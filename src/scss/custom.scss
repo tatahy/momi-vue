@@ -1,0 +1,14 @@
+//Override bootstrap4 $enable-* Sass variable’s value.
+$enable-gradients: true;
+
+// Bootstrap and its default variables,
+
+//方法1：相对路径引入bootstrap.scss
+//@import "../node_modules/bootstrap/scss/bootstrap.scss";
+
+//方法2：webpack的‘~’操作符
+//@import "~bootstrap/scss/bootstrap.scss";
+
+//方法3：webpack的模块引用
+@import "bootstrap/scss/bootstrap.scss";
+

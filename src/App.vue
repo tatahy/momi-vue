@@ -1,28 +1,37 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <TheNavbar />
+	
+	<TheContainer />
+
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+
+//引入各个组件,'@'已在webpack配置文件中的resolve中定义为‘/src/’
+import TheNavbar from '@/components/TheNavbar'
+import TheContainer from '@/components/TheContainer'
 
 export default {
-  name: 'app',
-  components: {
-    HelloWorld
-  }
+	name: 'app',
+	components: {
+		TheNavbar,
+		TheContainer
+	},  
 }
+
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang='scss'>
+
+//引入bootstrap4样式文件
+//@import '~bootstrap/dist/css/bootstrap.min.css';
+
+//引入bsv样式文件
+@import '~bootstrap-vue/dist/bootstrap-vue.min.css';
+
+//引入个人定制的bootstrap4样式文件
+@import '~@/scss/custom.scss';
+
 </style>
