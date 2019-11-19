@@ -4,6 +4,9 @@
 
 //只能通过commit mutations中的函数才能修改state中的数据
 export default {
+	changeEntity(state,payload){
+		state.entity=Object.assign({},state.entity,payload)
+	},
 	changeTable(state,payload){
 		state.table=Object.assign({},state.table,payload)
 		
@@ -26,24 +29,70 @@ export default {
 		state.isBriefContent=payload['value']
 		return payload['value']
 	},
+	changeIsNavChanged(state,payload){
+		state.isNavChanged=payload['value']
+		
+	},
+	
 	//
 	updateNavActive(state,payload){
 		let result=false
+		let navbar=state.navbar
 		
-		state.navbar.forEach((obj,idx)=>{
+		
+		navbar.forEach((obj,idx)=>{
 			//所有navbar中的isActive设为false
-			state['navbar'][idx]['props']['isActive']=false
+			obj['props']['isActive']=false
 			if(obj.name==payload.name){
+				payload.index=idx
+				payload.themeClr=obj['props']['themeClr']
 				//将指定name的navbar的isActive设为true
-				state['navbar'][idx]['props']['isActive']=true
-				payload.themeClr=obj.props.themeClr
+				obj['props']['isActive']=true
+				
 				result=true	
-				//commit('changeNavActive',payload)
 			}
-			
 			//设定navActive的值
 			state.navActive=Object.assign({},state.navActive,payload)	
 		})
+		return result
+	},
+	//更新navActive之后更新sideActive
+	updateSideActive(state,payload){
+		let result=false
+		let navActive=state.navActive
+		let sideActive=state.sideActive
+		let sidebar=state.sidebar
+		let entName=navActive.name
+		let label=navActive.label
+		
+		//组装sideActive.itemSets.label数组
+		let getSideActiveLabel=index=>{
+			let arr=[]
+			sidebar[index]['catlog'].forEach(obj=>{
+				
+				obj.items.forEach(objX=>{
+					arr.push(objX.label)
+					
+				})
+			
+			})
+			return arr
+		}		
+		
+		state.sidebar.forEach((obj,idx)=>{
+			if(obj.name==entName){
+				sideActive.index=idx
+				sideActive.caption=obj.caption
+			}
+		})
+		
+		payload['label']=getSideActiveLabel(sideActive.index)
+		//console.log(payload)
+		
+		sideActive.name=entName
+		sideActive.label=label
+		sideActive.itemSets=Object.assign({},sideActive.itemSets,payload)	
+		
 		return result
 	},
 	//更新payload.index对应的sidebar中各个菜单项的总数
@@ -102,6 +151,7 @@ export default {
 		//定义递归函数修改指定sidebar的isActive和isPressed。
 		let setIsActive=(arr,value,obj)=>{
 			let str=Array.isArray(arr)?arr[0]:'none'
+			let sideActive=state.sideActive
 			
 			//是否有button，有的话设置isPressed
 			if(arr[0]=='catlog' && obj[arr[0]][arr[1]]['hasButton']){
@@ -112,6 +162,14 @@ export default {
 			if(arr.length==1 ){
 				//设置item的isActive
 				if(arr[0]=='isActive'){obj[str]=value}
+				
+				if(value){
+						//更新state.sideActive中的内容
+						sideActive.item.name=obj.sysEnt
+						sideActive.item.label=obj.label
+						//更新table.subTitle
+						state.table.subTitle=obj.label
+					}
 				
 				return
 			}

@@ -16,8 +16,9 @@
 				@click="changeTable({
 					table:{title:nav.props.label,fieldLang:nav.props.fieldLang},
 					fetchOption:{routeStr:nav.props.routeStr},
-					navActive:{name:nav.name},
-					isBriefContent:true
+					navActive:{index:idx,name:nav.name,label:nav.props.label},
+					isBriefContent:true,
+					entity:{name:nav.name,label:nav.props.label}
 				})" 
 			>
 				{{ nav.props.label }}
@@ -84,6 +85,32 @@ export default {
 		... mapActions({
 			changeTable: 'asyChangeTable'
 		})
+	},
+	mounted(){
+		let nav=this.navArr[0]
+		let opt={
+				table:{
+					title:nav.props.label,
+					fieldLang:nav.props.fieldLang
+				},
+				fetchOption:{
+					routeStr:nav.props.routeStr
+				},
+				navActive:{
+					index:0,
+					name:nav.name,
+					label:nav.props.label
+				},
+				isBriefContent:true,
+				entity:{
+					name:nav.name,
+					label:nav.props.label
+				}
+			}
+		this.changeTable(opt)
+		
+		//console.log('mounted')
+
 	},
 	
 }

@@ -22,17 +22,23 @@ export default {
 		let table=setObjValue('table')
 		let fetchOption=setObjValue('fetchOption')
 		let navActive=setObjValue('navActive')
+		let entity=setObjValue('entity')
+		
+		//let sideActive=state.sideActive
 		
 		let isBriefContent=opt.hasOwnProperty('isBriefContent')?opt['isBriefContent']:state['isBriefContent']
 		
-		let isNavChanged=navActive['name']!==state['navActive']['name']?true:false
+		//let isNavChanged=navActive['name']!==state['navActive']['name']?true:false
+		let isNavChanged=entity['name']!==state['entity']['name']?true:false
 		let isRouteStrChanged=fetchOption['routeStr']!==state['fetchOption']['routeStr']?true:false
 		let isPageChanged=isBriefContent!=state['isBriefContent']?true:false
 		
 		let sidebarOld={routeOld:state['fetchOption']['routeStr'],
 					nameOld:state['navActive']['name']
 			}
+			
 		let res=isRouteStrChanged?await asyFetchByRoute(fetchOption):null
+		//isRouteStrChanged为true必然会有res，就会有cont
 		let cont=res?res.cont:null
 		
 		let result=false
@@ -42,12 +48,15 @@ export default {
 		if(isRouteStrChanged){
 
 			commit('changeFetchOption',fetchOption)
+			commit('changeIsNavChanged',{value:isNavChanged})
 			
 			table['isBusy']=true
 			commit('changeTable',table)		
 			
 			if(isNavChanged){
+				
 				navActive.category=cont.hasOwnProperty('itemsTotal')?{itemsTotal:cont.itemsTotal}:{}
+				
 				//计算navActive.name对应的sidebar中各个菜单项的总数
 				state['sidebar'].forEach((obj,idx)=>{
 					if(obj.name==navActive.name && cont.hasOwnProperty('itemsTotal')){
@@ -55,9 +64,15 @@ export default {
 					}
 					
 				})
+				
 			}
 		
 			commit('updateNavActive',navActive)
+			//更新navActive之后更新sideActive
+			if(cont.hasOwnProperty('brief'))commit('updateSideActive',cont.brief)
+			//commit('updateSideActive',cont.brief)
+			
+			
 			//更新sidebar的activeItem
 			commit('updateSidebarItemsActive',sidebarOld)
 			
@@ -65,9 +80,9 @@ export default {
 					getTableByFetchResult(res,table.fieldLang),
 					{'isBusy':false}
 				)
-			console.log(table)
+			//console.log(table)
 			commit('changeTable',table)
-			
+			commit('changeEntity',entity)
 			
 			result=true
 		}
@@ -77,7 +92,7 @@ export default {
 			commit('changeIsBriefContent',{value:isBriefContent})
 			table['isBusy']=false
 			commit('changeTable',table)
-			
+			result=true
 		}
 		
 		return result

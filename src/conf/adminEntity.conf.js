@@ -21,10 +21,10 @@ export const adminEntity={
 					]
 			},
 			{
-				caption:'技术方案',
+				caption:'成果方案',
 				items:[
+					{sysEnt:'ach',routeStr:'ach',label:'技术成果'},
 					{sysEnt:'sol',routeStr:'sol',label:'解决方案'},
-					{sysEnt:'ach',routeStr:'ach',label:'技术成果'}
 				
 				]
 			},
@@ -125,16 +125,16 @@ export const adminEntity={
 			{
 				caption:'科研导师',
 				items:[
-					{sysEnt:'person',routeStr:'res_des-material',label:'材料'},
-					{sysEnt:'person',routeStr:'res_des-computer',label:'计算机'},
+					{sysEnt:'person',routeStr:'material',label:'材料'},
+					{sysEnt:'person',routeStr:'computer',label:'计算机'},
 				]
 			},
 			{
 				caption:'管理导师',
 				items:[
-					{sysEnt:'person',routeStr:'manage-strategy',label:'战略'},
-					{sysEnt:'person',routeStr:'manage-finance',label:'财务'},
-					{sysEnt:'person',routeStr:'manage-operation',label:'运营'},
+					{sysEnt:'person',routeStr:'strategy',label:'战略'},
+					{sysEnt:'person',routeStr:'finance',label:'财务'},
+					{sysEnt:'person',routeStr:'operation',label:'运营'},
 				]
 			}
 			

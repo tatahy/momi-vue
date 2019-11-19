@@ -10,14 +10,17 @@
 <script>
 
 //引入各个组件,'@'已在webpack配置文件中的resolve中定义为‘/src/’
-import TheNavbar from '@/components/TheNavbar'
-import TheContainer from '@/components/TheContainer'
+//import TheNavbar from '@/components/TheNavbar'
+//import TheContainer from '@/components/TheContainer'
 
 export default {
 	name: 'app',
 	components: {
-		TheNavbar,
-		TheContainer
+		//TheNavbar,
+		
+		//异步引入
+		TheNavbar:()=>import ('@/components/TheNavbar'),
+		TheContainer:()=>import ('@/components/TheContainer')
 	},  
 }
 

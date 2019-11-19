@@ -17,8 +17,11 @@
 			:current-page="currentPage"
 			small
 		>
-			<template v-slot:table-caption>
-				<h4 class="text-center" v-bind:class="'text-'+clr">{{table.title}}</h4>
+			<template v-slot:table-caption >
+				<h4 class="text-center align-text-bottom" v-bind:class="'text-'+clr">
+					<span>{{table.title}}&nbsp;--&nbsp;</span>
+					<span v-show="table.subTitle" class="text-monospace">{{table.subTitle}}</span>
+				</h4>
 			</template>
 			
 			<template v-slot:table-busy>

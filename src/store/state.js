@@ -17,12 +17,47 @@ const tableInitItems=[
 ]
 
 export default {
-	//navArr,
+	entity:{
+		/* name:navbar[0]['name'],
+		label:navbar[0]['props']['label'], */
+		name:'',
+		label:'',
+	},
+	navActive:{
+		index:0,
+		name:navbar[0]['name'],
+		label:navbar[0]['props']['label'],
+		themeClr:navbar[0]['props']['themeClr'],
+		category:{}
+	},
+	sideActive:{
+		index:0,
+		name:sidebar[0]['name'],
+		label:sidebar[0]['caption'],
+		caption:sidebar[0]['caption'],
+		/*itemsObj:{
+			routeStr:'',
+			label:'',
+			total:'',
+		},*/
+		//所有item对象的属性值集合
+		itemSets:{
+			routeStr:'',
+			name:'',
+			label:'',
+			total:'',
+		},
+		//被点中的item对象属性
+		item:{
+			name:'',
+			label:''
+		}
+	},
 	navbar,
-	navActive:{name:navbar[0]['name'],themeClr:navbar[0]['props']['themeClr'],category:{}},
 	sidebar,
 	table:{
 		title:'Initial Info',
+		subTitle:'',
 		fieldLang:'chn',
 		fields:tableInitFields,
 		items:tableInitItems,
@@ -33,6 +68,7 @@ export default {
 		routeStr:'',
 		method:'GET'
 	},
-	isBriefContent:true
+	isBriefContent:true,
+	isNavChanged:false
 	
 }

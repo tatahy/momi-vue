@@ -81,9 +81,9 @@
 						:class="bsvAlignTwoEnds"
 						@click="changeTable({
 							fetchOption:{routeStr:ent.routeStr},
-							navActive:{name:navName},
+							navActive:{name:navName,label:ent.label},
 							isBriefContent:false,
-							table:{title:ent.label},
+							table:{subTitle:ent.label},
 						})"
 					>
 						

@@ -1,18 +1,21 @@
 <template>
 	<!-- <div class="container-fluid top56px">		 -->
+	
+	<!-- v-bind:style="{display:sidenavDis}" -->
 	<b-container fluid class="top56px">
 		<div class="bg-white border-right h-100 
 					sidenav sidenav-show sidenav-show-up" 
-			v-bind:style="{display:sidenavDis}"
+			v-if="showSidebar"
 			v-bind:class="`border-${themeClr}`"
 		>
 			<slot name="sidebar">
 				<TheSidebar />
 			</slot>
 		</div>
-			
+			<!-- v-bind:style="`marginLeft:${showSidebar}?200px;:0px;`" -->
 		<div class="content"
-			v-bind:style="{marginLeft:contentMarginLeft}"
+			
+			v-bind:style="setMarginLeft"
 		>
 			<div class="py-2">
 			
@@ -33,7 +36,12 @@
 			<main class="text-center">
 				
 				<template v-if="isBriefContent">
-					<slot name="briefPage"><TheChart /></slot>
+					<!-- <slot name="briefPage"><TheChart v-on:chart-change="chartChangeFn(oooohhh)"/></slot> -->
+					<!-- <slot name="briefPage"> -->
+						<!-- <TheChart v-on:give-advice="showAdvice"></TheChart> -->
+						<TheChart v-bind:nav-changed="isNavChanged"></TheChart>
+					
+					<!-- </slot> -->
 				</template>
 				<template v-else>
 					<TheTable />
@@ -42,7 +50,7 @@
 			</main>
 				
 			<footer>
-				<slot name="footer">footer</slot>
+				<slot name="footer"><div>footer</div></slot>
 			</footer>
 		</div>
 		
@@ -56,7 +64,7 @@
 </template>
 
 <script>
-import TheTable from '@/components/TheTable'
+//import TheTable from '@/components/TheTable'
 import TheSidebar from '@/components/TheSidebar'
 import TheChart from '@/components/TheChart'
 
@@ -68,46 +76,56 @@ export default {
 		return {
 			showDrop:true,
 			showSidebar:true,
-			contentMarginLeft:'200px',
-			sidenavDis:'block',
 			btnCls:'font24px py-0 px-2',
 		}
 	},
-	computed: mapState({
-		//主题颜色
-		themeClr: state=>state.navActive.themeClr,
-		isBriefContent:state=>state.isBriefContent,
-		//isTableBusy: state=>state.table.isBusy,
-	}),
+	computed: {
+		setMarginLeft:function(){
+			return {marginLeft:this.showSidebar?'200px':'0px'}
+		},
+		...mapState({
+			//主题颜色
+			themeClr: state=>state.navActive.themeClr,
+			chartLabel:state=>state.navActive.label,
+			isBriefContent:state=>state.isBriefContent,
+			isNavChanged:state=>state.isNavChanged,
+		
+		})
+	},
 	methods:{
 		backdropHide:function(){
 			this.showDrop=!this.showDrop
-			return this.sidenavHide()
+			return this.sidebarHide()
 		},
-		sidenavShow(){
+		sidebarShow(){
 			this.showSidebar=true
-			this.contentMarginLeft='200px'
-			this.sidenavDis='block'
 			this.showDrop=true
 		
 		},
-		sidenavHide(){
-			this.showSidebar=false
-			this.contentMarginLeft='0px'
-			this.sidenavDis='none'
+		sidebarHide(){
+			this.showSidebar=false			
 		},
 		sidebarDis(){
-			return this.showSidebar?this.sidenavHide():this.sidenavShow()
+			return this.showSidebar?this.sidebarHide():this.sidebarShow()
+		},
+		chartChangeFn(opt){
+			console.log('TheContainer chartChangeFn speak '+opt)
+			this.showAdvice(opt)
+			
+		},
+		showAdvice: function (advice) {
+			alert(advice)
 		}
 	},
-	props: {
-		msg: String
-	},
+	
 	components: {
-		TheTable,
+		
 		TheSidebar,
+		//TheTable,
+		TheTable:()=>import('@/components/TheTable'),
 		TheChart
-	},  
+	},
+	
 }
 </script>
 
