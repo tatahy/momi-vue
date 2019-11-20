@@ -1,11 +1,6 @@
 <template>
-
- <!--  hight:40vh;-->
-	<!-- <div class="chart-container" style="position: relative;width:75vw;"> -->
-	<div >
-		<!-- <canvas :id="chartId" v-on:chart-change="chartChangeFn(opt)"></canvas> -->
-		<!-- <canvas :id="chartId" v-on:click="giveAdvice"></canvas> -->
-		<!-- <canvas :id="chartId" nav-changed="isNavChanged"></canvas> -->
+	<div class="chart-container">
+	
 		<canvas :id="chartId"></canvas>
 	
 	</div>
@@ -23,7 +18,7 @@ let type= 'horizontalBar'
 let data={
 		labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
 		datasets: [{
-			label:'xx',
+			label:'数量',
 			data: [12, 19, 3, 5, 2, 3],
 			backgroundColor: [
 				'rgba(255, 99, 132, 0.2)',
@@ -48,9 +43,26 @@ let data={
 let options={
 		scales: {
 			yAxes: [{
+				gridLines: {
+					display: true,
+				},
 				ticks: {
-					beginAtZero: false
-				}
+					//stacked: true,
+					//beginAtZero: true,
+					fontSize:16,
+					//suggestedMin:0,
+				},
+				
+			}],
+			xAxes: [{
+				gridLines: {
+					display: true
+				},
+				ticks: {
+					//stacked: true,
+					beginAtZero: true,
+					suggestedMin:0,
+				},
 			}]
 		},
 		title: {
@@ -59,7 +71,7 @@ let options={
 			fontSize:20,
 			fontColor:''
         },
-		//responsive: true,
+		maintainAspectRatio: false,
 		
 	}
 
@@ -68,7 +80,6 @@ export default {
 	data:function(){
 		return {
 			chartId:'myChart',
-			//themeClr:'#dc3545'
 		}
 	},
 	props: {
@@ -170,6 +181,11 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style >
-
+<style scoped>
+.chart-container {
+  position: relative;
+  margin: auto;
+  height: 80vh;
+  //width: 80vw;
+}
 </style>

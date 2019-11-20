@@ -55,6 +55,10 @@
                     <File name="C:\AppServ\www\momi\application\admin\controller\Index.php" />
                     <File name="C:\AppServ\www\momi\application\admin\controller\Supply.php" />
                     <File name="C:\AppServ\www\momi\application\admin\controller\System.php" />
+                    <File name="C:\AppServ\www\momi\application\admin\controller\Demand.php" />
+                    <File name="C:\AppServ\www\momi\application\admin\controller\Expert.php" />
+                    <File name="C:\AppServ\www\momi\application\admin\controller\Mentor.php" />
+                    <File name="C:\AppServ\www\momi\application\admin\controller\Project.php" />
                 </Folder>
                 <Folder name="model" />
                 <Folder name="view" />

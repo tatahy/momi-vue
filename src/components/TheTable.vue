@@ -18,9 +18,12 @@
 			small
 		>
 			<template v-slot:table-caption >
-				<h4 class="text-center align-text-bottom" v-bind:class="'text-'+clr">
-					<span>{{table.title}}&nbsp;--&nbsp;</span>
-					<span v-show="table.subTitle" class="text-monospace">{{table.subTitle}}</span>
+				<h4 class="text-center align-text-bottom" >
+					<span v-bind:class="'text-'+themeClr">{{table.title}}</span>
+					<!-- <span v-show="table.subTitle" class="text-monospace">{{table.subTitle}}</span> -->
+					<span v-show="table.subTitle" class="text-muted" style="font-size:20px;">
+						&nbsp;--&nbsp;{{table.subTitle}}
+					</span>
 				</h4>
 			</template>
 			
@@ -108,7 +111,7 @@ export default {
 		//每页记录行数	
 		rows: state => state.table.items.length,
 		//主题颜色
-		clr : state=>state.navActive.themeClr
+		themeClr : state=>state.navActive.themeClr
 	}),
 	methods: {
 		getInfo(item, index, button) {

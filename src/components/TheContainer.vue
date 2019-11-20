@@ -108,11 +108,6 @@ export default {
 		sidebarDis(){
 			return this.showSidebar?this.sidebarHide():this.sidebarShow()
 		},
-		chartChangeFn(opt){
-			console.log('TheContainer chartChangeFn speak '+opt)
-			this.showAdvice(opt)
-			
-		},
 		showAdvice: function (advice) {
 			alert(advice)
 		}
