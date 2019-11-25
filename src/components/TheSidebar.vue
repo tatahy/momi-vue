@@ -56,10 +56,10 @@
 				
 				</b-button>
 			</div>
-			
+			<!-- :visible="cat.caption?null:true" -->
 			<b-collapse 
 				:id="`collapse-${catId}`"
-				:visible="cat.caption?null:true"
+				:visible="isVisible(cat.caption,catId)"
 			>
 				<b-list-group>
 					<!-- 此div的作用是给b-list-group-item加框线-->
@@ -81,7 +81,6 @@
 						:class="bsvAlignTwoEnds"
 						@click="changeTable({
 							fetchOption:{routeStr:ent.routeStr},
-							navActive:{name:navName,label:ent.label},
 							isBriefContent:false,
 							table:{subTitle:ent.label},
 						})"
@@ -156,7 +155,7 @@ export default {
 					}
 				}*/
 				state.sidebar.forEach(obj=>{
-					if(obj.name==state.navActive.name){
+					if(obj.name==state.entity.name){
 						sbObj=obj
 					}
 				})
@@ -164,17 +163,37 @@ export default {
 				return sbObj
 			},
 			
-			navName:state=>state.navActive.name,
+			navName:state=>state.entity.name,
 			//主题颜色
 			themeClr:state=>state.navActive.themeClr
 			
 		}),
 	},
 	methods: {
+		isVisible(str,id){
+			let result=true
+			
+			if(str){
+				if(id==0){
+					result=true
+				}else{
+					result=false
+				}
+			}else{
+				result=true
+			}
+			
+			//console.log(id)
+			return result
+		},
+		
 		... mapActions({
 			changeTable: 'asyChangeTable'
 		})
 	},
+	mounted(){
+	
+	}
 	//lifecycle func
 	//updated(){
 		//alert('sidebar: I am updated.')

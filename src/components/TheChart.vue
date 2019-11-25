@@ -100,20 +100,20 @@ export default {
 		},
 		...mapState({
 		chartLabel: state=>{
-			let items=state.sideActive.itemSets
-			let arr=items.hasOwnProperty('label')?items['label']:['xx']
+			let items=state.sideActive.items
+			let arr=items.hasOwnProperty('labels')?items['labels']:['xx']
 					
 			return arr
 			
 		},
 		chartDataSetsData:state=>{
-			let items=state.sideActive.itemSets
-			let arr=items.hasOwnProperty('total')?items['total']:['xx']
+			let items=state.sideActive.items
+			let arr=items.hasOwnProperty('totals')?items['totals']:['xx']
 					
 			return arr
 		},
 		//chartTitle:state=>state.navActive.label
-		chartTitle:state=>state.sideActive.label,
+		chartTitle:state=>state.entity.label,
 		isBriefContent: state=>state.isBriefContent,
 		isNavChanged: state=>state.isNavChanged,
 		themeClr:state=>{

@@ -18,41 +18,35 @@ const tableInitItems=[
 
 export default {
 	entity:{
-		/* name:navbar[0]['name'],
-		label:navbar[0]['props']['label'], */
-		name:'',
-		label:'',
+		/* name:navbar[1]['name'],
+		label:navbar[1]['props']['label'], */
+		name:navbar[1]['name'],
+		label:navbar[1]['props']['label'],
+		brief:{}
 	},
 	navActive:{
 		index:0,
-		name:navbar[0]['name'],
-		label:navbar[0]['props']['label'],
+		//name:navbar[0]['name'],
+		//label:navbar[0]['props']['label'],
 		themeClr:navbar[0]['props']['themeClr'],
-		category:{}
+		//category:{}
 	},
 	sideActive:{
 		index:0,
-		name:sidebar[0]['name'],
-		label:sidebar[0]['caption'],
 		caption:sidebar[0]['caption'],
-		/*itemsObj:{
-			routeStr:'',
-			label:'',
-			total:'',
-		},*/
 		//所有item对象的属性值集合
-		itemSets:{
+		items:{
 			routeStr:'',
 			name:'',
-			label:'',
-			total:'',
+			labels:[],
+			totals:[],
 		},
 		//被点中的item对象属性
-		item:{
+		itemActive:{
 			name:'',
 			label:''
 		}
-	},
+	},	
 	navbar,
 	sidebar,
 	table:{

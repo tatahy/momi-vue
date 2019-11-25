@@ -13,10 +13,10 @@
 			<b-nav-item 
 				:active="nav.props.isActive"
 				:key="idx"
-				@click="changeTable({
+				@click="changeContent({
 					table:{title:nav.props.label,fieldLang:nav.props.fieldLang},
 					fetchOption:{routeStr:nav.props.routeStr},
-					navActive:{index:idx,name:nav.name,label:nav.props.label},
+					navActive:{index:idx,themeClr:nav.props.themeClr},
 					isBriefContent:true,
 					entity:{name:nav.name,label:nav.props.label}
 				})" 
@@ -83,7 +83,7 @@ export default {
 	}),
 	methods: {
 		... mapActions({
-			changeTable: 'asyChangeTable'
+			changeContent: 'asyChangeTable'
 		})
 	},
 	mounted(){
@@ -98,8 +98,7 @@ export default {
 				},
 				navActive:{
 					index:0,
-					name:nav.name,
-					label:nav.props.label
+					themeClr:nav.props.themeClr
 				},
 				isBriefContent:true,
 				entity:{
@@ -107,7 +106,7 @@ export default {
 					label:nav.props.label
 				}
 			}
-		this.changeTable(opt)
+		this.changeContent(opt)
 		
 		//console.log('mounted')
 

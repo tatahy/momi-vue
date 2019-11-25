@@ -86,7 +86,7 @@ export default {
 		...mapState({
 			//主题颜色
 			themeClr: state=>state.navActive.themeClr,
-			chartLabel:state=>state.navActive.label,
+			chartLabel:state=>state.entity.label,
 			isBriefContent:state=>state.isBriefContent,
 			isNavChanged:state=>state.isNavChanged,
 		

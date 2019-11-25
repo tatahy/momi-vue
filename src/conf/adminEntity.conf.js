@@ -125,7 +125,7 @@ export const adminEntity={
 			{
 				caption:'科研导师',
 				items:[
-					{sysEnt:'person',routeStr:'material',label:'材料'},
+					{sysEnt:'person',routeStr:'material',label:'新材料'},
 					{sysEnt:'person',routeStr:'computer',label:'计算机'},
 				]
 			},
