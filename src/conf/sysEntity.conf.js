@@ -33,6 +33,10 @@ export const sysEntity={
 		routeStr:'',
 		adminEntArr:['expert'],
 	},
+	mentor:{
+		name:{en:'Mentor',chn:'导师'},
+		routeStr:'mentor',
+	},
 	pro:{
 		name:{en:'Project',chn:'项目'},
 		routeStr:'ent-pro'
@@ -89,15 +93,31 @@ export const sysEntity={
 	
 }
 
-//定义字段名称映射表
+
+
+
+//定义字段名称映射表，各项中字段的定义顺序也是显示的顺序
 export const entField={
 	pat:{
-		patnum:{en:'Patent No.',chn:'专利编号'},
-		topic:{en:'Topic',chn:'题目'},
-		type:{en:'Type',chn:'类型'},
-		patowner:{en:'Owner',chn:'所有人'},
-		inventor:{en:'Inventor',chn:'发明人'},
-		author:{en:'Author',chn:'撰写人'},
+		topic:{en:'Topic',chn:'题目',isBSVTableField:true},
+		type:{en:'Type',chn:'类型',isBSVTableField:true},
+		patowner:{en:'Owner',chn:'所有人',isBSVTableField:true},
+		inventor:{en:'Inventor',chn:'发明人',isBSVTableField:true},
+		author:{en:'Author',chn:'撰写人',isBSVTableField:true},
+		id:{en:'Id',chn:'系统编号',isBSVTableField:false},
+		patnum:{en:'Patent No.',chn:'专利编号',isBSVTableField:false},
+	},
+	mentor:{
+		name:{en:'Name',chn:'姓名',isBSVTableField:true},
+		field:{en:'Field',chn:'专业领域',isBSVTableField:true},
+		research:{en:'Research',chn:'研究方向',isBSVTableField:true},
+		title:{en:'Title',chn:'职衔',isBSVTableField:true},
+		position:{en:'Position',chn:'职务',isBSVTableField:true},
+		id:{en:'Id',chn:'系统编号',isBSVTableField:false},
+		type:{en:'Type',chn:'导师类型',isBSVTableField:false},
+		profile:{en:'Profile',chn:'个人简介',isBSVTableField:false},
+		experience:{en:'Experience',chn:'个人经历',isBSVTableField:false},
+		
 	},
 	the:{
 		xx:{en:'xx',chn:'哈哈'},

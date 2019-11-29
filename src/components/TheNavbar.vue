@@ -67,6 +67,12 @@ import { NavbarPlugin } from 'bootstrap-vue'
 new Vue('b-navbar',{NavbarPlugin})
 */
 
+
+import Vue from 'vue'
+
+import { NavbarPlugin } from 'bootstrap-vue'
+Vue.use(NavbarPlugin)
+
 import { mapState,mapActions } from 'vuex'
 
 export default {
@@ -86,7 +92,8 @@ export default {
 			changeContent: 'asyChangeTable'
 		})
 	},
-	mounted(){
+	//mounted(){
+	created(){
 		let nav=this.navArr[0]
 		let opt={
 				table:{

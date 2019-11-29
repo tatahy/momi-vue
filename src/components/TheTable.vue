@@ -19,12 +19,19 @@
 		>
 			<template v-slot:table-caption >
 				<h4 class="text-center align-text-bottom" >
-					<span v-bind:class="'text-'+themeClr">{{table.title}}</span>
+					<span v-bind:class="'text-'+themeClr">{{table.title}}&nbsp;--&nbsp;</span>
 					<!-- <span v-show="table.subTitle" class="text-monospace">{{table.subTitle}}</span> -->
-					<span v-show="table.subTitle" class="text-muted" style="font-size:20px;">
-						&nbsp;--&nbsp;{{table.subTitle}}
-					</span>
+					<b-badge v-show="table.subTitle"
+							:variant="themeClr" 
+							style="font-size:16px;color:#fff;"
+					>
+						{{table.subTitle}}
+					</b-badge>
 				</h4>
+			</template>
+			
+			<template v-slot:head()="data">
+				<span :class="`text-${themeClr}`">{{ data.label }}</span>
 			</template>
 			
 			<template v-slot:table-busy>
@@ -37,22 +44,75 @@
 			<template v-slot:cell(topic)="data">
 				<!-- <b-link href="#">{{ data.value }}</b-link> -->
 				
-				<b-button variant="link" v-on:click="getInfo(data.item, data.index, $event.target)" class="mr-1">
+				<b-button 
+					variant="link" 
+					v-on:click="getInfo(data.item, data.index, $event.target)" 
+					class="mr-1 text-left"
+				>
 					{{ data.value }}
 				</b-button>
 			</template>
 			
+			<template v-slot:cell(name)="data">
+				<b-button 
+					variant="link" 
+					v-on:click="getInfo(data.item, data.index, $event.target)" 
+					class="mr-1">
+					{{ data.value }}
+				</b-button>
+			</template>
+			<!-- actions字段的内容 -->
+			<template v-slot:cell(actions)="row">
+				<!-- 弹出modal组件 -->
+				<b-button 
+					size="sm" 
+					@click="getInfo(row.item, row.index, $event.target)" 
+					class="mr-1"
+				>
+					Info modal
+				</b-button>
+				
+				<!-- 显示/隐藏detail组件 -->
+				<b-button 
+					size="sm" 
+					@click="row.toggleDetails"
+				>
+					{{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+				</b-button>
+				
+				<b-form-checkbox 
+					v-model="row.detailsShowing" 
+					@change="row.toggleDetails"
+				>
+					Details via check
+				</b-form-checkbox>
+			</template>
+
+			<!-- detail组件 -->
+			<template v-slot:row-details="row">
+				<b-card>
+					<ul>
+						<li v-for="(value, key) in row.item" :key="key">
+						{{ key }}: {{ value }}
+						</li>
+						
+					</ul>
+				</b-card>
+			</template>
+			
 		</b-table>
 	</div>	
-	<div class="offset-9 text-right" v-show="rows > perPage" >
-		<p>
-			<span>Total items: {{ rows }},</span>&nbsp;
-			<span>Current Page: {{ currentPage }}</span>
-			<br>
+	<div class="text-right" v-show="rows > perPage">
+		<!-- <p> -->
+			<span>总数：<b-badge :variant="themeClr">{{ rows }}</b-badge></span>&nbsp;
+			<!-- <span>Current Page: {{ currentPage }}</span> -->
+			<!-- <br> -->
 			<!-- <span>每页行数:</span> -->
-			<label>每页行数:</label>
-			<b-form-select v-model="perPage" :options="options"></b-form-select>	
-		</p>
+			<!-- <label>每页行数:</label> -->
+			<label>每页行数:
+			<b-form-select v-model="perPage" size="sm" :options="options"></b-form-select>	
+			</label>
+		<!-- </p> -->
 		
 		<b-pagination
 			aria-controls="my-table"
@@ -81,7 +141,14 @@
 
 <script>
 
+import { TablePlugin, ModalPlugin, PaginationPlugin } from 'bootstrap-vue'
+import Vue from 'vue'
+
 import { mapState, mapActions } from 'vuex'
+
+Vue.use(TablePlugin)
+Vue.use(ModalPlugin)
+Vue.use(PaginationPlugin)
 
 //commonJs Module
 //module.exports= {

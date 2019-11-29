@@ -75,6 +75,15 @@
                     <File name="C:\AppServ\www\momi\application\index\model\Patinfo.php" />
                 </Folder>
             </Folder>
+            <Folder name="mentor">
+                <Folder name="config" />
+                <Folder name="controller">
+                    <File name="C:\AppServ\www\momi\application\mentor\controller\Index.php" />
+                </Folder>
+                <Folder name="model" />
+                <Folder name="view" />
+                <File name="C:\AppServ\www\momi\application\mentor\common.php" />
+            </Folder>
             <Folder name="patent">
                 <Folder name="config">
                     <File name="C:\AppServ\www\momi\application\patent\config\database.php" />

@@ -4,15 +4,8 @@ import Vue from 'vue'
 
 //拟使用的BsV插件名称
 const plugins=[
-	'NavbarPlugin',
-	//TheSidebar
-	'NavPlugin',
-	'CollapsePlugin',
-	//TheTable
 	'ButtonPlugin',
 	'ButtonGroupPlugin',
-	'PaginationPlugin',
-	'TablePlugin',
 	'FormInputPlugin',
 	'FormSelectPlugin',
 	'BadgePlugin',
@@ -20,7 +13,8 @@ const plugins=[
 	'SpinnerPlugin',
 	'LayoutPlugin',
 	'LinkPlugin',
-	'ModalPlugin'
+	'FormCheckboxPlugin',
+	'CardPlugin'
 ]
 
 //async 函数都是Promise对象
@@ -45,7 +39,12 @@ export default async function asyBsVGetReady(){
 	
 	if(result){
 		//注册'bootstrap-vue'插件
-		obj.forEach((el)=>Vue.use(el))
+		obj.forEach(el=>Vue.use(el))
+		/* obj.forEach(el=>{
+				console.log(el)
+				Vue.use(el)
+			}) */
+		
 	}	
 	
 	return result

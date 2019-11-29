@@ -64,9 +64,7 @@
 </template>
 
 <script>
-//import TheTable from '@/components/TheTable'
 import TheSidebar from '@/components/TheSidebar'
-import TheChart from '@/components/TheChart'
 
 import { mapState } from 'vuex'
 
@@ -118,7 +116,7 @@ export default {
 		TheSidebar,
 		//TheTable,
 		TheTable:()=>import('@/components/TheTable'),
-		TheChart
+		TheChart:()=>import('@/components/TheChart'),
 	},
 	
 }

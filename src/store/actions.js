@@ -2,7 +2,7 @@
 
 //import state from './state.js'
 
-import {asyFetchByRoute,getTableByFetchResult} from '@/util.js'
+import {asyFetchByRoute,getBSVTableByFetchResult} from '@/util.js'
 
 export default {
 	//async 函数都是Promise对象
@@ -73,7 +73,7 @@ export default {
 			commit('updateSidebarItemsActive',sidebarOld)
 			
 			table=Object.assign({},
-					getTableByFetchResult(res,table.fieldLang),
+					getBSVTableByFetchResult(res,table.fieldLang),
 					{'isBusy':false}
 				)
 			//console.log(table)

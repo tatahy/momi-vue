@@ -69,16 +69,19 @@
 						:class="cat.caption?`ml-3 border-bottom-0 ${borderCls}`:`border-top-0 ${borderCls}`"
 						:style="{width:cat.caption?`180px`:null}"
 					>
-					<!-- 系统实体按钮
+					<!-- 各个sidebar中的item按钮
 					
 					variant="themeClr"
-					:class="`${bsvAlignTwoEnds} text-${themeClr}`"
+					
+					:class="`${bsvAlignTwoEnds} text-${themeClr}`
+					:style="{background-color:ent.isActive?'red':'null'}"
 					-->
 					<b-list-group-item 
 						button
 						class="py-1 rounded-0 border-0"
 						:active="ent.isActive"
 						:class="bsvAlignTwoEnds"
+						:style="setBackgroundClr(ent.isActive)"
 						@click="changeTable({
 							fetchOption:{routeStr:ent.routeStr},
 							isBriefContent:false,
@@ -119,17 +122,16 @@
 </template>
 
 <script>
-/*
+
 import Vue from 'vue'
 
 import { NavPlugin } from 'bootstrap-vue'
-Vue.use('b-nav',{NavPlugin})
-
-import { CollapsePlugin } from 'bootstrap-vue'
-Vue.use('b-collapse',{CollapsePlugin})
-*/
 
 import { mapState,mapActions } from 'vuex'
+
+import {bs4TextColor as colorObj} from '@/conf/common.conf.js'
+
+Vue.use(NavPlugin)
 
 export default {
 	name: 'TheSidebar',
@@ -145,27 +147,10 @@ export default {
 		},
 		...mapState({
 		//activeNav对应的sidebar内容
-			sidebar:state => {
-				let sbObj={}
 			
-				/*for(let obj of state.sidebar){
-					if(obj.name==entName){
-						sbObj=obj
-						break
-					}
-				}*/
-				state.sidebar.forEach(obj=>{
-					if(obj.name==state.entity.name){
-						sbObj=obj
-					}
-				})
-				
-				return sbObj
-			},
-			
-			navName:state=>state.entity.name,
+			sidebar:state => state.sidebar[state.sideActive.index],
 			//主题颜色
-			themeClr:state=>state.navActive.themeClr
+			themeClr:state => state.navActive.themeClr,
 			
 		}),
 	},
@@ -186,19 +171,15 @@ export default {
 			//console.log(id)
 			return result
 		},
-		
+		setBackgroundClr(isActive){
+			let clrValue=isActive?colorObj[this.themeClr]:'#fff'
+			
+			return {backgroundColor:clrValue}
+		},
 		... mapActions({
 			changeTable: 'asyChangeTable'
 		})
 	},
-	mounted(){
-	
-	}
-	//lifecycle func
-	//updated(){
-		//alert('sidebar: I am updated.')
-	//}
-	
 }
 </script>
 

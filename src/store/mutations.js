@@ -26,6 +26,10 @@ export default {
 		state.fetchOption=Object.assign({},state.fetchOption,payload)
 		
 	},
+	updateSideActiveItemActive(state,payload){
+		state.sideActive.itemActive.label=payload.label
+		state.sideActive.itemActive.routeStr=payload.routeStr
+	},
 	
 	changeNavActive(state,payload){
 		state.navActive=Object.assign({},state.navActive,payload)
@@ -190,6 +194,8 @@ export default {
 						
 						//更新table.subTitle
 						state.table.subTitle=obj.label
+						//更新sideActive.itemActive
+						this.commit('updateSideActiveItemActive',obj)
 					}
 				
 				return

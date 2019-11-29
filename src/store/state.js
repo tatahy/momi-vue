@@ -36,15 +36,16 @@ export default {
 		caption:sidebar[0]['caption'],
 		//所有item对象的属性值集合
 		items:{
-			routeStr:'',
-			name:'',
+			//routeStr:'',
+			//name:'',
 			labels:[],
 			totals:[],
 		},
 		//被点中的item对象属性
 		itemActive:{
-			name:'',
-			label:''
+			//name:'',
+			label:'',
+			routeStr:'',
 		}
 	},	
 	navbar,

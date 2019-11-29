@@ -1,5 +1,6 @@
 
 import {langArr, entField} from '@/conf/sysEntity.conf.js'
+import {bsvTableFieldProp} from '@/conf/common.conf.js'
 
 //import {adminEntity} from '@/conf/adminEntity.conf.js'
 
@@ -89,10 +90,14 @@ async function asyFetchByRoute(opt={routeStr:'',method:'GET'}){
 
 
 //按照bootstrap-vue的要求组装table中使用的fields
-function setFieldsForBsv(entName,fields=[],lang='en',addNo=true){
+function setFieldsForBsvTable(entName,fields=[],lang='en',addNo=true){
 	let ent=Object.keys(entField).includes(entName)?entName:''
 	let langObj=ent?entField[ent]:''
 	let res=[]
+	let getBSVTableFieldProp=opt=>{
+		return Object.assign({},bsvTableFieldProp,opt)
+	}
+	let fieldProp={key:'',label:''}
 	//校验lang是否为预定义的值
 	lang=langArr.includes(lang)?lang:'en'
 	
@@ -102,40 +107,40 @@ function setFieldsForBsv(entName,fields=[],lang='en',addNo=true){
 	}
 	
 	if(ent){		
-		//fields为非空数组
-		/* fields.forEach((el,idx)=>{			
-			res[idx]=!Object.keys(langObj).includes(el)?el
-				:{
-					key:el,
-					label:langObj[el][lang],
-					'class':'text-center'
-				}
-		}) */
-		
-		res=fields.map(el=>!Object.keys(langObj).includes(el)?el
-			:{
-				key:el,
-				label:langObj[el][lang],
-				'class':'text-center'
+		//对要显示的字段添加属性
+		Object.keys(langObj).forEach(el=>{
+			let obj=langObj[el]
+			if(fields.includes(el) && obj['isBSVTableField']){
+				fieldProp.key=el
+				fieldProp.label=obj[lang]
+				res.push(getBSVTableFieldProp(fieldProp))
 			}
-		)
+		})
+		
 	}
 	
-	if(!res.length){
-		res=['key','value']
+	if(res.length){
+		//最后的一个字段
+		res.push({key:'actions',label:lang=='chn'?'详细信息':'Actions'})
+	}else{
+		res.push({key:'key',label:lang=='chn'?'键':'Key'})
+		res.push({key:'value',label:lang=='chn'?'值':'Value'})
 	}
 	
 	if(addNo){
-		res.unshift({
-			key:'No.',
-			label:lang=='chn'?'序号':'No.',
-			'class':'text-center'
-		})
+		fieldProp.key='No.'
+		fieldProp.label=lang=='chn'?'序号':'Id'
+		fieldProp['class']='text-center'		
+		fieldProp['sortable']=true		
+		fieldProp['sortDirection']='asc'
+			
+		//添加一个字段
+		res.unshift(fieldProp)
 	}
 	
 	fields=res
 	
-	return fields;
+	return fields
 }
 
 
@@ -144,7 +149,7 @@ function setFieldsForBsv(entName,fields=[],lang='en',addNo=true){
  *要处理的对象：res.cont = {ent:String,fields:Array,items:Array};
  *
  */
-function getTableByFetchResult(res,fieldLang='',addNo=true){
+function getBSVTableByFetchResult(res,fieldLang='',addNo=true){
 	
 	let cont=res.cont
 	//let ent=cont.hasOwnProperty('ent')?cont['ent']:''
@@ -166,7 +171,7 @@ function getTableByFetchResult(res,fieldLang='',addNo=true){
 	
 	//console.log(res) 
 	//按照bootstrap-vue的要求组装fields
-	table.fields=setFieldsForBsv(sysEnt,fields,fieldLang,addNo)
+	table.fields=setFieldsForBsvTable(sysEnt,fields,fieldLang,addNo)
 	//console.log(table.fields) 
 	if(sysEnt){
 		if(items.length){
@@ -192,12 +197,10 @@ function getTableByFetchResult(res,fieldLang='',addNo=true){
 	
 	table.items=arr
 	//console.log(table)
-		
-	//async函数返回的是Promise对象
 	return table
 }
 
 export {
 	asyFetchByRoute,
-	getTableByFetchResult
+	getBSVTableByFetchResult
 }

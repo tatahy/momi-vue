@@ -1,6 +1,25 @@
 
 import {langArr} from '@/conf/common.conf.js'
 
+
+var navbarArr=[
+		{props:{themeClr:'info'}},
+		{props:{themeClr:'info'}},
+		{props:{themeClr:'info'}},
+		{props:{themeClr:'primary'}},
+		{props:{themeClr:'warning'}},
+		{props:{themeClr:'danger'}}
+	]
+
+var sidebarArr=[
+		{caption:'供给分类',faIcon:['fas','warehouse']},
+		{caption:'需求方',faIcon:['fas','mountain']},
+		{caption:'项目主导方',faIcon:['fas','project-diagram']},
+		{caption:'专家来源',faIcon:['fas','chalkboard-teacher']},
+		{caption:'导师分类',faIcon:['fas','user-graduate']},
+		{caption:'系统信息',faIcon:['fas','h-square']},
+	]
+
 //import {sysEntity} from '@/conf/sysEntity.conf.js'
 
 //后台系统管理的实体定义，树形结构便于扩展
@@ -125,16 +144,16 @@ export const adminEntity={
 			{
 				caption:'科研导师',
 				items:[
-					{sysEnt:'person',routeStr:'material',label:'新材料'},
-					{sysEnt:'person',routeStr:'computer',label:'计算机'},
+					{sysEnt:'mentor',routeStr:'material',label:'新材料'},
+					{sysEnt:'mentor',routeStr:'computer',label:'计算机'},
 				]
 			},
 			{
 				caption:'管理导师',
 				items:[
-					{sysEnt:'person',routeStr:'strategy',label:'战略'},
-					{sysEnt:'person',routeStr:'finance',label:'财务'},
-					{sysEnt:'person',routeStr:'operation',label:'运营'},
+					{sysEnt:'mentor',routeStr:'strategy',label:'战略'},
+					{sysEnt:'mentor',routeStr:'finance',label:'财务'},
+					{sysEnt:'mentor',routeStr:'operation',label:'运营'},
 				]
 			}
 			
@@ -301,21 +320,15 @@ function getRoute(ent){
 }
 
 function buildNavbar(){
-	let arr=[
-		{props:{themeClr:'info'}},
-		{props:{themeClr:'info'}},
-		{props:{themeClr:'info'}},
-		{props:{themeClr:'primary'}},
-		{props:{themeClr:'warning'}},
-		{props:{themeClr:'danger'}}
-	]
+	let arr=navbarArr
 	const ent=Object.keys(adminEntity)
 	
 	if(ent.length == arr.length){
 		arr.forEach((obj,idx)=>{
 			let entName=ent[idx]
-			//添加属性
+			//属性赋值
 			obj['name']=entName
+			//添加属性
 			obj['props']['label']=getLabel(entName)
 			obj['props']['fieldLang']=langArr.includes('chn')?'chn':'en'
 			obj['props']['routeStr']=getRoute(entName)
@@ -333,14 +346,7 @@ function buildNavbar(){
 export const navbar=buildNavbar()
 
 function buildSidebar(){
-	let arr=[
-		{caption:'供给分类',faIcon:['fas','warehouse']},
-		{caption:'需求方',faIcon:['fas','mountain']},
-		{caption:'项目主导方',faIcon:['fas','project-diagram']},
-		{caption:'专家来源',faIcon:['fas','chalkboard-teacher']},
-		{caption:'导师分类',faIcon:['fas','user-graduate']},
-		{caption:'系统信息',faIcon:['fas','h-square']},
-	]
+	let arr=sidebarArr
 	const ent=Object.keys(adminEntity)
 	
 	if(ent.length == arr.length){

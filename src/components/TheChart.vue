@@ -8,34 +8,61 @@
 
 <script>
 import { mapState } from 'vuex'
-import {textColorBSValue} from '@/conf/common.conf.js'
+import {bs4TextColor,chartColor} from '@/conf/common.conf.js'
 
 import Chart from 'chart.js'
 
 let type= 'horizontalBar'
 //let type= 'bar'
+let labels=chartColor.labels
+//let labels=[1, 2, 3,4, 5,6,7,1, 2, 3,4, 5,6,7]
+
+//由labels的数量，根据预定义的chartColor取得颜色值
+//因为chartColor.labels.length有上限，递归调用自己
+//超过该上限就又按照chartColor.labels的排列顺序得到颜色值
+//直到labels的数量小于上限值
+let getDataColor=(labels,colorObj={})=>{
+	const lenDefault=chartColor.labels.length
+	const clrNameArr=chartColor.labels
+	
+	let minus=labels.length-lenDefault
+	let len=minus<=0?labels.length:lenDefault
+	let isEnd=minus<=0?true:false
+	let name=''
+	let clrObjDefault={names:[],background:[],border:[]}
+	
+	colorObj=Object.assign({},clrObjDefault,colorObj)
+	
+	for(var i=0;i<len;i++){
+		name=clrNameArr[i]
+		colorObj.names.push(name)
+		colorObj.background.push(chartColor['background'][name])
+		colorObj.border.push(chartColor['border'][name])
+	}
+	
+	//递归结束条件
+	if(isEnd){		
+		//console.log(colorObj)
+		return colorObj
+	}
+	
+	labels=labels.slice(len)
+	//console.log(labels)
+	
+	return getDataColor(labels,colorObj)
+	//随机得到0~len范围内的整数值，不含len
+	//name=clrNameArr[Math.floor(Math.random() * Math.floor(len))]
+}
+
+const dataColor=getDataColor(labels)
 
 let data={
-		labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+		labels: dataColor.names,
 		datasets: [{
 			label:'数量',
 			data: [12, 19, 3, 5, 2, 3],
-			backgroundColor: [
-				'rgba(255, 99, 132, 0.2)',
-				'rgba(54, 162, 235, 0.2)',
-				'rgba(255, 206, 86, 0.2)',
-				'rgba(75, 192, 192, 0.2)',
-				'rgba(153, 102, 255, 0.2)',
-				'rgba(255, 159, 64, 0.2)'
-				],
-			borderColor: [
-				'rgba(255, 99, 132, 1)',
-				'rgba(54, 162, 235, 1)',
-				'rgba(255, 206, 86, 1)',
-				'rgba(75, 192, 192, 1)',
-				'rgba(153, 102, 255, 1)',
-				'rgba(255, 159, 64, 1)'
-			],
+			backgroundColor: dataColor.background,
+			borderColor: dataColor.border,
 			borderWidth: 1
 		}]
 	}
@@ -82,7 +109,7 @@ export default {
 			chartId:'myChart',
 		}
 	},
-	props: {
+	/*props: {
 		msg: String,
 		navChanged:{
 			type:Boolean,
@@ -90,6 +117,7 @@ export default {
 			required:true
 		}
 	},
+	*/
 	computed:{
 		chart:function(){
 			return new Chart(this.chartId, {
@@ -99,35 +127,31 @@ export default {
 				})
 		},
 		...mapState({
-		chartLabel: state=>{
-			let items=state.sideActive.items
-			let arr=items.hasOwnProperty('labels')?items['labels']:['xx']
+			chartDataLabels: state=>{
+				let items=state.sideActive.items
+				let arr=items.hasOwnProperty('labels')?items['labels']:['xx']
 					
-			return arr
+				return arr
 			
-		},
-		chartDataSetsData:state=>{
-			let items=state.sideActive.items
-			let arr=items.hasOwnProperty('totals')?items['totals']:['xx']
+			},
+			chartDataSetsData:state=>{
+				let items=state.sideActive.items
+				let arr=items.hasOwnProperty('totals')?items['totals']:['xx']
 					
-			return arr
-		},
-		//chartTitle:state=>state.navActive.label
-		chartTitle:state=>state.entity.label,
-		isBriefContent: state=>state.isBriefContent,
-		isNavChanged: state=>state.isNavChanged,
-		themeClr:state=>{
-			let clrStr=state.navActive.themeClr
-			let clrObj=textColorBSValue
-			let clrVal=Object.keys(clrObj).includes(clrStr)?
+				return arr
+			},
+			chartTitle:state=>state.entity.label,
+			
+			themeClr:state=>{
+				let clrStr=state.navActive.themeClr
+				let clrObj=bs4TextColor
+				let clrVal=Object.keys(clrObj).includes(clrStr)?
 						clrObj[clrStr]
 						:''
 			
-			return clrVal
-		}
-		
-		//chartLabel: state=>Object.keys(state.navActive.catogery.itemsTotal)
-		
+				return clrVal
+			}
+
 		}),
 	},
 	watch:{
@@ -143,40 +167,20 @@ export default {
 			let self=this
 			let myChart=self.chart
 			let data=myChart.data
-			let options=myChart.options
+			let title=myChart.options.title
 
-			options.title.text=self.chartTitle
-			options.title.fontColor=self.themeClr
-			data.labels=self.chartLabel
+			title.text=self.chartTitle
+			title.fontColor=self.themeClr
+			data.labels=self.chartDataLabels
 			data.datasets[0].data=self.chartDataSetsData
 			
 			return myChart.update()
 		}
 	},
 	mounted(){
-		
 		this.updateChart()
 		//console.log('mounted')
-
 	},
-	updated(){
-		//let option={label:this.chartLabel}	
-
-		if(this.isBriefContent && this.isNavChanged){
-			//this.$forceUpdate()
-			//console.log('updated')
-		}	
-		//
-	},
-	destroyed(){
-		//console.log('destroyed')
-		/*
-		this.$nextTick(function () {
-				console.log('destroyed')
-		})
-		*/
-	},
-	
 }
 </script>
 
