@@ -75,15 +75,6 @@
                     <File name="C:\AppServ\www\momi\application\index\model\Patinfo.php" />
                 </Folder>
             </Folder>
-            <Folder name="mentor">
-                <Folder name="config" />
-                <Folder name="controller">
-                    <File name="C:\AppServ\www\momi\application\mentor\controller\Index.php" />
-                </Folder>
-                <Folder name="model" />
-                <Folder name="view" />
-                <File name="C:\AppServ\www\momi\application\mentor\common.php" />
-            </Folder>
             <Folder name="patent">
                 <Folder name="config">
                     <File name="C:\AppServ\www\momi\application\patent\config\database.php" />
@@ -105,6 +96,19 @@
                 <Folder name="model" />
                 <Folder name="view" />
                 <File name="C:\AppServ\www\momi\application\system\common.php" />
+            </Folder>
+            <Folder name="mentor">
+                <Folder name="config">
+                    <File name="C:\AppServ\www\momi\application\mentor\config\database.php" />
+                </Folder>
+                <Folder name="controller">
+                    <File name="C:\AppServ\www\momi\application\mentor\controller\Index.php" />
+                </Folder>
+                <Folder name="model">
+                    <File name="C:\AppServ\www\momi\application\mentor\model\MentorInfo.php" />
+                </Folder>
+                <Folder name="view" />
+                <File name="C:\AppServ\www\momi\application\mentor\common.php" />
             </Folder>
             <File name="C:\AppServ\www\momi\application\.htaccess" />
             <File name="C:\AppServ\www\momi\application\command.php" />

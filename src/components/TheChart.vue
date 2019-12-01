@@ -12,11 +12,6 @@ import {bs4TextColor,chartColor} from '@/conf/common.conf.js'
 
 import Chart from 'chart.js'
 
-let type= 'horizontalBar'
-//let type= 'bar'
-let labels=chartColor.labels
-//let labels=[1, 2, 3,4, 5,6,7,1, 2, 3,4, 5,6,7]
-
 //由labels的数量，根据预定义的chartColor取得颜色值
 //因为chartColor.labels.length有上限，递归调用自己
 //超过该上限就又按照chartColor.labels的排列顺序得到颜色值
@@ -54,7 +49,7 @@ let getDataColor=(labels,colorObj={})=>{
 	//name=clrNameArr[Math.floor(Math.random() * Math.floor(len))]
 }
 
-const dataColor=getDataColor(labels)
+const dataColor=getDataColor(chartColor.labels)
 
 let data={
 		labels: dataColor.names,
@@ -63,7 +58,9 @@ let data={
 			data: [12, 19, 3, 5, 2, 3],
 			backgroundColor: dataColor.background,
 			borderColor: dataColor.border,
-			borderWidth: 1
+			borderWidth: 1,
+			barPercentage: 0.5,
+			categoryPercentage: 1,
 		}]
 	}
 
@@ -99,80 +96,77 @@ let options={
 			fontColor:''
         },
 		maintainAspectRatio: false,
-		
 	}
 
 export default {
 	name: 'TheChart',
 	data:function(){
 		return {
-			chartId:'myChart',
+			
+			/*//鼠标放在chart上会显示改变前的图形
+			chartData:data,
+			chartOptions:options
+			*/
 		}
 	},
-	/*props: {
-		msg: String,
-		navChanged:{
-			type:Boolean,
-			default:false,
+	props: {
+		chartId:{
+			type:String,
+			default:'myChart',
+			required:true
+		},
+		chartType:{
+			type:String,
+			default:'bar',
 			required:true
 		}
 	},
-	*/
 	computed:{
+		//不能用箭头函数，应为箭头函数中的‘this’指代不明
 		chart:function(){
 			return new Chart(this.chartId, {
-					type:type,
+					type:this.chartType,
+					/*//使用data中的定义，鼠标放在chart上会显示改变前的图形
+					data:this.chartData,
+					options:this.chartOptions */
+					//直接定义
 					data:data,
-					options:options 
+					options:options
 				})
 		},
 		...mapState({
-			chartDataLabels: state=>{
-				let items=state.sideActive.items
-				let arr=items.hasOwnProperty('labels')?items['labels']:['xx']
-					
-				return arr
-			
-			},
-			chartDataSetsData:state=>{
-				let items=state.sideActive.items
-				let arr=items.hasOwnProperty('totals')?items['totals']:['xx']
-					
-				return arr
-			},
+			items:state=>state.sideActive.items,
 			chartTitle:state=>state.entity.label,
-			
 			themeClr:state=>{
 				let clrStr=state.navActive.themeClr
 				let clrObj=bs4TextColor
-				let clrVal=Object.keys(clrObj).includes(clrStr)?
-						clrObj[clrStr]
-						:''
-			
-				return clrVal
+				return clrObj.hasOwnProperty(clrStr)?clrObj[clrStr]:''
 			}
-
 		}),
 	},
 	watch:{
 		chartTitle:function(){
+		//chart:function(){
 			this.updateChart()
-			//console.log('watch: ')
-			//console.log(data)
 		}
-	
 	},
 	methods:{
 		updateChart(){
-			let self=this
-			let myChart=self.chart
+			let myChart=this.chart
+			let items=this.items
+			
 			let data=myChart.data
 			let title=myChart.options.title
+			
+			let chartDataLabels=items.hasOwnProperty('labels')?
+									items['labels']:['xx']
+			let chartDataSetsData=items.hasOwnProperty('totals')?
+									items['totals']:['xx']
 
-			title.text=self.chartTitle
-			title.fontColor=self.themeClr
-			data.labels=self.chartDataLabels
-			data.datasets[0].data=self.chartDataSetsData
+			title.text=this.chartTitle
+			title.fontColor=this.themeClr
+			data.labels=chartDataLabels
+			data.datasets[0].data=chartDataSetsData
 			
 			return myChart.update()
 		}

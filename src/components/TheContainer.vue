@@ -36,13 +36,9 @@
 			<main class="text-center">
 				
 				<template v-if="isBriefContent">
-					<!-- <slot name="briefPage"><TheChart v-on:chart-change="chartChangeFn(oooohhh)"/></slot> -->
-					<!-- <slot name="briefPage"> -->
-						<!-- <TheChart v-on:give-advice="showAdvice"></TheChart> -->
-						<TheChart v-bind:nav-changed="isNavChanged"></TheChart>
-					
-					<!-- </slot> -->
+					<TheChart chart-id='myChart' chart-type='horizontalBar' />
 				</template>
+				
 				<template v-else>
 					<TheTable />
 				</template>
