@@ -36,6 +36,8 @@
 						<span class="font-weight-bold">{{cat.caption}} </span>
 						<span class="when-opened"><font-awesome-icon :icon="['fas','minus-square']" /></span> 
 						<span class="when-closed"><font-awesome-icon :icon="['fas','plus-square']" /></span>
+						<!-- <span class="when-opened"><font-awesome-icon :icon="iconFas.minus" /></span>  -->
+						<!-- <span class="when-closed"><font-awesome-icon :icon="iconFas.plus" /></span> -->
 					
 					</template>
 						
@@ -43,6 +45,8 @@
 						<span class="font-italic">{{cat.caption}} </span>
 						<span class="when-opened"><font-awesome-icon :icon="['far','minus-square']" /></span> 
 						<span class="when-closed"><font-awesome-icon :icon="['far','plus-square']" /></span>
+						<!-- <span class="when-opened"><font-awesome-icon :icon="iconFar.minus" /></span>  -->
+						<!-- <span class="when-closed"><font-awesome-icon :icon="iconFar.plus" /></span> -->
 					</template>
 					
 					
@@ -122,23 +126,77 @@
 </template>
 
 <script>
-
-import Vue from 'vue'
-
-import { NavPlugin } from 'bootstrap-vue'
-
 import { mapState,mapActions } from 'vuex'
+
+//引入BsV的component
+import {
+	BNav,
+	BButton,
+	BCollapse,
+	BListGroup,
+	BListGroupItem,
+	BBadge,
+	//引入BsV定义的directive
+	VBToggle
+
+} from 'bootstrap-vue'
 
 import {bs4TextColor as colorObj} from '@/conf/common.conf.js'
 
-Vue.use(NavPlugin)
+//引入font awesome
+//'plus-square','minus-square'
+import { 
+	faPlusSquare as fasPlus,
+	faMinusSquare as fasMinus,
+	//供给
+	faWarehouse,
+	//需求
+	faMountain,
+	//项目
+	faProjectDiagram,
+	//导师
+	faUserGraduate,
+	//专家
+	faChalkboardTeacher,
+	//系统
+	faHSquare,
+	
+} from '@fortawesome/free-solid-svg-icons'
+import { 
+	faPlusSquare as farPlus,
+	faMinusSquare as farMinus 
+} from '@fortawesome/free-regular-svg-icons'
+import { library as faLib} from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+faLib.add(
+	fasPlus,
+	fasMinus,
+	farPlus,
+	farMinus,
+	//供给
+	faWarehouse,
+	//需求
+	faMountain,
+	//项目
+	faProjectDiagram,
+	//导师
+	faUserGraduate,
+	//专家
+	faChalkboardTeacher,
+	//系统
+	faHSquare,	
+)
 
 export default {
 	name: 'TheSidebar',
 	data(){
 		return {
 			//bsv中的"d-flex justify-content-between align-items-center"是对button中的内容进行两端对齐
-			bsvAlignTwoEnds:"d-flex justify-content-between align-items-center"
+			bsvAlignTwoEnds:"d-flex justify-content-between align-items-center",
+			/*iconFas:{plus:fasPlus,minus:fasMinus},
+			iconFar:{plus:farPlus,minus:farMinus}
+			*/
 		}
 	},
 	computed:{
@@ -180,6 +238,20 @@ export default {
 			changeTable: 'asyChangeTable'
 		})
 	},
+	components:{
+		'b-nav':BNav,
+		'b-button':BButton,
+		'b-collapse':BCollapse,
+		'b-list-group':BListGroup,
+		'b-list-group-item':BListGroupItem,
+		'b-badge':BBadge,
+		//FontAwesomeIcon
+		'font-awesome-icon':FontAwesomeIcon
+	},
+	directives:{
+		//引入BsV定义的directive
+		bToggle:VBToggle
+	}
 }
 </script>
 

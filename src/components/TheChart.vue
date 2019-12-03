@@ -172,6 +172,13 @@ export default {
 		}
 	},
 	mounted(){
+		/* 
+		//控制台查看vue实例属性值
+		console.log(this.$el)
+		console.log(this.$props)
+		console.log(this.$data)
+		console.log(this.$options)
+		*/
 		this.updateChart()
 		//console.log('mounted')
 	},

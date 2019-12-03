@@ -29,10 +29,10 @@
 
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
-        <b-nav-form>
-          <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
-          <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
-        </b-nav-form>
+        <!-- <b-nav-form> -->
+          <!-- <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input> -->
+          <!-- <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button> -->
+        <!-- </b-nav-form> -->
 
         <b-nav-item-dropdown text="Lang" right>
           <b-dropdown-item href="#">EN</b-dropdown-item>
@@ -59,19 +59,24 @@
 </template>
 
 <script>
-/*
-import Vue from 'vue'
+//引入font awesome
+import { faFontAwesome} from '@fortawesome/free-brands-svg-icons'
+import { faSignOutAlt} from '@fortawesome/free-solid-svg-icons'
+import { library as faLib} from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-import { NavbarPlugin } from 'bootstrap-vue'
-//Vue.use(NavbarPlugin)
-new Vue('b-navbar',{NavbarPlugin})
-*/
+faLib.add(faFontAwesome,faSignOutAlt)
 
-
-import Vue from 'vue'
-
-import { NavbarPlugin } from 'bootstrap-vue'
-Vue.use(NavbarPlugin)
+import { 
+	BNavbar,
+	BNavbarNav,
+	BNavbarBrand,
+	BNavbarToggle,
+	BNavItem,
+	BNavItemDropdown,
+	BDropdownItem,
+	BCollapse	
+} from 'bootstrap-vue'
 
 import { mapState,mapActions } from 'vuex'
 
@@ -118,6 +123,17 @@ export default {
 		//console.log('mounted')
 
 	},
+	components:{
+		'b-navbar':BNavbar,
+		'b-navbar-nav':BNavbarNav,
+		'b-navbar-brand':BNavbarBrand,
+		'b-navbar-toggle':BNavbarToggle,
+		'b-nav-item':BNavItem,
+		'b-nav-item-dropdown':BNavItemDropdown,
+		'b-dropdown-item':BDropdownItem,
+		'b-collapse':BCollapse,
+		FontAwesomeIcon		
+	}
 	
 }
 </script>

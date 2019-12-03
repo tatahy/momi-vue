@@ -4,17 +4,17 @@ import Vue from 'vue'
 
 //拟使用的BsV插件名称
 const plugins=[
-	'ButtonPlugin',
+	//'ButtonPlugin',
 	'ButtonGroupPlugin',
 	'FormInputPlugin',
-	'FormSelectPlugin',
-	'BadgePlugin',
+	//'FormSelectPlugin',
+	//'BadgePlugin',
 	'ListGroupPlugin',
 	'SpinnerPlugin',
 	'LayoutPlugin',
 	'LinkPlugin',
-	'FormCheckboxPlugin',
-	'CardPlugin'
+	//'FormCheckboxPlugin',
+	//'CardPlugin'        
 ]
 
 //async 函数都是Promise对象
@@ -31,7 +31,7 @@ export default async function asyBsVGetReady(){
 	let result=false
 		
 	plugins.forEach((el,idx)=>{
-		res[idx]=Object.keys(BsV).includes(el)?true:false
+		res[idx]=BsV.hasOwnProperty(el)?true:false
 		obj[idx]=BsV[el]		
 	})
 	//检验是否每一个plug都注册了，所有的都注册了every才返回true，否则返回false

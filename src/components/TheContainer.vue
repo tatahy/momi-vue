@@ -60,9 +60,27 @@
 </template>
 
 <script>
+
+
+import { 
+	BContainer,
+	BButton,
+} from 'bootstrap-vue'
+
 import TheSidebar from '@/components/TheSidebar'
+import TheChart from '@/components/TheChart'
 
 import { mapState } from 'vuex'
+
+//引入font awesome
+import { 
+	faAngleDoubleLeft,
+	faAngleDoubleRight
+} from '@fortawesome/free-solid-svg-icons'
+import { library as faLib} from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+faLib.add(faAngleDoubleLeft,faAngleDoubleRight)
 
 export default {
 	name: 'TheContainer',
@@ -108,11 +126,14 @@ export default {
 	},
 	
 	components: {
-		
-		TheSidebar,
+		'b-container':BContainer,
+		'b-button':BButton,
+		TheSidebar:TheSidebar,
+		TheChart:TheChart,
 		//TheTable,
 		TheTable:()=>import('@/components/TheTable'),
-		TheChart:()=>import('@/components/TheChart'),
+		FontAwesomeIcon
+		
 	},
 	
 }

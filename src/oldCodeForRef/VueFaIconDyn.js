@@ -26,8 +26,8 @@ const fasArr=[
 	//专家
 	'chalkboard-teacher',
 	'h-square',
-	'plus-square',
-	'minus-square'
+	//'plus-square',
+	//'minus-square'
 ]
 
 //拟使用的fab图标
@@ -37,8 +37,8 @@ const fabArr=[
 
 //拟使用的far图标
 const farArr=[
-	'plus-square',
-	'minus-square'
+	//'plus-square',
+	//'minus-square'
 ]
 
 //async 函数都是Promise对象

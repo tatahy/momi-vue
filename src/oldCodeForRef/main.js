@@ -5,9 +5,9 @@ import store from '@/store'
 
 import App from '@/App.vue'
 
-import '@/VueBs.js'
+//import '@/VueBs.js'
 
-import '@/VueFaIcon.js'
+//import '@/VueFaIcon.js'
 
 Vue.config.productionTip = false
 

@@ -14,6 +14,7 @@
 //import TheContainer from '@/components/TheContainer'
 
 export default {
+//export const App= {
 	name: 'app',
 	components: {
 		//TheNavbar,
@@ -23,6 +24,8 @@ export default {
 		TheContainer:()=>import ('@/components/TheContainer')
 	},  
 }
+
+
 
 </script>
 

@@ -140,15 +140,25 @@
 </template>
 
 <script>
-
-import { TablePlugin, ModalPlugin, PaginationPlugin } from 'bootstrap-vue'
-import Vue from 'vue'
-
 import { mapState, mapActions } from 'vuex'
 
-Vue.use(TablePlugin)
-Vue.use(ModalPlugin)
-Vue.use(PaginationPlugin)
+
+//引入BsV的plugin
+//import { TablePlugin, ModalPlugin, PaginationPlugin } from 'bootstrap-vue'
+
+
+//引入BsV的component
+import { 
+	BTable,
+	BModal,
+	BPagination,
+	BCard,
+	BButton,
+	BBadge,
+	BFormCheckbox,
+	BFormSelect 
+} from 'bootstrap-vue'
+
 
 //commonJs Module
 //module.exports= {
@@ -194,16 +204,27 @@ export default {
 			//getTableItemsBy: 'asyChangeTable'
 		})
 	},
-	//computed:{
-		
-		//...mapState({
-			
-		//})
-	//},
+	
 	components:{
-		//BButtonGroup,
-		//BButton
+		
+		//引入BSV的component
+		'b-table':BTable,
+		'b-modal':BModal,
+		'b-pagination':BPagination,
+		'b-card':BCard,
+		'b-button':BButton,
+		'b-form-checkbox':BFormCheckbox,
+		'b-form-select':BFormSelect,
+		'b-badge':BBadge,
+	
+		/*
+		//引入BSV的plugin
+		TablePlugin, 
+		ModalPlugin, 
+		PaginationPlugin
+		*/
 	}
+
 }
 
 </script>
