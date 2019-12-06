@@ -9,6 +9,7 @@
 <script>
 import { mapState } from 'vuex'
 import {bs4TextColor,chartColor} from '@/conf/common.conf.js'
+//
 
 import Chart from 'chart.js'
 
@@ -136,12 +137,21 @@ export default {
 		},
 		...mapState({
 			items:state=>state.sideActive.items,
-			chartTitle:state=>state.entity.label,
-			themeClr:state=>{
-				let clrStr=state.navActive.themeClr
-				let clrObj=bs4TextColor
-				return clrObj.hasOwnProperty(clrStr)?clrObj[clrStr]:''
-			}
+			chartTitle:state=>{
+				let index=state.navbar.index
+				let actNav=state.navbar.items[index]
+				let props=actNav.props
+				return props.label
+						
+			},
+			//chart中使用的颜色
+			themeClr: state=>{
+				let index=state.navbar.index
+				let actNav=state.navbar.items[index]
+				let props=actNav.props
+				return bs4TextColor[props.themeClr]
+						
+			},
 		}),
 	},
 	watch:{
@@ -151,22 +161,31 @@ export default {
 		}
 	},
 	methods:{
-		updateChart(){
-			let myChart=this.chart
-			let items=this.items
+		_getChartData(){
+			let result={labels:'',data:''}
 			
+			return result
+		},
+		updateChart(){
+			let self=this
+			
+			let myChart=self.chart
 			let data=myChart.data
 			let title=myChart.options.title
 			
+			let chartData=self._getChartData()
+			/*
+			let items=self.items
 			let chartDataLabels=items.hasOwnProperty('labels')?
 									items['labels']:['xx']
 			let chartDataSetsData=items.hasOwnProperty('totals')?
 									items['totals']:['xx']
+			*/
 
-			title.text=this.chartTitle
-			title.fontColor=this.themeClr
-			data.labels=chartDataLabels
-			data.datasets[0].data=chartDataSetsData
+			title.text=self.chartTitle
+			title.fontColor=self.themeClr
+			data.labels=chartData.labels
+			data.datasets[0].data=chartData.data
 			
 			return myChart.update()
 		}

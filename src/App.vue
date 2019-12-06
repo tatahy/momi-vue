@@ -1,8 +1,13 @@
 <template>
   <div id="app">
     <TheNavbar />
+
+	<TheContainer>
+		<template v-slot:leftSide>
+			<TheSidebar />
+		</template>
 	
-	<TheContainer />
+	</TheContainer>
 
   </div>
 </template>
@@ -10,22 +15,26 @@
 <script>
 
 //引入各个组件,'@'已在webpack配置文件中的resolve中定义为‘/src/’
-//import TheNavbar from '@/components/TheNavbar'
+import TheNavbar from '@/components/TheNavbar'
 //import TheContainer from '@/components/TheContainer'
+//import TheSidebar from '@/components/TheSidebar'
 
 export default {
 //export const App= {
 	name: 'app',
 	components: {
-		//TheNavbar,
+		TheNavbar,
+		//TheContainer,
+		//TheSidebar
+		
 		
 		//异步引入
-		TheNavbar:()=>import ('@/components/TheNavbar'),
-		TheContainer:()=>import ('@/components/TheContainer')
-	},  
+		//TheNavbar:()=>import ('@/components/TheNavbar'),
+		TheContainer:()=>import ('@/components/TheContainer'),
+		TheSidebar:()=>import ('@/components/TheSidebar')
+		
+	}
 }
-
-
 
 </script>
 

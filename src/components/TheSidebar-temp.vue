@@ -175,7 +175,7 @@ faLib.add(
 	faHSquare,	
 )
 
-import { mapState,mapActions,mapGetters } from 'vuex'
+import { mapState,mapActions } from 'vuex'
 
 export default {
 	name: 'TheSidebar',
@@ -200,18 +200,14 @@ export default {
 			//sidebar:state => sideArr[state.sideActive.index],
 			sidebar:state=>state.sidebar.items[state.navbar.index],
 			//主题颜色
-			/*themeClr: state=>{
+			themeClr: state=>{
 				let nav=state.navbar
 				let actNav=nav.items[nav.index]
 				let props=actNav.props
 				return props.themeClr
 						
-			},*/
+			},
 			
-		}),
-		...mapGetters({
-			//主题颜色
-			themeClr:'actNavThemeClr'
 		}),
 	},
 	methods: {
@@ -259,7 +255,107 @@ export default {
 				//self.updateTable(routeNow)
 			}
 		},
+		//得到添加所有item在sidebar中的访问路径数组后的items		
+		_addItemPathArr(){
+			let self=this
+			let sidebar=self.sidebar
+			//Array.slice()才是数组的复制方法，
+			//arrA=arrB只是arrA引用arrB的地址
+			let items=self.briefItems.slice()
+			let path=[]
+			
+			items.forEach(item=>{
+			
+				sidebar.catlog.forEach((objX,idx)=>{
+					
+					objX.items.forEach((objY,idy)=>{
+					
+						if(objY.routeStr==item.routeStr){
+							path=[]
+							path.push('catlog')
+							path.push(idx)
+							path.push('items')
+							path.push(idy)
+						
+							item['path']=path
+						}
+					})
+				})
+			})
+			
+			
+			return items
+		},		
+		//任意时刻Sidebar中的Items最多只有一项的isActive=true
+		updateItemActive(routeNow){
+			let self=this
+			let sidebar=self.sidebar
+			let items=self._addItemPathArr()
+			let truePath=[]
+			
+			//定义递归函数修改指定sidebar的isActive和isPressed。
+			let setIsActive=(arr,value,obj)=>{
+				let str=Array.isArray(arr)?arr[0]:'none'		
+				//console.log(arr)
+				
+				//是否有button，有的话设置isPressed
+				if(obj.hasOwnProperty('hasButton')){
+					obj['isPressed']=value
+				}
+			
+				//递归结束条件
+				if(obj.hasOwnProperty('isActive')){
+					obj.isActive=obj.routeStr==routeNow?value:false
+					//console.log(routeNow)
+					return
+				}
 		
+				arr.shift()
+				return setIsActive(arr,value,obj[str])
+			
+			}
+			
+			items.forEach(item=>{
+				let arr=item.path
+				let start=arr.includes('catlog')?arr.indexOf('catlog'):0
+				let arrTemp=arr.slice(start)
+				//触发click事件的item的path
+				if(item.routeStr==routeNow){
+					truePath=arr.slice(start)
+				}
+			
+				//将所有的item的active=false
+				setIsActive(arrTemp,false,sidebar)
+			})
+			
+			//触发click事件的item的active=true
+			if(truePath.length)setIsActive(truePath,true,sidebar)
+		},
+		updateItemsTotal(){
+			let catlog=this.sidebar.hasOwnProperty('catlog')?
+						this.sidebar.catlog:{}
+	
+			console.log(catlog)
+			console.log(this.briefItems)
+			console.log('updateItemsTotal()')
+			
+			catlog.forEach((obj,idx)=>{
+				obj.items.forEach(ent=>{
+					//console.log(ent)
+					//更新各个菜单项的总数
+					this.briefItems.forEach(objB=>{
+						if(ent.routeStr==objB.routeStr){
+							ent.itemsTotal=objB.total
+						
+						}
+					
+					})
+				
+				})
+				catlog[idx]=obj
+			})
+		
+		},
 	
 		... mapActions({
 			//changeTable: 'asyChangeTable'
@@ -283,7 +379,7 @@ export default {
 	//created(){
 	mounted(){
 		//console.log(this.sidebar.catlog)
-		//this.updateItemsTotal()
+		this.updateItemsTotal()
 	}
 }
 </script>

@@ -8,8 +8,8 @@
 			v-if="showSidebar"
 			v-bind:class="`border-${themeClr}`"
 		>
-			<slot name="sidebar">
-				<TheSidebar />
+			<slot name="leftSide">
+				<!-- <TheSidebar /> -->
 			</slot>
 		</div>
 			<!-- v-bind:style="`marginLeft:${showSidebar}?200px;:0px;`" -->
@@ -20,7 +20,7 @@
 			<div class="py-2">
 			
 			<b-button 
-				:variant="'outline-'+themeClr"
+				:variant="`outline-${themeClr}`"
 				@click="sidebarDis"
 				:class="btnCls"
 			>
@@ -46,7 +46,9 @@
 			</main>
 				
 			<footer>
-				<slot name="footer"><div>footer</div></slot>
+				<slot name="footer">
+					<!-- <div>footer</div> -->
+				</slot>
 			</footer>
 		</div>
 		
@@ -67,10 +69,10 @@ import {
 	BButton,
 } from 'bootstrap-vue'
 
-import TheSidebar from '@/components/TheSidebar'
+//import TheSidebar from '@/components/TheSidebar'
 import TheChart from '@/components/TheChart'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 //引入font awesome
 import { 
@@ -96,12 +98,11 @@ export default {
 			return {marginLeft:this.showSidebar?'200px':'0px'}
 		},
 		...mapState({
-			//主题颜色
-			themeClr: state=>state.navActive.themeClr,
-			chartLabel:state=>state.entity.label,
 			isBriefContent:state=>state.isBriefContent,
-			isNavChanged:state=>state.isNavChanged,
-		
+		}),
+		...mapGetters({
+			//主题颜色
+			themeClr:'actNavThemeClr'
 		})
 	},
 	methods:{
@@ -128,7 +129,7 @@ export default {
 	components: {
 		'b-container':BContainer,
 		'b-button':BButton,
-		TheSidebar:TheSidebar,
+		//TheSidebar:TheSidebar,
 		TheChart:TheChart,
 		//TheTable,
 		TheTable:()=>import('@/components/TheTable'),

@@ -140,7 +140,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions,mapGetters } from 'vuex'
 
 
 //引入BsV的plugin
@@ -158,7 +158,41 @@ import {
 	BFormCheckbox,
 	BFormSelect 
 } from 'bootstrap-vue'
-
+/*
+//BSV:Bootstrap-vuez中table插件用到的field对象的属性值
+var bsvTableFieldProp={
+	key:'',					//String
+	label:'',				//String
+	class:'',				//String or Array
+	sortable:true,			//Boolean
+	sortDirection:'',		//String
+	thClass:'text-center',				//String or Array
+	tdClass:'text-left',				//String or Array or Function
+	variant:'',				//String
+	headerTitle:'',			//String
+	headerAbbr:'',			//String
+	formatter:'',			//String or Function
+	sortByFormatted:'',		//Boolean or Function
+	filterByFormatted:'',	//Boolean or Function
+	thStyle:'',				//Object
+	thAttr:'',				//Object or Function	
+	tdAttr:'',				//Object or Function	
+	isRowHeader:'',			//Boolean
+	stickyColumn:'',		//Boolean
+}
+*/
+const tableInitFields=[
+	{key:'No.','class':'text-center',},
+	{key:'age','class':'text-center',},
+	{key:'firstName',label:'FName','class':'',},
+	{key:'lastName',label:'LName',},
+]
+const tableInitItems=[
+    { 'No.':1, age: 40, firstName: 'Dickerson', lastName: 'Macdonald' },
+    { 'No.':2, age: 21, firstName: 'Larsen', lastName: 'Shaw' },
+    { 'No.':3, age: 89, firstName: 'Geneva', lastName: 'Wilson' },
+    { 'No.':4, age: 38, firstName: 'Jami', lastName: 'Carney' }
+]
 
 //commonJs Module
 //module.exports= {
@@ -184,11 +218,24 @@ export default {
 	},
 	computed: mapState({
 		//表格内容
-		table: state => state.table,
+		table: state => {
+			let actNav=state.activeNav
+			let actItem=state.activeSideItem
+			let tblItems=state.fetchData.response.hasOwnProperty('items')?
+							state.fetchData.response.items:
+							tableInitItems
+			return {
+				title:actNav.props.hasOwnProperty('label')?actNav.props.label:'Title',
+				fieldLang:actNav.props.hasOwnProperty('fieldLang')?actNav.props.fieldLang:'chn',
+				subTitle:actItem.hasOwnProperty('label')?actItem.label:'subTitle',
+				
+				fields:tableInitFields,
+				items:tblItems,
+				isBusy:false
+			}
+		},
 		//每页记录行数	
 		rows: state => state.table.items.length,
-		//主题颜色
-		themeClr : state=>state.navActive.themeClr
 	}),
 	methods: {
 		getInfo(item, index, button) {
@@ -200,9 +247,13 @@ export default {
 			this.infoModal.title = ''
 			this.infoModal.content = ''
 		},
-		... mapActions({
+		...mapActions({
 			//getTableItemsBy: 'asyChangeTable'
-		})
+		}),
+		...mapGetters({
+			//主题颜色
+			themeClr:'actNavThemeClr'
+		}),
 	},
 	
 	components:{

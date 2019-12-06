@@ -20,6 +20,138 @@ var sidebarArr=[
 		{caption:'系统信息',faIcon:['fas','h-square']},
 	]
 
+/*	完善sidebar的catArr的值
+ *	算法描述：
+ *	1. 得到对应对象的items:[
+					{routeStr:'env'},
+					{routeStr:'conf'},
+					{routeStr:'serv'},
+				]
+		其中每一项表示访问路由的后半部分，前半部分由上一级的routeStr定义。
+		以system为例，完整路由为'system-env'
+ *	2. 根据sysEntPath中的每一项对应生成一个Object，结构1：
+ 		{
+			caption:'',
+			items:[
+				{itemsTotal:0,routeStr:'syetem-env'},
+				{itemsTotal:0,routeStr:'syetem-conf'},
+				{itemsTotal:0,routeStr:'syetem-serv'},
+			]
+		}
+		结构2：
+		{
+			caption:'',
+			itemsTotal:[0,0,0],
+			routeStr:['','',''],
+			label:['','','']
+		}
+ *	3. Object的内容填充：
+ 		routeStr和label已在items中定义，找到后填充；
+		itemsTotal则要在运行时通过fetch方法拿到数据后填充。
+ *
+ *	ent:String
+ *	lang:String
+ */
+function fufillSidebarCatlog(ent){
+	
+	//组装成数据结构1
+	adminEntity[ent].catlog.forEach(obj=>{
+		//增加
+		obj['hasButton']=obj.caption?true:false
+		obj['isPressed']=false
+		
+		obj.items.forEach(objX=>{
+			let routeArr=objX.routeStr.toLowerCase().split('-')
+			
+			routeArr.unshift(adminEntity[ent]['routeStr'].toLowerCase())
+			//增加
+			objX['itemsTotal']=0
+			objX['isActive']=false
+			//修改
+			objX['routeStr']=routeArr.join('-')
+			
+			/* objX=Object.assign({},objX,
+				{
+					itemsTotal:0,
+					isActive:false,
+					routeStr:routeArr.join('-')
+				}
+			) */
+
+		})
+	})
+	return adminEntity[ent].catlog
+}
+
+/* 	得到预定义的caption值
+ *	ent:string
+ * 	lang:String
+ */
+function getLabel(ent,lang=''){
+	lang=langArr.includes(lang)?lang:'chn'
+	
+	//return Object.keys(adminEntity).includes(ent)?
+	return adminEntity.hasOwnProperty(ent)?
+			adminEntity[ent]['name'][lang]
+			:'none'
+}
+
+function getRoute(ent){
+	
+	return adminEntity.hasOwnProperty(ent)?
+			adminEntity[ent]['routeStr']
+			:''
+}
+
+function buildNavbar(){
+	let arr=navbarArr
+	const ent=Object.keys(adminEntity)
+	
+	if(ent.length == arr.length){
+		arr.forEach((obj,idx)=>{
+			let entName=ent[idx]
+			//属性赋值
+			obj['name']=entName
+			obj['index']=idx
+			//添加属性
+			obj['props']['label']=getLabel(entName)
+			obj['props']['fieldLang']=langArr.includes('chn')?'chn':'en'
+			obj['props']['routeStr']=getRoute(entName)
+			obj['props']['isActive']=idx==0?true:false
+			
+			arr[idx]=obj
+		})
+	}else{
+		//console.log('wrong navbar numbers')
+	}
+	
+	return arr
+}
+
+
+
+function buildSidebar(){
+	let arr=sidebarArr
+	const ent=Object.keys(adminEntity)
+	
+	if(ent.length == arr.length){
+		arr.forEach((obj,idx)=>{
+			let entName=ent[idx]
+			//添加属性
+			obj['name']=entName
+			obj['index']=idx
+			obj['catlog']=fufillSidebarCatlog(entName)
+						
+			arr[idx]=obj
+		})
+	}else{
+		//console.log('wrong sidebar numbers')
+	}
+	
+	return arr
+	
+}
+
 //import {sysEntity} from '@/conf/sysEntity.conf.js'
 
 //后台系统管理的实体定义，树形结构便于扩展
@@ -178,193 +310,5 @@ export const adminEntity={
 	}
 }
 
-/*	完善sidebar的catArr的值
- *	算法描述：
- *	1. 得到对应对象的items:[
-					{routeStr:'env'},
-					{routeStr:'conf'},
-					{routeStr:'serv'},
-				]
-		其中每一项表示访问路由的后半部分，前半部分由上一级的routeStr定义。
-		以system为例，完整路由为'system-env'
- *	2. 根据sysEntPath中的每一项对应生成一个Object，结构1：
- 		{
-			caption:'',
-			items:[
-				{itemsTotal:0,routeStr:'syetem-env'},
-				{itemsTotal:0,routeStr:'syetem-conf'},
-				{itemsTotal:0,routeStr:'syetem-serv'},
-			]
-		}
-		结构2：
-		{
-			caption:'',
-			itemsTotal:[0,0,0],
-			routeStr:['','',''],
-			label:['','','']
-		}
- *	3. Object的内容填充：
- 		routeStr和label已在items中定义，找到后填充；
-		itemsTotal则要在运行时通过fetch方法拿到数据后填充。
- *
- *	ent:String
- *	lang:String
- */
-function fufillSidebarCatlog(ent){
-	
-	//组装成数据结构1
-	adminEntity[ent].catlog.forEach(obj=>{
-		//增加
-		obj['hasButton']=obj.caption?true:false
-		obj['isPressed']=false
-		
-		obj.items.forEach(objX=>{
-			let routeArr=objX.routeStr.toLowerCase().split('-')
-			
-			routeArr.unshift(adminEntity[ent]['routeStr'].toLowerCase())
-			//增加
-			objX['itemsTotal']=0
-			objX['isActive']=false
-			//修改
-			objX['routeStr']=routeArr.join('-')
-			
-			/* objX=Object.assign({},objX,
-				{
-					itemsTotal:0,
-					isActive:false,
-					routeStr:routeArr.join('-')
-				}
-			) */
-
-		})
-	})
-	return adminEntity[ent].catlog
-}
-
-/* 
-function fufillSidebarCatlog1(ent,lang=''){
-	let catArr=[]
-	
-	//定义递归函数
-	let getEntObj=(path,obj)=>{
-			let pathArr=path.split('/')
-			let ent=obj.hasOwnProperty(pathArr[0])?pathArr[0]:''
-			let resObj={routeStr:'none',label:'none'}
-			
-			lang=langArr.includes(lang)?lang:'chn'
-			
-			//递归结束条件
-			if(!ent.length){
-				return resObj
-			}else{
-				resObj.label=obj[ent]['name'][lang]
-				resObj.routeStr=obj[ent]['routeStr']
-			}
-			
-			if(pathArr.length>1){
-				pathArr.shift()
-				return getEntObj(pathArr.join('/'),obj[ent]['children'])
-			}
-		
-			return resObj
-		}
-	//组装成数据结构1
-		
-	adminEntity[ent].catlog.forEach(obj=>{
-		let catlog={
-				caption:obj.caption,
-				hasButton:obj.caption?true:false,
-				isPressed:false,
-				sysEnt:[]
-			}
-		
-		obj.sysEntPath.forEach(path=>{
-			let entProps=getEntObj(path,sysEntity)
-			catlog['sysEnt'].push(
-								{
-									path:path,
-									itemsTotal:0,
-									routeStr:entProps.routeStr,
-									label:entProps.label,
-									isActive:false
-								}
-							)
-		})
-		catArr.push(catlog)
-		
-		
-	})
-
-	return catArr
-	
-}
- */
-
-/* 	得到预定义的caption值
- *	ent:string
- * 	lang:String
- */
-function getLabel(ent,lang=''){
-	lang=langArr.includes(lang)?lang:'chn'
-	
-	return Object.keys(adminEntity).includes(ent)?
-			adminEntity[ent]['name'][lang]
-			:'none'
-}
-
-function getRoute(ent){
-	
-	return Object.keys(adminEntity).includes(ent)?
-			adminEntity[ent]['routeStr']
-			:''
-}
-
-function buildNavbar(){
-	let arr=navbarArr
-	const ent=Object.keys(adminEntity)
-	
-	if(ent.length == arr.length){
-		arr.forEach((obj,idx)=>{
-			let entName=ent[idx]
-			//属性赋值
-			obj['name']=entName
-			//添加属性
-			obj['props']['label']=getLabel(entName)
-			obj['props']['fieldLang']=langArr.includes('chn')?'chn':'en'
-			obj['props']['routeStr']=getRoute(entName)
-			obj['props']['isActive']=idx==0?true:false
-			
-			arr[idx]=obj
-		})
-	}else{
-		//console.log('wrong navbar numbers')
-	}
-	
-	return arr
-}
-
 export const navbar=buildNavbar()
-
-function buildSidebar(){
-	let arr=sidebarArr
-	const ent=Object.keys(adminEntity)
-	
-	if(ent.length == arr.length){
-		arr.forEach((obj,idx)=>{
-			let entName=ent[idx]
-			//添加属性
-			obj['name']=entName
-			obj['catlog']=fufillSidebarCatlog(entName)
-						
-			arr[idx]=obj
-		})
-	}else{
-		//console.log('wrong sidebar numbers')
-	}
-	
-	return arr
-	
-}
-
 export const sidebar=buildSidebar()
-

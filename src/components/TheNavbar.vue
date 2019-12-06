@@ -10,16 +10,18 @@
     <b-collapse id="nav-collapse" is-nav>
       <b-navbar-nav >
 		<template v-for="(nav, idx) in navArr">
-			<b-nav-item 
-				:active="nav.props.isActive"
-				:key="idx"
-				@click="changeContent({
+		
+		<!-- @click="changeContent({
 					table:{title:nav.props.label,fieldLang:nav.props.fieldLang},
 					fetchOption:{routeStr:nav.props.routeStr},
 					navActive:{index:idx,themeClr:nav.props.themeClr},
 					isBriefContent:true,
 					entity:{name:nav.name,label:nav.props.label}
-				})" 
+				})"  -->
+			<b-nav-item 
+				:active="nav.props.isActive"
+				:key="idx"
+				@click="navClick(nav.index)" 
 			>
 				{{ nav.props.label }}
 			</b-nav-item>
@@ -44,12 +46,13 @@
         <b-nav-item-dropdown right>
           <!-- Using 'button-content' slot -->
           <template v-slot:button-content>
-            <em>User</em>
+            <!-- em:字体为斜体 -->
+			<em>User</em>
           </template>
 			<b-dropdown-item href="#">Profile</b-dropdown-item>
 			<b-dropdown-item href="#">
 				<font-awesome-icon :icon="['fas', 'sign-out-alt']" />
-				Sign Out
+				<em>Sign Out</em>
 			</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
@@ -64,7 +67,6 @@ import { faFontAwesome} from '@fortawesome/free-brands-svg-icons'
 import { faSignOutAlt} from '@fortawesome/free-solid-svg-icons'
 import { library as faLib} from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
 faLib.add(faFontAwesome,faSignOutAlt)
 
 import { 
@@ -78,50 +80,48 @@ import {
 	BCollapse	
 } from 'bootstrap-vue'
 
-import { mapState,mapActions } from 'vuex'
+import { mapActions, mapState} from 'vuex'
 
 export default {
 	name: 'TheNavbar',
-	/* data(){
+	data(){
 		return {
-			navArr:navItems,
-			entArr:entItems
+			index:0
 		}
-	}, */
-	
-	computed: mapState({
-		navArr:state=>state.navbar,
-	}),
-	methods: {
-		... mapActions({
-			changeContent: 'asyChangeTable'
+	},
+	computed: {
+		
+		...mapState({
+			navArr:state=>state.navbar.items,
+			actIndex:state=>state.navbar.index,
+			
 		})
 	},
-	//mounted(){
-	created(){
-		let nav=this.navArr[0]
-		let opt={
-				table:{
-					title:nav.props.label,
-					fieldLang:nav.props.fieldLang
-				},
-				fetchOption:{
-					routeStr:nav.props.routeStr
-				},
-				navActive:{
-					index:0,
-					themeClr:nav.props.themeClr
-				},
-				isBriefContent:true,
-				entity:{
-					name:nav.name,
-					label:nav.props.label
-				}
+	/*watch:{
+		index:function(){
+			
+			return this.setNavbarIsActive(this.index)
+			
+		}
+	},*/
+	methods: {
+		navClick(idx){
+			let self=this
+			//console.log(idx)
+			//判断是否需要触发后续的修改
+			if(idx!=self.actIndex){
+				self.index=idx
+				self.updateNavbar(idx)
+				
 			}
-		this.changeContent(opt)
-		
-		//console.log('mounted')
-
+		},
+		... mapActions({
+			updateNavbar:'asyUpdateNavbar',
+			//changeContent: 'asyChangeTable'
+		})
+	},
+	created(){
+		return this.updateNavbar(this.actIndex)
 	},
 	components:{
 		'b-navbar':BNavbar,
