@@ -4,9 +4,9 @@
 import {navbar,sidebar} from '@/conf/adminEntity.conf.js'
 
 export default {
-	activeSideItem:{
+	activeItem:{
 		label:'',
-		path:'',
+		path:[],
 		routeStr:'',
 		total:'',
 	},

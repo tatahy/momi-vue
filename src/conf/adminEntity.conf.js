@@ -33,15 +33,15 @@ var sidebarArr=[
  		{
 			caption:'',
 			items:[
-				{itemsTotal:0,routeStr:'syetem-env'},
-				{itemsTotal:0,routeStr:'syetem-conf'},
-				{itemsTotal:0,routeStr:'syetem-serv'},
+				{total:0,routeStr:'syetem-env'},
+				{total:0,routeStr:'syetem-conf'},
+				{total:0,routeStr:'syetem-serv'},
 			]
 		}
 		结构2：
 		{
 			caption:'',
-			itemsTotal:[0,0,0],
+			total:[0,0,0],
 			routeStr:['','',''],
 			label:['','','']
 		}
@@ -60,19 +60,19 @@ function fufillSidebarCatlog(ent){
 		obj['hasButton']=obj.caption?true:false
 		obj['isPressed']=false
 		
-		obj.items.forEach(objX=>{
-			let routeArr=objX.routeStr.toLowerCase().split('-')
+		obj.items.forEach(item=>{
+			let routeArr=item.routeStr.toLowerCase().split('-')
 			
 			routeArr.unshift(adminEntity[ent]['routeStr'].toLowerCase())
 			//增加
-			objX['itemsTotal']=0
-			objX['isActive']=false
+			item['total']=0
+			item['isActive']=false
 			//修改
-			objX['routeStr']=routeArr.join('-')
+			item['routeStr']=routeArr.join('-')
 			
-			/* objX=Object.assign({},objX,
+			/* item=Object.assign({},item,
 				{
-					itemsTotal:0,
+					total:0,
 					isActive:false,
 					routeStr:routeArr.join('-')
 				}

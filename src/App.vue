@@ -19,6 +19,8 @@ import TheNavbar from '@/components/TheNavbar'
 //import TheContainer from '@/components/TheContainer'
 //import TheSidebar from '@/components/TheSidebar'
 
+
+
 export default {
 //export const App= {
 	name: 'app',

@@ -10,14 +10,6 @@
     <b-collapse id="nav-collapse" is-nav>
       <b-navbar-nav >
 		<template v-for="(nav, idx) in navArr">
-		
-		<!-- @click="changeContent({
-					table:{title:nav.props.label,fieldLang:nav.props.fieldLang},
-					fetchOption:{routeStr:nav.props.routeStr},
-					navActive:{index:idx,themeClr:nav.props.themeClr},
-					isBriefContent:true,
-					entity:{name:nav.name,label:nav.props.label}
-				})"  -->
 			<b-nav-item 
 				:active="nav.props.isActive"
 				:key="idx"
@@ -80,7 +72,7 @@ import {
 	BCollapse	
 } from 'bootstrap-vue'
 
-import { mapActions, mapState} from 'vuex'
+import { mapState,mapActions } from 'vuex'
 
 export default {
 	name: 'TheNavbar',
@@ -97,31 +89,30 @@ export default {
 			
 		})
 	},
-	/*watch:{
-		index:function(){
-			
-			return this.setNavbarIsActive(this.index)
+	//监视是否需要更新
+	watch:{
+		index(){
+			//console.log(this.index)
+			return this.changeNavbar(this.index)
 			
 		}
-	},*/
+	},
 	methods: {
 		navClick(idx){
 			let self=this
-			//console.log(idx)
-			//判断是否需要触发后续的修改
+			
 			if(idx!=self.actIndex){
 				self.index=idx
-				self.updateNavbar(idx)
-				
 			}
 		},
 		... mapActions({
-			updateNavbar:'asyUpdateNavbar',
-			//changeContent: 'asyChangeTable'
+			initApp:'asyInitApp',
+			changeNavbar:'asyUpdateNavbar',
 		})
 	},
 	created(){
-		return this.updateNavbar(this.actIndex)
+		//return this.changeNavbar(this.index)
+		return this.initApp()
 	},
 	components:{
 		'b-navbar':BNavbar,

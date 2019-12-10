@@ -3,7 +3,7 @@
 	<div class="py-3 px-1 font18px border-top-0"
 		:class="`${borderCls} text-${themeClr}`"
 	>
-		<font-awesome-icon :icon="sidebar.faIcon" />&nbsp;<span class="font-weight-bold">{{sidebar.caption}}</span>
+		<font-awesome-icon :icon="sideObj.faIcon" />&nbsp;<span class="font-weight-bold">{{sideObj.caption}}</span>
 	</div>
 
 
@@ -14,7 +14,7 @@
 		<b-nav-item disabled>Disabled</b-nav-item> -->
 		
 		
-		<div v-for="(cat,catId) in sidebar.catlog" 
+		<div v-for="(cat,catId) in sideObj.catlog" 
 			:class="cat.caption?`${borderCls} border-top-0`:`border-bottom-0`"
 			:key="catId"
 		>
@@ -175,7 +175,7 @@ faLib.add(
 	faHSquare,	
 )
 
-import { mapState,mapActions,mapGetters } from 'vuex'
+import { mapState,mapGetters,mapMutations,mapActions } from 'vuex'
 
 export default {
 	name: 'TheSidebar',
@@ -183,7 +183,7 @@ export default {
 		return {
 			//bsv中的"d-flex justify-content-between align-items-center"是对button中的内容进行两端对齐
 			bsvAlignTwoEnds:"d-flex justify-content-between align-items-center",
-			index:0
+			
 		}
 	},
 	computed:{
@@ -193,25 +193,19 @@ export default {
 		
 		...mapState({
 		//activeNav对应的sidebar内容
-			briefItems:state=>state.fetchData.response.hasOwnProperty('items')?
-								state.fetchData.response.items:
-								[],
-			routeStr:state=> state.fetchOption.routeStr,
+			/*resItems:state=>state.fetchCont.response.hasOwnProperty('items')?
+								state.fetchCont.response.items:
+								[],*/
+			routeStr:state=> state.fetchCont.option.routeStr,
 			//sidebar:state => sideArr[state.sideActive.index],
-			sidebar:state=>state.sidebar.items[state.navbar.index],
-			//主题颜色
-			/*themeClr: state=>{
-				let nav=state.navbar
-				let actNav=nav.items[nav.index]
-				let props=actNav.props
-				return props.themeClr
-						
-			},*/
+			index:state=>state.sidebar.index,
+			sideObj:state=>state.sidebar.items[state.sidebar.index],
 			
 		}),
 		...mapGetters({
 			//主题颜色
-			themeClr:'actNavThemeClr'
+			themeClr:'actNavThemeClr',
+			resItems:'resItems'
 		}),
 	},
 	methods: {
@@ -237,32 +231,71 @@ export default {
 			//console.log(isActive)
 			return {backgroundColor:clrValue}
 		},
+		//根据routeNow找到对应的path，
+		//再由path访问sidebar修改对应的isActive,isPressed等属性
 		itemClick(routeNow){
 			let self=this
 			let routeOld=self.routeStr
-			
-			/*
-			console.log(routeOld)
-			console.log(routeNow)
-			*/
+				
+			//得到routeNow对应的item在actSidebar中的完整路径
+			let getPathArr=route=>{
+				let arr=[]
+				self.sideObj.catlog.forEach((cat,idx)=>{
+					if(cat.hasOwnProperty('items')){
+						cat.items.forEach((item,idy)=>{
+							if(item.routeStr==route){
+								arr.push('catlog')
+								arr.push(idx)
+								arr.push('items')
+								arr.push(idy)
+							}
+						})
+					}	
+				
+				})
+				return arr
+			}
+			let opt={index:self.index,path:[],name:'',val:''}
 			
 			if(routeNow!==routeOld){
-				//整个sidebar中的所有item的active=false
-				//触发click事件的item的active=true
-				self.updateItemActive(routeNow)
-				self.updateItemsTotal()
+				//将fetchCont.option.routeStr修改为routeNow
+				self.changeRouteStr({routeStr:routeNow})
 				
-				//判断state中的内容是否更新
-				//self.updateState(routeNow)
-	
-				//判断是否更新table
-				//self.updateTable(routeNow)
+				//将sidebar中所有item的isActive=false
+				self.resItems.forEach(itm=>{
+					opt.name='isActive'
+					opt.val=false
+					opt.path=itm.path
+					self.setPropVal(opt)
+				})
+				
+				//任意时刻Sidebar中的Item只有一项的isActive=true
+				opt.name='isActive'
+				opt.val=true
+				opt.path=getPathArr(routeNow)
+				self.setPropVal(opt)
+				
+				//将sidebar中所有button的isPressed=false
+				self.resItems.forEach(itm=>{
+					opt.name='isPressed'
+					opt.val=false
+					opt.path=itm.path
+					self.setPropVal(opt)
+				})
+				
+				//任意时刻Sidebar中的button只有一项的isPressed=true
+				opt.name='isPressed'
+				opt.val=true
+				opt.path=getPathArr(routeNow)
+				self.setPropVal(opt)
+				
 			}
 		},
-		
-	
+		... mapMutations({
+			setPropVal:'setSidebarProps'
+		}),		
 		... mapActions({
-			//changeTable: 'asyChangeTable'
+			changeRouteStr:'asyUpdateFetchCont'
 			
 		})
 	},
@@ -280,11 +313,15 @@ export default {
 		//引入BsV定义的directive
 		bToggle:VBToggle
 	},
-	//created(){
-	mounted(){
-		//console.log(this.sidebar.catlog)
+	/*
+	created(){
+	//mounted(){
+		console.log(this.resItems)
+		console.log(this.index)
+		console.log(this.sidebar)
 		//this.updateItemsTotal()
 	}
+	*/
 }
 </script>
 

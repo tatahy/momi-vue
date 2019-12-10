@@ -70,7 +70,7 @@ import {
 } from 'bootstrap-vue'
 
 //import TheSidebar from '@/components/TheSidebar'
-import TheChart from '@/components/TheChart'
+//import TheChart from '@/components/TheChart'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -129,9 +129,12 @@ export default {
 	components: {
 		'b-container':BContainer,
 		'b-button':BButton,
-		//TheSidebar:TheSidebar,
-		TheChart:TheChart,
+		//TheSidebar,
+		//TheChart,
 		//TheTable,
+				
+		//TheSidebar:()=>import('@/components/TheSidebar'),
+		TheChart:()=>import('@/components/TheChart'),
 		TheTable:()=>import('@/components/TheTable'),
 		FontAwesomeIcon
 		

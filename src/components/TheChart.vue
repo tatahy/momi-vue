@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState,mapGetters } from 'vuex'
 import {bs4TextColor,chartColor} from '@/conf/common.conf.js'
 //
 
@@ -135,34 +135,39 @@ export default {
 					options:options
 				})
 		},
+		//chart.js中的颜色使用数值，将字符转换为数值
+		themeClr:function(){
+			return bs4TextColor[this.navThemeClr]
+		},
 		...mapState({
-			items:state=>state.sideActive.items,
-			chartTitle:state=>{
-				let index=state.navbar.index
-				let actNav=state.navbar.items[index]
-				let props=actNav.props
-				return props.label
-						
-			},
-			//chart中使用的颜色
-			themeClr: state=>{
-				let index=state.navbar.index
-				let actNav=state.navbar.items[index]
-				let props=actNav.props
-				return bs4TextColor[props.themeClr]
-						
-			},
+			//resItems:state=>state.fetchCont.response.items,
+			
+		}),
+		...mapGetters({
+			//主题颜色
+			navThemeClr:'actNavThemeClr',
+			chartTitle:'actNavLabel',
+			resItems:'resItems'
 		}),
 	},
+	//监视是否需要更新
 	watch:{
 		chartTitle:function(){
-		//chart:function(){
+			//console.log(this.chartTitle)
 			this.updateChart()
 		}
 	},
 	methods:{
 		_getChartData(){
-			let result={labels:'',data:''}
+			let result={labels:[],data:[]}
+			let items=this.resItems
+			if(items.length){
+				items.forEach(item=>{
+					result.labels.push(item.label)
+					result.data.push(item.total)
+				
+				})
+			}
 			
 			return result
 		},
@@ -174,14 +179,8 @@ export default {
 			let title=myChart.options.title
 			
 			let chartData=self._getChartData()
-			/*
-			let items=self.items
-			let chartDataLabels=items.hasOwnProperty('labels')?
-									items['labels']:['xx']
-			let chartDataSetsData=items.hasOwnProperty('totals')?
-									items['totals']:['xx']
-			*/
-
+			
+			//console.log(chartData)
 			title.text=self.chartTitle
 			title.fontColor=self.themeClr
 			data.labels=chartData.labels
