@@ -4,12 +4,6 @@
 import {navbar,sidebar} from '@/conf/adminEntity.conf.js'
 
 export default {
-	activeItem:{
-		label:'',
-		path:[],
-		routeStr:'',
-		total:'',
-	},
 	fetchCont:{
 		option:{
 			routeStr:'',
@@ -18,8 +12,8 @@ export default {
 		response:{}
 	},
 	isBriefContent:true,
-	isNavChanged:false,
-	isITemChanged:false,
+	//isNavChanged:false,
+	//isITemChanged:false,
 	navbar:{
 		index:0,
 		items:navbar
@@ -27,6 +21,10 @@ export default {
 	sidebar:{
 		index:0,
 		items:sidebar
+	},
+	sidebarEntry:{
+		prev:{},
+		active:{}
 	},
 	
 }

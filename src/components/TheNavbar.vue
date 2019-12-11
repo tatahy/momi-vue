@@ -111,8 +111,7 @@ export default {
 		})
 	},
 	created(){
-		//return this.changeNavbar(this.index)
-		return this.initApp()
+		return this.changeNavbar(this.index)
 	},
 	components:{
 		'b-navbar':BNavbar,

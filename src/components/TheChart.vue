@@ -147,7 +147,8 @@ export default {
 			//主题颜色
 			navThemeClr:'actNavThemeClr',
 			chartTitle:'actNavLabel',
-			resItems:'resItems'
+			resItems:'resItems',
+			actSidebar:'actSidebar'
 		}),
 	},
 	//监视是否需要更新
@@ -158,14 +159,31 @@ export default {
 		}
 	},
 	methods:{
+		
+		_getSidebarEntry(route){
+			let obj={}
+			this.actSidebar.catlog.forEach(cat=>{
+				if(cat.hasOwnProperty('items')){
+					cat.items.forEach(item=>{
+						if(item.routeStr==route){
+							obj=item
+						}
+					})
+				}	
+			})
+			return obj
+		},
 		_getChartData(){
+			let self=this
 			let result={labels:[],data:[]}
-			let items=this.resItems
+			let items=self.resItems
+			
 			if(items.length){
 				items.forEach(item=>{
-					result.labels.push(item.label)
-					result.data.push(item.total)
-				
+					let obj=self._getSidebarEntry(item.routeStr)
+					
+					result.labels.push(obj.label)
+					result.data.push(obj.total)
 				})
 			}
 			

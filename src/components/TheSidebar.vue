@@ -33,7 +33,7 @@
 					:variant="`outline-${themeClr}`"
 				>
 					<template v-if="cat.isPressed">
-						<span class="font-weight-bold">{{cat.caption}} </span>
+						<span class="font-weight-bold">[{{cat.caption}}] </span>
 						<span class="when-opened"><font-awesome-icon :icon="['fas','minus-square']" /></span> 
 						<span class="when-closed"><font-awesome-icon :icon="['fas','plus-square']" /></span>
 						<!-- <span class="when-opened"><font-awesome-icon :icon="iconFas.minus" /></span>  -->
@@ -88,7 +88,7 @@
 						
 						<template v-if="ent.isActive">
 							<span class="font-weight-bold">{{ ent.label }}</span>
-							<span class="font-weight-bold" v-if="ent.itemsTotal">{{ent.itemsTotal}}</span>
+							<span class="font-weight-bold" v-if="ent.total">{{ent.total}}</span>
 							<span v-else >无</span>
 						
 						</template>
@@ -97,8 +97,8 @@
 							<span >{{ ent.label }}</span>
 							<b-badge pill
 								:variant="themeClr"
-								v-if="ent.itemsTotal"
-							>{{ent.itemsTotal}}
+								v-if="ent.total"
+							>{{ent.total}}
 							</b-badge> 
 							<span v-else class="text-muted">无</span>
 						
@@ -192,12 +192,7 @@ export default {
 		},
 		
 		...mapState({
-		//activeNav对应的sidebar内容
-			/*resItems:state=>state.fetchCont.response.hasOwnProperty('items')?
-								state.fetchCont.response.items:
-								[],*/
 			routeStr:state=> state.fetchCont.option.routeStr,
-			//sidebar:state => sideArr[state.sideActive.index],
 			index:state=>state.sidebar.index,
 			sideObj:state=>state.sidebar.items[state.sidebar.index],
 			
@@ -236,63 +231,34 @@ export default {
 		itemClick(routeNow){
 			let self=this
 			let routeOld=self.routeStr
-				
-			//得到routeNow对应的item在actSidebar中的完整路径
-			let getPathArr=route=>{
-				let arr=[]
-				self.sideObj.catlog.forEach((cat,idx)=>{
-					if(cat.hasOwnProperty('items')){
-						cat.items.forEach((item,idy)=>{
-							if(item.routeStr==route){
-								arr.push('catlog')
-								arr.push(idx)
-								arr.push('items')
-								arr.push(idy)
-							}
-						})
-					}	
-				
-				})
-				return arr
-			}
-			let opt={index:self.index,path:[],name:'',val:''}
+
+			//let opt={index:self.index,route:routeNow,name:'',val:''}
 			
+			let opt={
+					index:self.index,
+					route:routeNow,
+					props:[]
+				}
+					
 			if(routeNow!==routeOld){
 				//将fetchCont.option.routeStr修改为routeNow
 				self.changeRouteStr({routeStr:routeNow})
 				
-				//将sidebar中所有item的isActive=false
-				self.resItems.forEach(itm=>{
-					opt.name='isActive'
-					opt.val=false
-					opt.path=itm.path
-					self.setPropVal(opt)
-				})
-				
 				//任意时刻Sidebar中的Item只有一项的isActive=true
-				opt.name='isActive'
-				opt.val=true
-				opt.path=getPathArr(routeNow)
-				self.setPropVal(opt)
-				
-				//将sidebar中所有button的isPressed=false
-				self.resItems.forEach(itm=>{
-					opt.name='isPressed'
-					opt.val=false
-					opt.path=itm.path
-					self.setPropVal(opt)
-				})
-				
 				//任意时刻Sidebar中的button只有一项的isPressed=true
-				opt.name='isPressed'
-				opt.val=true
-				opt.path=getPathArr(routeNow)
-				self.setPropVal(opt)
+				opt.props=[
+					{name:'isActive',val:true},
+					{name:'isPressed',val:true}
+				]
+				self.setProps(opt)
 				
+				self.changeEntry({route:routeNow,index:self.index})
 			}
 		},
 		... mapMutations({
-			setPropVal:'setSidebarProps'
+			setPropVal:'setSidebarProps',
+			setProps:'setSidebarProps',
+			changeEntry:'updateActiveEntry'
 		}),		
 		... mapActions({
 			changeRouteStr:'asyUpdateFetchCont'

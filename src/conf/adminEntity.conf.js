@@ -55,18 +55,20 @@ var sidebarArr=[
 function fufillSidebarCatlog(ent){
 	
 	//组装成数据结构1
-	adminEntity[ent].catlog.forEach(obj=>{
+	adminEntity[ent].catlog.forEach((cat,idM)=>{
 		//增加
-		obj['hasButton']=obj.caption?true:false
-		obj['isPressed']=false
+		cat['hasButton']=cat.caption?true:false
+		cat['isPressed']=false
 		
-		obj.items.forEach(item=>{
+		cat.items.forEach((item,idN)=>{
 			let routeArr=item.routeStr.toLowerCase().split('-')
-			
+			let path=['catlog',idM,'items',idN]
 			routeArr.unshift(adminEntity[ent]['routeStr'].toLowerCase())
 			//增加
 			item['total']=0
 			item['isActive']=false
+			item['path']=path
+			
 			//修改
 			item['routeStr']=routeArr.join('-')
 			
