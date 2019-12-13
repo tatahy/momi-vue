@@ -69,9 +69,6 @@ import {
 	BButton,
 } from 'bootstrap-vue'
 
-//import TheSidebar from '@/components/TheSidebar'
-//import TheChart from '@/components/TheChart'
-
 import { mapState, mapGetters } from 'vuex'
 
 //引入font awesome
@@ -129,14 +126,11 @@ export default {
 	components: {
 		'b-container':BContainer,
 		'b-button':BButton,
-		//TheSidebar,
-		//TheChart,
-		//TheTable,
-				
-		//TheSidebar:()=>import('@/components/TheSidebar'),
+		FontAwesomeIcon,
+		//异步加载组件
 		TheChart:()=>import('@/components/TheChart'),
 		TheTable:()=>import('@/components/TheTable'),
-		FontAwesomeIcon
+		
 		
 	},
 	

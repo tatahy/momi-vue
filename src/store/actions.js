@@ -5,17 +5,19 @@
 import {asyFetchByRoute,} from '@/util.js'
 //getBSVTableByFetchResult
 export default {
-	
+	//异步更新fetchCont
 	async asyUpdateFetchCont({commit,state},payload){
 		let option=Object.assign({},state.fetchCont.option,payload)
 		let res=await asyFetchByRoute(option)
 		
 		let items=res.cont.hasOwnProperty('items')?res.cont.items:state.fetchCont.response.items
+		
 		commit('updateFetchCont',{option:option,response:{items:items}})
 		
 		return 
 	},	
 	
+	//异步更新navbar
 	//async 函数返回Promise对象
 	async asyUpdateNavbar({dispatch,commit,state},index){
 		let actNav=state.navbar.items[index]

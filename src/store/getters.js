@@ -18,7 +18,6 @@ export default {
 						
 	},
 	actSidebar:state=>state.sidebar.items[state.sidebar.index],
-	resItems:state=>state.fetchCont.response.hasOwnProperty('items')?
-								state.fetchCont.response.items:
-								[],
+	//首页加载时有可能为空数组，因为是通过fetch异步从后端拿数据
+	resItems:state=>state.fetchCont.response.items
 }

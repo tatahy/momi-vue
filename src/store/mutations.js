@@ -117,7 +117,7 @@ export default {
 			
 		}
 		//重置activeItem
-		this.commit('updateActiveEntry')
+		this.commit('updateActiveEntry',{index:index})
 		
 		
 		//console.log(state.fetchCont.response.items)
@@ -149,15 +149,22 @@ export default {
 			return obj
 		}
 		
+		let actEntry=state.sidebarEntry.active
+		//let preEntry=state.sidebarEntry.prev
+		
+		if(actEntry.hasOwnProperty('isActive') && actEntry.isActive ){
+			actEntry.isActive=false
+			state.sidebarEntry.prev=actEntry
+		} 
+		
 		if(Array.isArray(path)){
 			/* 
 			console.log(state.sidebarEntry.active.isActive)//==fasle
 			*/
-				
-			if(state.sidebarEntry.active.label.length){
-				state.sidebarEntry.prev=state.sidebarEntry.active
-			} 
 			
+			if(actEntry.label){
+				state.sidebarEntry.prev=actEntry
+			} 
 			state.sidebarEntry.active=getEntry(path,sideObj)
 			
 			/* 
@@ -165,12 +172,16 @@ export default {
 			
 			*/
 		}else{
+		
 			state.sidebarEntry.active=itemDefault
 		}
+		
+		
 		
 		return
 		
 	},
+	
 	//遍历指定sidebar，修改给定属性的值，
 	//前提是sidebar内的所有对象属性名都不同
 	setSidebarProps(state,payload){

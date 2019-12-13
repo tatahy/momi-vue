@@ -9,7 +9,12 @@ export default {
 			routeStr:'',
 			method:'GET'
 		},
-		response:{}
+		response:{
+			//放置后端返回的各项统计数据
+			items: [],
+			//放置后端返回的列表数据
+			lists: []
+		}
 	},
 	isBriefContent:true,
 	//isNavChanged:false,
@@ -23,8 +28,10 @@ export default {
 		items:sidebar
 	},
 	sidebarEntry:{
-		prev:{},
-		active:{}
+		//当前高亮的sidebar中的item
+		active:{},
+		//最近一次高亮的sidebar中的item
+		prev:{}
 	},
 	
 }

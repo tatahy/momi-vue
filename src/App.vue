@@ -27,7 +27,7 @@ export default {
 	components: {
 		TheNavbar,
 		//TheContainer,
-		//TheSidebar
+		//TheSidebar,
 		
 		
 		//异步引入

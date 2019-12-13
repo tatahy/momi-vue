@@ -93,7 +93,8 @@ export default {
 	watch:{
 		index(){
 			//console.log(this.index)
-			return this.changeNavbar(this.index)
+			//return this.changeNavbar(this.index)
+			return this.asyUpdateNavbar(this.index)
 			
 		}
 	},
@@ -105,13 +106,13 @@ export default {
 				self.index=idx
 			}
 		},
-		... mapActions({
-			initApp:'asyInitApp',
-			changeNavbar:'asyUpdateNavbar',
-		})
+		...mapActions([
+			//changeNavbar:'asyUpdateNavbar',
+			'asyUpdateNavbar',
+		])
 	},
 	created(){
-		return this.changeNavbar(this.index)
+		return this.asyUpdateNavbar(this.index)
 	},
 	components:{
 		'b-navbar':BNavbar,
