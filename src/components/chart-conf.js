@@ -66,7 +66,7 @@ let getDataColor=(labArr,colorObj={})=>{
 let getDataColor=(num)=>{
 	const max=rgbaColor.labels.length
 	const clrLabArr=rgbaColor.labels
-	
+	//按照num的值生成对应长度的数组
 	let arr=[]
 	let clrObj={background:[],border:[]}
 	//let nCeil=Math.ceil(num/max)

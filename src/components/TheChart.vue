@@ -144,9 +144,18 @@ export default {
 		
 		},
 		updateChart(){
+			let self=this
+			//定义promise，延迟一点时间再设置数据
+			let promise1 = new Promise(function(resolve) {
+					setTimeout(function() {
+						resolve(self.setChartData())
+					}, 300)
+				})
+			//延迟一点时间再执行更新
+			return promise1.then(()=>self.ctx.update())
 			
-			this.setChartData()
-			return this.ctx.update()
+			/*this.setChartData()
+			return this.ctx.update()*/
 		}
 		
 	},

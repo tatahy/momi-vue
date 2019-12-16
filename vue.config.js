@@ -26,6 +26,7 @@ module.exports = {
 	//tweak the webpack config by an object
 	configureWebpack: {
 		//externals: process.env.NODE_ENV === 'production' ?getProdExternals() : {}
+		//申明无需打包的库
 		externals: getProdExternals()
 	},
 	/* css: {
