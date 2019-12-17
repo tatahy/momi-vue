@@ -181,6 +181,19 @@ export default {
 		return
 		
 	},
+	//更新isBriefContent
+	updateIsBriefContent(state,val){
+		state.isBriefContent=val
+		
+		/* if(val){
+			
+			this.commit('updateActiveEntry')
+		}
+			 */
+		return
+		
+		//console.log(payload)
+	},
 	
 	//遍历指定sidebar，修改给定属性的值，
 	//前提是sidebar内的所有对象属性名都不同

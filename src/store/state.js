@@ -5,7 +5,7 @@ import {navbar,sidebar} from '@/conf/adminEntity.conf.js'
 
 export default {
 	fetchCont:{
-		option:{
+		request:{
 			routeStr:'',
 			method:'GET'
 		},

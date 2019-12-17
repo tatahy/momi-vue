@@ -10,22 +10,22 @@
 			caption-top 
 			sticky-header="800px"
 			no-border-collapse
-			:fields="table.fields"			
-			:items="table.items"
-			:busy="table.isBusy"
+			:fields="fields"			
+			:items="lists"
+			:busy="isBusy"
 			:per-page="perPage"
 			:current-page="currentPage"
 			small
 		>
 			<template v-slot:table-caption >
 				<h4 class="text-center align-text-bottom" >
-					<span v-bind:class="'text-'+themeClr">{{table.title}}&nbsp;--&nbsp;</span>
+					<span v-bind:class="'text-'+themeClr">{{title}}&nbsp;--&nbsp;</span>
 					<!-- <span v-show="table.subTitle" class="text-monospace">{{table.subTitle}}</span> -->
-					<b-badge v-show="table.subTitle"
+					<b-badge v-show="subTitle"
 							:variant="themeClr" 
 							style="font-size:16px;color:#fff;"
 					>
-						{{table.subTitle}}
+						{{subTitle}}
 					</b-badge>
 				</h4>
 			</template>
@@ -102,9 +102,9 @@
 			
 		</b-table>
 	</div>	
-	<div class="text-right" v-show="rows > perPage">
+	<div class="text-right" v-show="total > perPage">
 		<!-- <p> -->
-			<span>总数：<b-badge :variant="themeClr">{{ rows }}</b-badge></span>&nbsp;
+			<span>总数：<b-badge :variant="themeClr">{{ total }}</b-badge></span>&nbsp;
 			<!-- <span>Current Page: {{ currentPage }}</span> -->
 			<!-- <br> -->
 			<!-- <span>每页行数:</span> -->
@@ -119,7 +119,7 @@
 			align="right"
 			size="sm"
 			v-model="currentPage"
-			:total-rows="rows"
+			:total-rows="total"
 			:per-page="perPage"	
 		></b-pagination>
 		
@@ -142,9 +142,7 @@
 <script>
 import { mapState, mapActions,mapGetters } from 'vuex'
 
-
-//引入BsV的plugin
-//import { TablePlugin, ModalPlugin, PaginationPlugin } from 'bootstrap-vue'
+//import { asyGetBsvComponent as aGetBsv} from '@/components/util-bootstrap-vue'
 
 
 //引入BsV的component
@@ -158,29 +156,10 @@ import {
 	BFormCheckbox,
 	BFormSelect 
 } from 'bootstrap-vue'
+
+import {fieldProps,FIELDS} from '@/components/util-the-table'
+
 /*
-//BSV:Bootstrap-vuez中table插件用到的field对象的属性值
-var bsvTableFieldProp={
-	key:'',					//String
-	label:'',				//String
-	class:'',				//String or Array
-	sortable:true,			//Boolean
-	sortDirection:'',		//String
-	thClass:'text-center',				//String or Array
-	tdClass:'text-left',				//String or Array or Function
-	variant:'',				//String
-	headerTitle:'',			//String
-	headerAbbr:'',			//String
-	formatter:'',			//String or Function
-	sortByFormatted:'',		//Boolean or Function
-	filterByFormatted:'',	//Boolean or Function
-	thStyle:'',				//Object
-	thAttr:'',				//Object or Function	
-	tdAttr:'',				//Object or Function	
-	isRowHeader:'',			//Boolean
-	stickyColumn:'',		//Boolean
-}
-*/
 const tableInitFields=[
 	{key:'No.','class':'text-center',},
 	{key:'age','class':'text-center',},
@@ -193,16 +172,25 @@ const tableInitItems=[
     { 'No.':3, age: 89, firstName: 'Geneva', lastName: 'Wilson' },
     { 'No.':4, age: 38, firstName: 'Jami', lastName: 'Carney' }
 ]
+*/
 
-//commonJs Module
-//module.exports= {
 //native JS Module export
 export default {
     name: 'TheTable',
+	props: {
+		lang:{
+			type:String,
+			default:'en',
+		}
+	},
     data:function() {
 		return {
+			fields:[],
+			isBusy:false,
+				
 			perPage: 10,
 			currentPage: 1,
+			lists:[],
 			options: [
 				{ value: 5, text: '5' },
 				{ value: 10, text: '10' },
@@ -216,28 +204,76 @@ export default {
 			}
 		}
 	},
-	computed: mapState({
-		//表格内容
-		table: state => {
-			let actNav=state.activeNav
-			let actItem=state.activeSideItem
-			let tblItems=state.fetchData.response.hasOwnProperty('items')?
-							state.fetchData.response.items:
-							tableInitItems
-			return {
-				title:actNav.props.hasOwnProperty('label')?actNav.props.label:'Title',
-				fieldLang:actNav.props.hasOwnProperty('fieldLang')?actNav.props.fieldLang:'chn',
-				subTitle:actItem.hasOwnProperty('label')?actItem.label:'subTitle',
-				
-				fields:tableInitFields,
-				items:tblItems,
-				isBusy:false
-			}
+	computed: {
+		//总记录数	
+		total:function(){
+			return this.resLists.length
 		},
-		//每页记录行数	
-		rows: state => state.table.items.length,
-	}),
+		...mapGetters({
+			title:'actNavLabel',
+			subTitle:'actEntryLabel',
+			//主题颜色
+			themeClr:'actNavThemeClr'
+		}),
+		...mapState({
+			//表格字段
+			//fields:tableInitFields,
+			//表格内容
+			resLists:state => state.fetchCont.response.lists,
+			actFields:function(state){
+				let route=state.fetchCont.request.routeStr
+				
+				return FIELDS.hasOwnProperty(route)
+						?FIELDS[route]:[]
+			}
+		}),
+	},
+	watch:{
+		resLists:function(){
+			this.isBusy=true
+			//设置lists
+			this.setLists()
+		
+			//设置fields
+			this.setFields()
+			
+			this.isBusy=false
+			return 
+		}
+	
+	},
 	methods: {
+		setLists(){
+			//转化为TheTable自己的数据属性，方便修改
+			this.lists=this.resLists.slice()
+			//添加sn项
+			if(this.lists.length){
+				this.lists.forEach((list,idx)=>list['serial-number']=idx*1+1)
+			}
+			return 
+		},
+		setFields(){
+			let self=this
+			let tpls=self.actFields
+			let lang=self.lang
+			self.fields=[]
+			
+			tpls.forEach(tpl=>{
+				let label=tpl.label.hasOwnProperty(lang)
+							?tpl.label[lang]
+							:tpl.label.en
+				//是要显示的才添加到fields中
+				if(tpl.isField){
+					self.fields.push(Object.assign({},fieldProps,tpl,{label:label}))
+				}
+				
+			})
+			
+			
+			
+			return
+			
+		},
 		getInfo(item, index, button) {
 			this.infoModal.title = `Row index: ${index}`
 			this.infoModal.content = JSON.stringify(item, null, 2)
@@ -250,12 +286,7 @@ export default {
 		...mapActions({
 			//getTableItemsBy: 'asyChangeTable'
 		}),
-		...mapGetters({
-			//主题颜色
-			themeClr:'actNavThemeClr'
-		}),
 	},
-	
 	components:{
 		
 		//引入BSV的component
@@ -267,13 +298,22 @@ export default {
 		'b-form-checkbox':BFormCheckbox,
 		'b-form-select':BFormSelect,
 		'b-badge':BBadge,
-	
+		
 		/*
-		//引入BSV的plugin
-		TablePlugin, 
-		ModalPlugin, 
-		PaginationPlugin
+		//动态引入
+		'b-table':aGetBsv('b-table'),
+		'b-modal':aGetBsv('b-modal'),
+		'b-pagination':aGetBsv('b-pagination'),
+		'b-card':aGetBsv('b-card'),
+		'b-button':aGetBsv('b-button'),
+		'b-form-checkbox':aGetBsv('b-form-checkbox'),
+		'b-form-select':aGetBsv('b-form-select'),
+		'b-badge':aGetBsv('b-badge'),
 		*/
+	},
+	mounted(){
+		
+		//return this.lists=this.resLists.slice()
 	}
 
 }

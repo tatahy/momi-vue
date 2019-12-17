@@ -1,6 +1,6 @@
 
 import {langArr, entField} from '@/conf/sysEntity.conf.js'
-import {bsvTableFieldProp} from '@/conf/common.conf.js'
+import {bsvTableFieldProps} from '@/conf/common.conf.js'
 
 //import {adminEntity} from '@/conf/adminEntity.conf.js'
 
@@ -95,7 +95,7 @@ function setFieldsForBsvTable(entName,fields=[],lang='en',addNo=true){
 	let langObj=ent?entField[ent]:''
 	let res=[]
 	let getBSVTableFieldProp=opt=>{
-		return Object.assign({},bsvTableFieldProp,opt)
+		return Object.assign({},bsvTableFieldProps,opt)
 	}
 	let fieldProp={key:'',label:''}
 	//校验lang是否为预定义的值

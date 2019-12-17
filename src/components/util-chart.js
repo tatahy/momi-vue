@@ -1,4 +1,4 @@
-//chart-data.js
+//util-chart.js
 
 //chart中使用的颜色值
 const rgbaColor={
@@ -105,8 +105,8 @@ let getDataColor=(num)=>{
 export default {
 	type:'horizontalBar',
 	data:{
-		//labels:['blue','yellow','purple','green','orange','red'] ,
-		labels:['专利','项目','技术成果','解决方案'] ,
+		labels:['blue','yellow','purple','green','orange','red'] ,
+		//labels:['专利','项目','技术成果','解决方案'] ,
 		datasets: [{
 			label:'数量',
 			data: [0, 0, 0, 0],

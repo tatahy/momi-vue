@@ -16,13 +16,15 @@ export const bs4TextColor={
 	
 }
 
+/*
 //chart中使用的颜色值
 export const chartColor={
 	labels:['blue', 'yellow', 'purple','green', 'orange','red'],
 	background:{
 		red:'rgba(255, 99, 132, 0.2)',
 		blue:'rgba(54, 162, 235, 0.2)',
-		yellow:'rgba(255, 206, 86, 0.2)',
+		yellow:'rgba(255, 206, 86, 0.2)',】
+		
 		green:'rgba(75, 192, 192, 0.2)',
 		purple:'rgba(153, 102, 255, 0.2)',
 		orange:'rgba(255, 159, 64, 0.2)'
@@ -36,26 +38,27 @@ export const chartColor={
 		orange:'rgba(255, 159, 64, 1)'
 	}
 }
+*/
 
-//BSV:Bootstrap-vuez中table插件用到的field对象的属性值
-export const bsvTableFieldProp={
-	key:'',					//String
-	label:'',				//String
-	class:'',				//String or Array
-	sortable:true,			//Boolean
-	sortDirection:'',		//String
-	thClass:'text-center',				//String or Array
-	tdClass:'text-left',				//String or Array or Function
-	variant:'',				//String
-	headerTitle:'',			//String
-	headerAbbr:'',			//String
-	formatter:'',			//String or Function
-	sortByFormatted:'',		//Boolean or Function
-	filterByFormatted:'',	//Boolean or Function
-	thStyle:'',				//Object
-	thAttr:'',				//Object or Function	
-	tdAttr:'',				//Object or Function	
-	isRowHeader:'',			//Boolean
-	stickyColumn:'',		//Boolean
+//BSV:Bootstrap-vue中table插件用到的field对象的属性值
+export const bsvTableFieldProps={
+	key:'',						//String
+	label:'',					//String
+	class:'',					//String or Array
+	sortable:true,				//Boolean
+	sortDirection:'',			//String
+	thClass:'text-center',		//String or Array
+	tdClass:'text-left',		//String or Array or Function
+	variant:'',					//String
+	headerTitle:'',				//String
+	headerAbbr:'',				//String
+	formatter:'',				//String or Function
+	sortByFormatted:'',			//Boolean or Function
+	filterByFormatted:'',		//Boolean or Function
+	thStyle:'',					//Object
+	thAttr:'',					//Object or Function	
+	tdAttr:'',					//Object or Function	
+	isRowHeader:'',				//Boolean
+	stickyColumn:'',			//Boolean
 }
 

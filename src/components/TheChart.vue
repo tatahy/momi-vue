@@ -15,7 +15,7 @@ import {bs4TextColor} from '@/conf/common.conf.js'
 
 import Chart from 'chart.js'
 
-import {default as chartData,getDataColor} from './chart-conf.js'
+import {default as chartData,getDataColor} from '@/components/util-chart'
 
 /* import * as chartConf from './chart-conf.js'
 console.log(chartConf) */
@@ -154,7 +154,9 @@ export default {
 			//延迟一点时间再执行更新
 			return promise1.then(()=>self.ctx.update())
 			
-			/*this.setChartData()
+			/*
+			//无延迟设置数据，有可能无数据
+			this.setChartData()
 			return this.ctx.update()*/
 		}
 		

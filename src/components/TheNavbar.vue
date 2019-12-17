@@ -54,14 +54,13 @@
 </template>
 
 <script>
-//引入font awesome
-import { faFontAwesome} from '@fortawesome/free-brands-svg-icons'
-import { faSignOutAlt} from '@fortawesome/free-solid-svg-icons'
-import { library as faLib} from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-faLib.add(faFontAwesome,faSignOutAlt)
+import { mapState,mapActions} from 'vuex'
 
-import { 
+//自编函数用于异步引入Bsv组件，可减少代码量，但不能减少打包文件体积
+//import { asyGetBsvComponent as aGetBsv} from '@/components/util-bootstrap-vue'
+
+//静态引入Bsv组件，可减少打包文件体积
+import {
 	BNavbar,
 	BNavbarNav,
 	BNavbarBrand,
@@ -69,10 +68,36 @@ import {
 	BNavItem,
 	BNavItemDropdown,
 	BDropdownItem,
-	BCollapse	
+	BCollapse,
+	
 } from 'bootstrap-vue'
 
-import { mapState,mapActions } from 'vuex'
+/*
+//自编函数用于异步引入fontawesome组件，可减少代码量，但不能减少打包文件体积
+import { asySetFaIconLibrary as aGetFa, FANAME} from '@/components/util-fontawesome'
+//定义要引入的faIcon名称数组
+let faObj=Object.assign({},FANAME,{
+		fas:[
+			'sign-out-alt'
+		],
+		fab:[
+			'font-awesome'
+		]
+	})
+*/
+
+//静态引入fontawesome，可减少打包文件体积
+import { 
+	faSignOutAlt,
+} from '@fortawesome/free-solid-svg-icons'
+import { 
+	faFontAwesome,
+} from '@fortawesome/free-brands-svg-icons'
+
+import { library as faLib} from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+faLib.add(faSignOutAlt,faFontAwesome)
+
 
 export default {
 	name: 'TheNavbar',
@@ -86,7 +111,7 @@ export default {
 		...mapState({
 			navArr:state=>state.navbar.items,
 			actIndex:state=>state.navbar.index,
-			
+			isBriefContent:state=>state.isBriefContent,			
 		})
 	},
 	//监视是否需要更新
@@ -105,11 +130,16 @@ export default {
 			if(idx!=self.actIndex){
 				self.index=idx
 			}
+			
+			if(!self.isBriefContent){
+				self.asyUpdateNavbar(self.index)
+			}
+			
 		},
 		...mapActions([
 			//changeNavbar:'asyUpdateNavbar',
 			'asyUpdateNavbar',
-		])
+		]),
 	},
 	created(){
 		return this.asyUpdateNavbar(this.index)
@@ -123,7 +153,18 @@ export default {
 		'b-nav-item-dropdown':BNavItemDropdown,
 		'b-dropdown-item':BDropdownItem,
 		'b-collapse':BCollapse,
-		FontAwesomeIcon		
+		'font-awesome-icon':FontAwesomeIcon
+
+		/*异步引入，减少代码量，并不能减小打包文件体积
+		'b-navbar':()=>aGetBsv('b-navbar'),
+		'b-navbar-nav':()=>aGetBsv('b-navbar-nav'),	
+		'b-navbar-brand':()=>aGetBsv('b-navbar-brand'),	
+		'b-navbar-toggle':()=>aGetBsv('b-navbar-toggle'),	
+		'b-nav-item':()=>aGetBsv('b-nav-item'),	
+		'b-nav-item-dropdown':()=>aGetBsv('b-nav-item-dropdown'),	
+		'b-dropdown-item':()=>aGetBsv('b-dropdown-item'),	
+		'b-collapse':()=>aGetBsv('b-collapse'),	
+		'font-awesome-icon':()=>aGetFa(faObj)*/	
 	}
 	
 }

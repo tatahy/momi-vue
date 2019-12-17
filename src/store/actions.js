@@ -7,12 +7,20 @@ import {asyFetchByRoute,} from '@/util.js'
 export default {
 	//异步更新fetchCont
 	async asyUpdateFetchCont({commit,state},payload){
-		let option=Object.assign({},state.fetchCont.option,payload)
-		let res=await asyFetchByRoute(option)
+		let req=Object.assign({},state.fetchCont.request,payload)
+		let res=await asyFetchByRoute(req)
 		
 		let items=res.cont.hasOwnProperty('items')?res.cont.items:state.fetchCont.response.items
+		let lists=res.cont.hasOwnProperty('lists')?res.cont.lists:state.fetchCont.response.lists
 		
-		commit('updateFetchCont',{option:option,response:{items:items}})
+		commit('updateFetchCont',{
+						request:req,
+						response:{
+							items:items,
+							lists:lists
+						}
+					}
+				)
 		
 		return 
 	},	
@@ -28,6 +36,8 @@ export default {
 		commit('updateNavbar',index)
 		
 		commit('updateSidebar',index)
+		
+		commit('updateIsBriefContent',true)
 		
 		return 
 	},

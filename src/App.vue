@@ -17,7 +17,7 @@
 //引入各个组件,'@'已在webpack配置文件中的resolve中定义为‘/src/’
 import TheNavbar from '@/components/TheNavbar'
 //import TheContainer from '@/components/TheContainer'
-//import TheSidebar from '@/components/TheSidebar'
+import TheSidebar from '@/components/TheSidebar'
 
 
 
@@ -25,15 +25,18 @@ export default {
 //export const App= {
 	name: 'app',
 	components: {
+		
 		TheNavbar,
-		//TheContainer,
-		//TheSidebar,
+		TheSidebar,
+		/*TheContainer,
+		
+		*/
 		
 		
-		//异步引入
+		//异步引入可减小打包文件体积
 		//TheNavbar:()=>import ('@/components/TheNavbar'),
 		TheContainer:()=>import ('@/components/TheContainer'),
-		TheSidebar:()=>import ('@/components/TheSidebar')
+		//TheSidebar:()=>import ('@/components/TheSidebar')
 		
 	}
 }

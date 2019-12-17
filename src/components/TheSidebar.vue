@@ -117,25 +117,33 @@
 </template>
 
 <script>
-//引入BsV的component
+
+
+
 import {
+	
+	//静态引入BsV的component
 	BNav,
 	BButton,
 	BCollapse,
 	BListGroup,
 	BListGroupItem,
 	BBadge,
-	//引入BsV定义的directive
+	
+	//静态引入BsV定义的directive
 	VBToggle
 
 } from 'bootstrap-vue'
 
-import {bs4TextColor as colorObj} from '@/conf/common.conf.js'
+import { mapState,mapGetters,mapMutations,mapActions } from 'vuex'
 
-//引入font awesome
+//import { asyGetBsvComponent as aGetBsv} from '@/components/util-bootstrap-vue'
+
+
+//静态引入fontawesome
 import { 
-	faPlusSquare as fasPlus,
-	faMinusSquare as fasMinus,
+	faPlusSquare as fasPsSqr,
+	faMinusSquare as fasMsSqr,
 	//供给
 	faWarehouse,
 	//需求
@@ -147,35 +155,47 @@ import {
 	//专家
 	faChalkboardTeacher,
 	//系统
-	faHSquare,
-	
+	faHSquare
 } from '@fortawesome/free-solid-svg-icons'
 import { 
-	faPlusSquare as farPlus,
-	faMinusSquare as farMinus 
+	faPlusSquare as farPsSqr,
+	faMinusSquare as farMsSqr
 } from '@fortawesome/free-regular-svg-icons'
 import { library as faLib} from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-faLib.add(
-	fasPlus,
-	fasMinus,
-	farPlus,
-	farMinus,
-	//供给
-	faWarehouse,
-	//需求
-	faMountain,
-	//项目
-	faProjectDiagram,
-	//导师
-	faUserGraduate,
-	//专家
-	faChalkboardTeacher,
-	//系统
-	faHSquare,	
-)
+faLib.add(fasPsSqr,fasMsSqr,faWarehouse,faMountain,faProjectDiagram,
+		faUserGraduate,faChalkboardTeacher,faHSquare,
+		farPsSqr,farMsSqr)
 
-import { mapState,mapGetters,mapMutations,mapActions } from 'vuex'
+/*
+import { asySetFaIconLibrary as aGetFa, FANAME} from '@/components/util-fontawesome'
+//定义要引入的faIcon名称数组
+let faObj=Object.assign({},FANAME,{
+		fas:[
+			'plus-square',
+			'minus-square',
+			//供给
+			'warehouse',
+			//需求
+			'mountain',
+			//项目
+			'project-diagram',
+			//导师
+			'user-graduate',
+			//专家
+			'chalkboard-teacher',
+			//系统
+			'h-square'
+		],
+		far:[
+			'plus-square',
+			'minus-square',
+		]
+	})
+*/
+import {bs4TextColor as colorObj} from '@/conf/common.conf.js'
+
+//console.log(VBToggle)
 
 export default {
 	name: 'TheSidebar',
@@ -192,7 +212,7 @@ export default {
 		},
 		
 		...mapState({
-			routeStr:state=> state.fetchCont.option.routeStr,
+			routeStr:state=> state.fetchCont.request.routeStr,
 			index:state=>state.sidebar.index,
 			sideObj:state=>state.sidebar.items[state.sidebar.index],
 			
@@ -241,7 +261,7 @@ export default {
 				}
 					
 			if(routeNow!==routeOld){
-				//将fetchCont.option.routeStr修改为routeNow
+				//将fetchCont.request.routeStr修改为routeNow
 				self.changeRouteStr({routeStr:routeNow})
 				
 				//任意时刻Sidebar中的Item只有一项的isActive=true
@@ -253,12 +273,16 @@ export default {
 				self.setProps(opt)
 				
 				self.changeEntry({route:routeNow,index:self.index})
+				
+				self.setIsBriefContent(false)
 			}
 		},
 		... mapMutations({
 			setPropVal:'setSidebarProps',
 			setProps:'setSidebarProps',
-			changeEntry:'updateActiveEntry'
+			setIsBriefContent:'updateIsBriefContent',
+			changeEntry:'updateActiveEntry',
+			
 		}),		
 		... mapActions({
 			changeRouteStr:'asyUpdateFetchCont'
@@ -266,18 +290,36 @@ export default {
 		})
 	},
 	components:{
+		
 		'b-nav':BNav,
 		'b-button':BButton,
 		'b-collapse':BCollapse,
 		'b-list-group':BListGroup,
 		'b-list-group-item':BListGroupItem,
 		'b-badge':BBadge,
-		FontAwesomeIcon
-		//'font-awesome-icon':FontAwesomeIcon
+		'font-awesome-icon':FontAwesomeIcon,
+		//与上一行等效
+		//FontAwesomeIcon
+		
+		
+		//异步加载组件
+		/*'b-nav':()=>aGetBsv('b-nav'),
+		'b-button':()=>aGetBsv('b-button'),
+		'b-collapse':()=>aGetBsv('b-collapse'),
+		'b-list-group':()=>aGetBsv('b-list-group'),
+		'b-list-group-item':()=>aGetBsv('b-list-group-item'),
+		'b-badge':()=>aGetBsv('b-badge'),
+		'font-awesome-icon':()=>aGetFa(faObj)*/
 	},
 	directives:{
 		//引入BsV定义的directive
-		bToggle:VBToggle
+		//bToggle:VBToggle
+		'b-toggle':VBToggle
+		
+		
+		//异步加载directive??
+		//'b-toggle':()=>aGetBsv('VBToggle')
+		//'b-toggle':()=>aGetBsv('VBToggle').then(dir=>{return dir})
 	},
 	/*
 	created(){

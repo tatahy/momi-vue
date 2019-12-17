@@ -40,7 +40,7 @@
 				</template>
 				
 				<template v-else>
-					<TheTable />
+					<TheTable lang='chn'/>
 				</template>
 		
 			</main>
@@ -55,30 +55,37 @@
 		<div v-bind:class="showDrop?'sidenav-backdrop':''" v-on:click="backdropHide" ></div>
 	</b-container>
 	<!-- </div> -->
-		
-	
-	
-
 </template>
 
 <script>
 
+import { mapState, mapGetters } from 'vuex'
 
-import { 
+//import { asyGetBsvComponent as aGetBsv} from '@/components/util-bootstrap-vue'
+import {
+	//静态引入BsV的component
 	BContainer,
 	BButton,
 } from 'bootstrap-vue'
 
-import { mapState, mapGetters } from 'vuex'
-
-//引入font awesome
+/*
+import { asySetFaIconLibrary as aGetFa, FANAME} from '@/components/util-fontawesome'
+//定义要引入的faIcon名称数组
+let faObj=Object.assign({},FANAME,{
+		fas:[
+			'angle-double-left',
+			'angle-double-right',
+		]
+	})
+*/
+//静态引入fontawesome
 import { 
 	faAngleDoubleLeft,
 	faAngleDoubleRight
 } from '@fortawesome/free-solid-svg-icons'
+
 import { library as faLib} from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
 faLib.add(faAngleDoubleLeft,faAngleDoubleRight)
 
 export default {
@@ -126,11 +133,14 @@ export default {
 	components: {
 		'b-container':BContainer,
 		'b-button':BButton,
-		FontAwesomeIcon,
+		'font-awesome-icon':FontAwesomeIcon,
+		
 		//异步加载组件
+		/*'b-container':()=>aGetBsv('b-container'),
+		'b-button':()=>aGetBsv('b-button'),
+		'font-awesome-icon':()=>aGetFa(faObj),*/
 		TheChart:()=>import('@/components/TheChart'),
 		TheTable:()=>import('@/components/TheTable'),
-		
 		
 	},
 	
