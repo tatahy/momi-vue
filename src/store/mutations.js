@@ -5,11 +5,11 @@
 //得到route对应的item在sideObj中的完整路径
 var _getSidebarEntryPathArr=(route,sideObj)=>{
 	let arr=[]
-	sideObj.catlog.forEach((cat,idM)=>{
+	sideObj.catalog.forEach((cat,idM)=>{
 		if(cat.hasOwnProperty('items')){
 			cat.items.forEach((item,idN)=>{
 				if(item.routeStr==route){
-					arr=['catlog',idM,'items',idN]
+					arr=['catalog',idM,'items',idN]
 				}
 			})
 		}	
@@ -20,8 +20,8 @@ var _getSidebarEntryPathArr=(route,sideObj)=>{
 
 //定义递归函数修改指定属性值
 var _setSidebarEntryPropVal=(name,val,arr,obj)=>{
-	if(arr.includes('catlog')){
-		arr=arr.slice(arr.indexOf('catlog'))
+	if(arr.includes('catalog')){
+		arr=arr.slice(arr.indexOf('catalog'))
 	}
 			
 	//递归结束条件，obj中的所有属性名都唯一
@@ -92,7 +92,7 @@ export default {
 			//
 			resItems.forEach(item=>{
 				//根据actSidebar.catlog的数据结构进行判断赋值
-				actSidebar.catlog.forEach((cat,idM)=>{
+				actSidebar.catalog.forEach((cat,idM)=>{
 					if(cat.hasOwnProperty('items')){
 						//重置isPressed=false	
 						cat.isPressed=false
@@ -104,7 +104,7 @@ export default {
 								obj.isActive=false
 						
 								//添加item在state.sidebar中的完整路径
-								obj['path']=['sidebar','items',index,'catlog',idM,'items',idN]
+								obj['path']=['sidebar','items',index,'catalog',idM,'items',idN]
 								
 							}
 						})

@@ -28,7 +28,7 @@ async function appInit(){
 			import('@/store'),
 			import('@/App'),
 		])
-		
+	
 	return {Vue,App,store}
 }
 

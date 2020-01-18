@@ -31,7 +31,7 @@ var sidebarArr=[
 		以system为例，完整路由为'system-env'
  *	2. 根据sysEntPath中的每一项对应生成一个Object，结构1：
  		{
-			caption:'',
+			label:'',
 			items:[
 				{total:0,routeStr:'syetem-env'},
 				{total:0,routeStr:'syetem-conf'},
@@ -40,7 +40,7 @@ var sidebarArr=[
 		}
 		结构2：
 		{
-			caption:'',
+			label:'',
 			total:[0,0,0],
 			routeStr:['','',''],
 			label:['','','']
@@ -55,14 +55,14 @@ var sidebarArr=[
 function fufillSidebarCatlog(ent){
 	
 	//组装成数据结构1
-	adminEntity[ent].catlog.forEach((cat,idM)=>{
+	adminEntity[ent].catalog.forEach((cat,idM)=>{
 		//增加
-		cat['hasButton']=cat.caption?true:false
+		cat['hasButton']=cat.label?true:false
 		cat['isPressed']=false
 		
 		cat.items.forEach((item,idN)=>{
 			let routeArr=item.routeStr.toLowerCase().split('-')
-			let path=['catlog',idM,'items',idN]
+			let path=['catalog',idM,'items',idN]
 			routeArr.unshift(adminEntity[ent]['routeStr'].toLowerCase())
 			//增加
 			item['total']=0
@@ -82,7 +82,7 @@ function fufillSidebarCatlog(ent){
 
 		})
 	})
-	return adminEntity[ent].catlog
+	return adminEntity[ent].catalog
 }
 
 /* 	得到预定义的caption值
@@ -142,7 +142,7 @@ function buildSidebar(){
 			//添加属性
 			obj['name']=entName
 			obj['index']=idx
-			obj['catlog']=fufillSidebarCatlog(entName)
+			obj['catalog']=fufillSidebarCatlog(entName)
 						
 			arr[idx]=obj
 		})
@@ -162,19 +162,19 @@ export const adminEntity={
 		name:{en:'Supply',chn:'供给'},
 		routeStr:'supply',
 		//定义为数组，便于应用v-for指令
-		catlog:[
-			/* {caption:'知识产权',sysEntPath:['pat','pro']},
-			{caption:'技术方案',sysEntPath:['ach','sol']}, */
+		catalog:[
+			/* {label:'知识产权',sysEntPath:['pat','pro']},
+			{label:'技术方案',sysEntPath:['ach','sol']}, */
 			
 			{
-				caption:'知识产权',
+				label:'知识产权',
 				items:[
 					{sysEnt:'pat',routeStr:'pat',label:'专利'},
 					{sysEnt:'pro',routeStr:'pro',label:'项目'}
 					]
 			},
 			{
-				caption:'成果方案',
+				label:'成果方案',
 				items:[
 					{sysEnt:'ach',routeStr:'ach',label:'技术成果'},
 					{sysEnt:'sol',routeStr:'sol',label:'解决方案'},
@@ -192,10 +192,10 @@ export const adminEntity={
 		//routeStr:['com','gov','edu','dev','ngo','person'],
 		
 		//定义为数组，便于应用v-for指令
-		catlog:[
-			/* {caption:'',sysEntPath:['com','gov','edu','dev','ngo','person']}, */
+		catalog:[
+			/* {label:'',sysEntPath:['com','gov','edu','dev','ngo','person']}, */
 			{
-				caption:'',
+				label:'',
 				items:[
 					{sysEnt:'com',routeStr:'com',label:'商业机构'},
 					{sysEnt:'gov',routeStr:'gov',label:'政府组织'},
@@ -227,10 +227,10 @@ export const adminEntity={
 		//routeStr:['com','gov','edu','dev','ngo','person'],
 		
 		//定义为数组，便于应用v-for指令
-		catlog:[
-			/* {caption:'',sysEntPath:['edu','dev']}, */
+		catalog:[
+			/* {label:'',sysEntPath:['edu','dev']}, */
 			{
-				caption:'',
+				label:'',
 				items:[
 					{sysEnt:'com',routeStr:'com',label:'商业机构'},
 					//{sysEnt:'gov',routeStr:'gov',label:'政府组织'},
@@ -248,12 +248,12 @@ export const adminEntity={
 		name:{en:'Expert',chn:'专家'},
 		routeStr:'expert',
 		//定义为数组，便于应用v-for指令
-		catlog:[
-			/* {caption:'',sysEntPath:['person']},
-			{caption:'产业界',sysEntPath:['com','gov']},
-			{caption:'研究组织',sysEntPath:['edu','dev','ngo']}, */
+		catalog:[
+			/* {label:'',sysEntPath:['person']},
+			{label:'产业界',sysEntPath:['com','gov']},
+			{label:'研究组织',sysEntPath:['edu','dev','ngo']}, */
 			{
-				caption:'',
+				label:'',
 				items:[
 					{sysEnt:'com',routeStr:'com',label:'商业机构'},
 					{sysEnt:'gov',routeStr:'gov',label:'政府组织'},
@@ -273,17 +273,17 @@ export const adminEntity={
 		//routeStr:['person','com'],
 		
 		//定义为数组，便于应用v-for指令
-		catlog:[
-			/* {caption:'',sysEntPath:['person','com']}, */
+		catalog:[
+			/* {label:'',sysEntPath:['person','com']}, */
 			{
-				caption:'科研导师',
+				label:'科研导师',
 				items:[
 					{sysEnt:'mentor',routeStr:'material',label:'新材料'},
 					{sysEnt:'mentor',routeStr:'computer',label:'计算机'},
 				]
 			},
 			{
-				caption:'管理导师',
+				label:'管理导师',
 				items:[
 					{sysEnt:'mentor',routeStr:'strategy',label:'战略'},
 					{sysEnt:'mentor',routeStr:'finance',label:'财务'},
@@ -297,10 +297,10 @@ export const adminEntity={
 	system:{
 		name:{en:'System Info',chn:'系统信息'},
 		routeStr:'system',
-		catlog:[
-			/* {caption:'',sysEntPath:['sys/env','sys/conf','sys/serv']}, */
+		catalog:[
+			/* {label:'',sysEntPath:['sys/env','sys/conf','sys/serv']}, */
 			{
-				caption:'',
+				label:'',
 				items:[
 					{sysEnt:'env',routeStr:'env',label:'环境参数'},
 					{sysEnt:'conf',routeStr:'conf',label:'配置参数'},

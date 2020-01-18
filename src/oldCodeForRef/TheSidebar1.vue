@@ -3,7 +3,7 @@
 	<div class="py-3 px-1 font18px border-top-0"
 		:class="`${borderCls} text-${themeClr}`"
 	>
-		<font-awesome-icon :icon="sidebar.faIcon" />&nbsp;<span class="font-weight-bold">{{sidebar.caption}}</span>
+		<font-awesome-icon :icon="sideObj.faIcon" />&nbsp;<span class="font-weight-bold">{{sideObj.caption}}</span>
 	</div>
 
 
@@ -14,7 +14,7 @@
 		<b-nav-item disabled>Disabled</b-nav-item> -->
 		
 		
-		<div v-for="(cat,catId) in sidebar.catlog" 
+		<div v-for="(cat,catId) in sideObj.catlog" 
 			:class="cat.caption?`${borderCls} border-top-0`:`border-bottom-0`"
 			:key="catId"
 		>
@@ -33,7 +33,7 @@
 					:variant="`outline-${themeClr}`"
 				>
 					<template v-if="cat.isPressed">
-						<span class="font-weight-bold">{{cat.caption}} </span>
+						<span class="font-weight-bold">[{{cat.caption}}] </span>
 						<span class="when-opened"><font-awesome-icon :icon="['fas','minus-square']" /></span> 
 						<span class="when-closed"><font-awesome-icon :icon="['fas','plus-square']" /></span>
 						<!-- <span class="when-opened"><font-awesome-icon :icon="iconFas.minus" /></span>  -->
@@ -59,7 +59,7 @@
 			>
 				<b-list-group>
 					<!-- 此div的作用是给b-list-group-item加框线-->
-					<div class="pt-1 pb-1"
+					<div class="p-1"
 						v-for="(ent, idx) in cat.items"
 						:key="idx"
 						:class="cat.caption?`ml-3 border-bottom-0 ${borderCls}`:`border-top-0 ${borderCls}`"
@@ -88,7 +88,7 @@
 						
 						<template v-if="ent.isActive">
 							<span class="font-weight-bold">{{ ent.label }}</span>
-							<span class="font-weight-bold" v-if="ent.itemsTotal">{{ent.itemsTotal}}</span>
+							<span class="font-weight-bold" v-if="ent.total">{{ent.total}}</span>
 							<span v-else >无</span>
 						
 						</template>
@@ -97,8 +97,8 @@
 							<span >{{ ent.label }}</span>
 							<b-badge pill
 								:variant="themeClr"
-								v-if="ent.itemsTotal"
-							>{{ent.itemsTotal}}
+								v-if="ent.total"
+							>{{ent.total}}
 							</b-badge> 
 							<span v-else class="text-muted">无</span>
 						
@@ -117,25 +117,33 @@
 </template>
 
 <script>
-//引入BsV的component
+
+
+
 import {
+	
+	//静态引入BsV的component
 	BNav,
 	BButton,
 	BCollapse,
 	BListGroup,
 	BListGroupItem,
 	BBadge,
-	//引入BsV定义的directive
+	
+	//静态引入BsV定义的directive
 	VBToggle
 
 } from 'bootstrap-vue'
 
-import {bs4TextColor as colorObj} from '@/conf/common.conf.js'
+import { mapState,mapGetters,mapMutations,mapActions } from 'vuex'
 
-//引入font awesome
+//import { asyGetBsvComponent as aGetBsv} from '@/components/util-bootstrap-vue'
+
+
+//静态引入fontawesome
 import { 
-	faPlusSquare as fasPlus,
-	faMinusSquare as fasMinus,
+	faPlusSquare as fasPsSqr,
+	faMinusSquare as fasMsSqr,
 	//供给
 	faWarehouse,
 	//需求
@@ -147,35 +155,47 @@ import {
 	//专家
 	faChalkboardTeacher,
 	//系统
-	faHSquare,
-	
+	faHSquare
 } from '@fortawesome/free-solid-svg-icons'
 import { 
-	faPlusSquare as farPlus,
-	faMinusSquare as farMinus 
+	faPlusSquare as farPsSqr,
+	faMinusSquare as farMsSqr
 } from '@fortawesome/free-regular-svg-icons'
 import { library as faLib} from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-faLib.add(
-	fasPlus,
-	fasMinus,
-	farPlus,
-	farMinus,
-	//供给
-	faWarehouse,
-	//需求
-	faMountain,
-	//项目
-	faProjectDiagram,
-	//导师
-	faUserGraduate,
-	//专家
-	faChalkboardTeacher,
-	//系统
-	faHSquare,	
-)
+faLib.add(fasPsSqr,fasMsSqr,faWarehouse,faMountain,faProjectDiagram,
+		faUserGraduate,faChalkboardTeacher,faHSquare,
+		farPsSqr,farMsSqr)
 
-import { mapState,mapActions } from 'vuex'
+/*
+import { asySetFaIconLibrary as aGetFa, FANAME} from '@/components/util-fontawesome'
+//定义要引入的faIcon名称数组
+let faObj=Object.assign({},FANAME,{
+		fas:[
+			'plus-square',
+			'minus-square',
+			//供给
+			'warehouse',
+			//需求
+			'mountain',
+			//项目
+			'project-diagram',
+			//导师
+			'user-graduate',
+			//专家
+			'chalkboard-teacher',
+			//系统
+			'h-square'
+		],
+		far:[
+			'plus-square',
+			'minus-square',
+		]
+	})
+*/
+import {bs4TextColor as colorObj} from '@/conf/common.conf.js'
+
+//console.log(VBToggle)
 
 export default {
 	name: 'TheSidebar',
@@ -183,7 +203,7 @@ export default {
 		return {
 			//bsv中的"d-flex justify-content-between align-items-center"是对button中的内容进行两端对齐
 			bsvAlignTwoEnds:"d-flex justify-content-between align-items-center",
-			index:0
+			
 		}
 	},
 	computed:{
@@ -192,22 +212,14 @@ export default {
 		},
 		
 		...mapState({
-		//activeNav对应的sidebar内容
-			briefItems:state=>state.fetchData.response.hasOwnProperty('items')?
-								state.fetchData.response.items:
-								[],
-			routeStr:state=> state.fetchOption.routeStr,
-			//sidebar:state => sideArr[state.sideActive.index],
-			sidebar:state=>state.sidebar.items[state.navbar.index],
+			routeStr:state=> state.fetchCont.request.routeStr,
+			index:state=>state.sidebar.index,
+		}),
+		...mapGetters({
 			//主题颜色
-			themeClr: state=>{
-				let nav=state.navbar
-				let actNav=nav.items[nav.index]
-				let props=actNav.props
-				return props.themeClr
-						
-			},
-			
+			themeClr:'actNavThemeClr',
+			//resItems:'resItems'，
+			sideObj:'actSidebar'
 		}),
 	},
 	methods: {
@@ -223,8 +235,9 @@ export default {
 			}else{
 				result=true
 			}
-			
+			//console.log(str)
 			//console.log(id)
+			//console.log(result)
 			return result
 		},
 		setBackgroundClr(isActive){
@@ -233,154 +246,90 @@ export default {
 			//console.log(isActive)
 			return {backgroundColor:clrValue}
 		},
+		//根据routeNow找到对应的path，
+		//再由path访问sidebar修改对应的isActive,isPressed等属性
 		itemClick(routeNow){
 			let self=this
 			let routeOld=self.routeStr
+
+			//let opt={index:self.index,route:routeNow,name:'',val:''}
 			
-			/*
-			console.log(routeOld)
-			console.log(routeNow)
-			*/
-			
+			let opt={
+					index:self.index,
+					route:routeNow,
+					props:[]
+				}
+					
 			if(routeNow!==routeOld){
-				//整个sidebar中的所有item的active=false
-				//触发click事件的item的active=true
-				self.updateItemActive(routeNow)
-				self.updateItemsTotal()
+				//将fetchCont.request.routeStr修改为routeNow
+				self.changeRouteStr({routeStr:routeNow})
 				
-				//判断state中的内容是否更新
-				//self.updateState(routeNow)
-	
-				//判断是否更新table
-				//self.updateTable(routeNow)
+				//任意时刻Sidebar中的Item只有一项的isActive=true
+				//任意时刻Sidebar中的button只有一项的isPressed=true
+				opt.props=[
+					{name:'isActive',val:true},
+					{name:'isPressed',val:true}
+				]
+				self.setProps(opt)
+				
+				self.changeEntry({route:routeNow,index:self.index})
+				
+				self.setIsBriefContent(false)
 			}
 		},
-		//得到添加所有item在sidebar中的访问路径数组后的items		
-		_addItemPathArr(){
-			let self=this
-			let sidebar=self.sidebar
-			//Array.slice()才是数组的复制方法，
-			//arrA=arrB只是arrA引用arrB的地址
-			let items=self.briefItems.slice()
-			let path=[]
+		... mapMutations({
+			//setPropVal:'setSidebarProps',
+			setProps:'setSidebarProps',
+			setIsBriefContent:'updateIsBriefContent',
+			changeEntry:'updateActiveEntry',
 			
-			items.forEach(item=>{
-			
-				sidebar.catlog.forEach((objX,idx)=>{
-					
-					objX.items.forEach((objY,idy)=>{
-					
-						if(objY.routeStr==item.routeStr){
-							path=[]
-							path.push('catlog')
-							path.push(idx)
-							path.push('items')
-							path.push(idy)
-						
-							item['path']=path
-						}
-					})
-				})
-			})
-			
-			
-			return items
-		},		
-		//任意时刻Sidebar中的Items最多只有一项的isActive=true
-		updateItemActive(routeNow){
-			let self=this
-			let sidebar=self.sidebar
-			let items=self._addItemPathArr()
-			let truePath=[]
-			
-			//定义递归函数修改指定sidebar的isActive和isPressed。
-			let setIsActive=(arr,value,obj)=>{
-				let str=Array.isArray(arr)?arr[0]:'none'		
-				//console.log(arr)
-				
-				//是否有button，有的话设置isPressed
-				if(obj.hasOwnProperty('hasButton')){
-					obj['isPressed']=value
-				}
-			
-				//递归结束条件
-				if(obj.hasOwnProperty('isActive')){
-					obj.isActive=obj.routeStr==routeNow?value:false
-					//console.log(routeNow)
-					return
-				}
-		
-				arr.shift()
-				return setIsActive(arr,value,obj[str])
-			
-			}
-			
-			items.forEach(item=>{
-				let arr=item.path
-				let start=arr.includes('catlog')?arr.indexOf('catlog'):0
-				let arrTemp=arr.slice(start)
-				//触发click事件的item的path
-				if(item.routeStr==routeNow){
-					truePath=arr.slice(start)
-				}
-			
-				//将所有的item的active=false
-				setIsActive(arrTemp,false,sidebar)
-			})
-			
-			//触发click事件的item的active=true
-			if(truePath.length)setIsActive(truePath,true,sidebar)
-		},
-		updateItemsTotal(){
-			let catlog=this.sidebar.hasOwnProperty('catlog')?
-						this.sidebar.catlog:{}
-	
-			console.log(catlog)
-			console.log(this.briefItems)
-			console.log('updateItemsTotal()')
-			
-			catlog.forEach((obj,idx)=>{
-				obj.items.forEach(ent=>{
-					//console.log(ent)
-					//更新各个菜单项的总数
-					this.briefItems.forEach(objB=>{
-						if(ent.routeStr==objB.routeStr){
-							ent.itemsTotal=objB.total
-						
-						}
-					
-					})
-				
-				})
-				catlog[idx]=obj
-			})
-		
-		},
-	
+		}),		
 		... mapActions({
-			//changeTable: 'asyChangeTable'
+			changeRouteStr:'asyUpdateFetchCont'
 			
 		})
 	},
 	components:{
+		
 		'b-nav':BNav,
 		'b-button':BButton,
 		'b-collapse':BCollapse,
 		'b-list-group':BListGroup,
 		'b-list-group-item':BListGroupItem,
 		'b-badge':BBadge,
-		FontAwesomeIcon
-		//'font-awesome-icon':FontAwesomeIcon
+		'font-awesome-icon':FontAwesomeIcon,
+		//与上一行等效
+		//FontAwesomeIcon
+		
+		
+		//异步加载组件
+		/*'b-nav':()=>aGetBsv('b-nav'),
+		'b-button':()=>aGetBsv('b-button'),
+		'b-collapse':()=>aGetBsv('b-collapse'),
+		'b-list-group':()=>aGetBsv('b-list-group'),
+		'b-list-group-item':()=>aGetBsv('b-list-group-item'),
+		'b-badge':()=>aGetBsv('b-badge'),
+		'font-awesome-icon':()=>aGetFa(faObj)*/
 	},
 	directives:{
 		//引入BsV定义的directive
-		bToggle:VBToggle
+		//bToggle:VBToggle
+		'b-toggle':VBToggle
+		
+		
+		//异步加载directive??
+		//'b-toggle':()=>aGetBsv('VBToggle')
+		//'b-toggle':()=>aGetBsv('VBToggle').then(dir=>{return dir})
 	},
-	//created(){
-	mounted(){
-		//console.log(this.sidebar.catlog)
-		this.updateItemsTotal()
+	/*
+	created(){
+	//mounted(){
+		console.log(this.resItems)
+		console.log(this.index)
+		console.log(this.sidebar)
+		//this.updateItemsTotal()
 	}
+	*/
 }
 </script>
 

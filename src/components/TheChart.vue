@@ -95,7 +95,7 @@ export default {
 			
 			let getSidebarEntry=route=>{
 				let obj={}
-				self.actSidebar.catlog.forEach(cat=>{
+				self.actSidebar.catalog.forEach(cat=>{
 					if(cat.hasOwnProperty('items')){
 						cat.items.forEach(item=>{
 							if(item.routeStr==route){
