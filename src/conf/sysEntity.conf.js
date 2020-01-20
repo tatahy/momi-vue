@@ -109,9 +109,9 @@ export const entField={
 	},
 	mentor:{
 		name:{en:'Name',chn:'姓名',isBSVTableField:true},
-		field:{en:'Field',chn:'专业领域',isBSVTableField:true},
+		field:{en:'Field',chn:'专业领域',isBSVTableField:false},
 		research:{en:'Research',chn:'研究方向',isBSVTableField:true},
-		title:{en:'Title',chn:'职衔',isBSVTableField:true},
+		title:{en:'Title',chn:'职衔',isBSVTableField:false},
 		position:{en:'Position',chn:'职务',isBSVTableField:true},
 		id:{en:'Id',chn:'系统编号',isBSVTableField:false},
 		type:{en:'Type',chn:'导师类型',isBSVTableField:false},

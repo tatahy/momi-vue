@@ -1,16 +1,18 @@
 <template>
 <div class="overflow-auto">
 		
-	<div class="text-left">
+	<!-- <div class="text-left"> -->
 		
 		<b-table class="border-bottom"
 			id="my-talbe"
+			responsive
 			striped 
 			hover 
 			caption-top 
 			sticky-header="800px"
 			no-border-collapse
-			:fields="fields"			
+			:head-row-variant="themeClr"
+			:fields="fields.show"			
 			:items="lists"
 			:busy="isBusy"
 			:per-page="perPage"
@@ -19,20 +21,34 @@
 		>
 			<template v-slot:table-caption >
 				<h4 class="text-center align-text-bottom" >
-					<span v-bind:class="'text-'+themeClr">{{title}}&nbsp;--&nbsp;</span>
-					<!-- <span v-show="table.subTitle" class="text-monospace">{{table.subTitle}}</span> -->
-					<b-badge v-show="subTitle"
-							:variant="themeClr" 
-							style="font-size:16px;color:#fff;"
+					<span :class="`text-${themeClr}`">{{title}}&nbsp;--&nbsp;</span>
+					<span 
+						v-show="subTitle"
+						:class="`badge badge-${themeClr}`" 
+						style="font-size:16px;"
+					
 					>
 						{{subTitle}}
-					</b-badge>
+					</span>
+					
 				</h4>
+				
+				<!-- 弹出modal组件, '新增'表单 -->
+				<b-button 
+					v-if="actNav.routeStr!='system'"
+					size="sm" 
+					@click="getInfo('', '新增', $event.target)" 
+					class="py-0 px-1 mr-1 float-right"
+					variant="primary"
+					
+				>
+					新增
+				</b-button>
 			</template>
 			
-			<template v-slot:head()="data">
-				<span :class="`text-${themeClr}`">{{ data.label }}</span>
-			</template>
+			<!-- <template v-slot:head()="data"> -->
+				<!-- <span :class="`text-${themeClr}`">{{ data.label }}</span> -->
+			<!-- </template> -->
 			
 			<template v-slot:table-busy>
 				<div class="text-center text-muted my-2">
@@ -63,65 +79,100 @@
 			</template>
 			<!-- actions字段的内容 -->
 			<template v-slot:cell(actions)="row">
-				<!-- 弹出modal组件 -->
+				<!-- 弹出modal组件 class="mr-1"-->
 				<b-button 
-					size="sm" 
+					size='sm'
+					variant="primary"
+					class="py-0 px-1 ml-1 mt-1"					
 					@click="getInfo(row.item, row.index, $event.target)" 
-					class="mr-1"
 				>
-					Info modal
+					编辑
 				</b-button>
 				
-				<!-- 显示/隐藏detail组件 -->
+				<!-- 显示/隐藏detail组件-->
 				<b-button 
-					size="sm" 
+					size='sm'
+					variant="primary"
+					class="py-0 px-1 ml-1 mt-1"
+					:class="row.detailsShowing ? 'btn-'+themeClr: null"
 					@click="row.toggleDetails"
 				>
-					{{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+					{{ row.detailsShowing ? '隐藏': '详情'  }} 
 				</b-button>
-				
-				<b-form-checkbox 
-					v-model="row.detailsShowing" 
-					@change="row.toggleDetails"
-				>
-					Details via check
-				</b-form-checkbox>
+			
 			</template>
 
 			<!-- detail组件 -->
 			<template v-slot:row-details="row">
 				<b-card>
-					<ul>
-						<li v-for="(value, key) in row.item" :key="key">
-						{{ key }}: {{ value }}
-						</li>
-						
-					</ul>
+					<b-media>
+						<template 
+							v-slot:aside
+							v-if="actNav.routeStr=='mentor'"
+						>
+							<b-img 
+								blank 
+								blank-color="#ccc" 
+								width="168" 
+								height="200"
+								alt="placeholder"
+								class="mr-3 rounded shadow"
+							>
+							</b-img>
+						</template>
+					
+						<b-row v-for="(obj, index) in fields.hide" :key="index">
+							<template v-if="obj.formType">
+							<b-col 
+								cols="3" 
+								class="text-right"> 
+								<strong>{{ obj.label+'：'}}</strong>
+							</b-col>
+							<b-col 
+								class="text-left border-bottom"
+							>
+								{{ row.item[obj.key] }}
+							</b-col>
+							</template>
+						</b-row>
+					</b-media>
 				</b-card>
 			</template>
 			
 		</b-table>
-	</div>	
+	<!-- </div>	 -->
 	<div class="text-right" v-show="total > perPage">
-		<!-- <p> -->
-			<span>总数：<b-badge :variant="themeClr">{{ total }}</b-badge></span>&nbsp;
-			<!-- <span>Current Page: {{ currentPage }}</span> -->
-			<!-- <br> -->
-			<!-- <span>每页行数:</span> -->
-			<!-- <label>每页行数:</label> -->
-			<label>每页行数:
-			<b-form-select v-model="perPage" size="sm" :options="options"></b-form-select>	
-			</label>
-		<!-- </p> -->
-		
-		<b-pagination
-			aria-controls="my-table"
-			align="right"
-			size="sm"
-			v-model="currentPage"
-			:total-rows="total"
-			:per-page="perPage"	
-		></b-pagination>
+		<b-row>
+			<b-col cols="8" style="padding-top:5px;">
+				<span >总数：<b-badge :variant="themeClr" style="font-size:14px;">{{ total }}</b-badge></span>
+			</b-col>
+			<b-col>
+				<b-form-group
+					label-cols="6"
+					label-align="right"
+					label="每页行数:"
+				>
+					<!-- size="sm"  -->
+					<b-form-select 
+						v-model="perPage" 
+						:options="options"
+					></b-form-select>	
+				</b-form-group>			
+			</b-col>
+		</b-row>
+			
+		<b-row>
+			<b-col>
+				<!-- size="sm" -->
+				<b-pagination
+					aria-controls="my-table"
+					align="right"
+					v-model="currentPage"
+					:total-rows="total"
+					:per-page="perPage"	
+				></b-pagination>
+			</b-col>	
+		</b-row>
 		
 	</div>
 	
@@ -140,7 +191,7 @@
 </template>
 
 <script>
-import { mapState, mapActions,mapGetters } from 'vuex'
+import { mapState,mapGetters, mapActions } from 'vuex'
 
 //import { asyGetBsvComponent as aGetBsv} from '@/components/util-bootstrap-vue'
 
@@ -153,26 +204,16 @@ import {
 	BCard,
 	BButton,
 	BBadge,
-	BFormCheckbox,
-	BFormSelect 
+	BRow,
+	BCol,
+	BFormGroup,
+	//BFormCheckbox,
+	BFormSelect, 
+	BMedia,
+	BImg
 } from 'bootstrap-vue'
 
 import {fieldProps,FIELDS} from '@/components/util-the-table'
-
-/*
-const tableInitFields=[
-	{key:'No.','class':'text-center',},
-	{key:'age','class':'text-center',},
-	{key:'firstName',label:'FName','class':'',},
-	{key:'lastName',label:'LName',},
-]
-const tableInitItems=[
-    { 'No.':1, age: 40, firstName: 'Dickerson', lastName: 'Macdonald' },
-    { 'No.':2, age: 21, firstName: 'Larsen', lastName: 'Shaw' },
-    { 'No.':3, age: 89, firstName: 'Geneva', lastName: 'Wilson' },
-    { 'No.':4, age: 38, firstName: 'Jami', lastName: 'Carney' }
-]
-*/
 
 //native JS Module export
 export default {
@@ -185,9 +226,8 @@ export default {
 	},
     data:function() {
 		return {
-			fields:[],
+			
 			isBusy:false,
-				
 			perPage: 10,
 			currentPage: 1,
 			lists:[],
@@ -205,27 +245,30 @@ export default {
 		}
 	},
 	computed: {
+		title:function(){
+			return this.actNav.label
+		},
+		subTitle:function(){
+			return this.actItem.label
+		},
+		//主题颜色
+		themeClr:function(){
+			return this.actNav.themeClr
+		},
 		//总记录数	
 		total:function(){
 			return this.resLists.length
 		},
+		fields:function(){
+			return this.setFields()
+		},
 		...mapGetters({
-			title:'actNavLabel',
-			subTitle:'actEntryLabel',
-			//主题颜色
-			themeClr:'actNavThemeClr'
+			actNav:'actNavbar',
+			actItem:'actEntry'
 		}),
 		...mapState({
-			//表格字段
-			//fields:tableInitFields,
 			//表格内容
 			resLists:state => state.fetchCont.response.lists,
-			actFields:function(state){
-				let route=state.fetchCont.request.routeStr
-				
-				return FIELDS.hasOwnProperty(route)
-						?FIELDS[route]:[]
-			}
 		}),
 	},
 	watch:{
@@ -233,50 +276,55 @@ export default {
 			this.isBusy=true
 			//设置lists
 			this.setLists()
-		
 			//设置fields
 			this.setFields()
 			
 			this.isBusy=false
 			return 
 		}
-	
 	},
 	methods: {
 		setLists(){
-			//转化为TheTable自己的数据属性，方便修改
-			this.lists=this.resLists.slice()
-			//添加sn项
-			if(this.lists.length){
-				this.lists.forEach((list,idx)=>list['serial-number']=idx*1+1)
+			let self=this
+			let resLists=self.resLists
+			let lists=self.lists=[]
+			//添加sn项，并逐项复制转化为TheTable自己的数据属性，方便修改，
+			if(resLists.length){
+				resLists.forEach((list,idx)=>{
+				//list为对象，必须用Object.assign()进行复制，否则就是对象的浅拷贝（按引用复制）
+					if(typeof list =='object'){
+						lists[idx]=Object.assign({},{'serial-number':idx*1+1},list)
+					}
+				})
 			}
 			return 
 		},
 		setFields(){
 			let self=this
-			let tpls=self.actFields
+			let route=self.actItem.routeStr
+			let fields=FIELDS.hasOwnProperty(route)
+						?FIELDS[route]:[]
+			
 			let lang=self.lang
-			self.fields=[]
+			let showArr=[]
+			let hideArr=[]
 			
-			tpls.forEach(tpl=>{
-				let label=tpl.label.hasOwnProperty(lang)
-							?tpl.label[lang]
-							:tpl.label.en
-				//是要显示的才添加到fields中
-				if(tpl.isField){
-					self.fields.push(Object.assign({},fieldProps,tpl,{label:label}))
-				}
-				
-			})
-			
-			
-			
-			return
-			
+			if(fields.length){
+				fields.forEach(field=>{
+					let label=field.label.hasOwnProperty(lang)
+								?field.label[lang]
+								:field.label.en
+					let obj=Object.assign({},fieldProps,field,{'label':label})
+					//是要显示的才添加到fields.show中
+					field.isShown?showArr.push(obj):hideArr.push(obj)
+				})
+			}
+			return {'show':showArr,'hide':hideArr}
 		},
 		getInfo(item, index, button) {
 			this.infoModal.title = `Row index: ${index}`
-			this.infoModal.content = JSON.stringify(item, null, 2)
+			//this.infoModal.content = JSON.stringify(item, null, 2)
+			this.infoModal.content =item
 			this.$root.$emit('bv::show::modal', this.infoModal.id, button)
 		},
 		resetInfoModal() {
@@ -295,9 +343,14 @@ export default {
 		'b-pagination':BPagination,
 		'b-card':BCard,
 		'b-button':BButton,
-		'b-form-checkbox':BFormCheckbox,
+		'b-form-group':BFormGroup,
+		'b-row':BRow,
+		'b-col':BCol,
+		//'b-form-checkbox':BFormCheckbox,
 		'b-form-select':BFormSelect,
 		'b-badge':BBadge,
+		BMedia,
+		BImg
 		
 		/*
 		//动态引入

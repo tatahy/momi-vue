@@ -24,29 +24,29 @@ export let fieldProps={
 }
 
 const FIELDSDEF={
-	SN:{isField:true,tdClass:'text-center',key:'serial-number',label:{en:'S/N',chn:'序号'}},
-	ACTIONS:{isField:true,tdClass:'text-right',key:'actions',label:{en:'Actions',chn:'操作'}},
+	SN:{isShown:true,tdClass:'text-center',key:'serial-number',label:{en:'S/N',chn:'序号'}},
+	ACTIONS:{isShown:true,tdClass:'text-right',key:'actions',label:{en:'Actions',chn:'操作'},sortable:false,},
 	DEFAULT:[
-		{isField:true,tdClass:'text-center',key:'serial-number',label:{en:'S/N',chn:'序号'}},
-		{isField:true,key:'key',label:{en:'Key',chn:'键名'}},
-		{isField:true,key:'value',label:{en:'Value',chn:'键值'}},
+		{isShown:true,tdClass:'text-center',key:'serial-number',label:{en:'S/N',chn:'序号'}},
+		{isShown:true,key:'key',label:{en:'Key',chn:'键名'}},
+		{isShown:true,key:'value',label:{en:'Value',chn:'键值'}},
 	]
 	
 }
-//定义字段名称映射表，各项中字段的定义顺序也是显示的顺序
+//定义字段名称及在表单中的展现类型，各项中字段的定义顺序也是显示的顺序
 //根据routeStr的值进行定义
 export const FIELDS={
 	'supply-pat':[
 		FIELDSDEF.SN,
-		{isField:true,key:'topic',label:{en:'Topic',chn:'题目'}},
-		{isField:true,key:'type',label:{en:'Type',chn:'类型'}},
-		{isField:true,key:'patowner',label:{en:'Owner',chn:'所有人'}},
-		{isField:true,key:'inventor',label:{en:'Inventor',chn:'发明人'}},
-		{isField:true,key:'author',label:{en:'Author',chn:'撰写人'}},
-		{isField:false,key:'id',label:{en:'Id',chn:'系统编号'}},
-		{isField:false,key:'patnum',label:{en:'Patent No.',chn:'专利编号'}},
+		{isShown:true,key:'topic',label:{en:'Topic',chn:'题目'},formType:'input'},
+		{isShown:true,key:'type',label:{en:'Type',chn:'类型'},formType:'select'},
+		{isShown:true,key:'patowner',label:{en:'Owner',chn:'所有人'},formType:'input'},
+		{isShown:true,key:'inventor',label:{en:'Inventor',chn:'发明人'},formType:'input'},
+		{isShown:true,key:'author',label:{en:'Author',chn:'撰写人'},formType:'input'},
+		{isShown:false,key:'id',label:{en:'Id',chn:'系统编号'},formType:''},
+		{isShown:false,key:'patnum',label:{en:'Patent No.',chn:'专利编号'},formType:'input'},
 		FIELDSDEF.ACTIONS,
-			//{key:'',isField:true,label:{}},
+			//{key:'',isShown:true,label:{}},
 		],
 	'supply-pro':FIELDSDEF.DEFAULT,
 	'supply-ach':FIELDSDEF.DEFAULT,
@@ -56,17 +56,17 @@ export const FIELDS={
 	'system-serv':FIELDSDEF.DEFAULT,
 	'mentor-material':[
 		FIELDSDEF.SN,
-		{isField:true,key:'name',label:{en:'Name',chn:'姓名'}},
-		{isField:true,key:'field',label:{en:'Field',chn:'专业领域'}},
-		{isField:true,key:'research',label:{en:'Research',chn:'研究方向'}},
-		{isField:true,key:'title',label:{en:'Title',chn:'职衔'}},
-		{isField:true,key:'position',label:{en:'Position',chn:'职务'}},
-		{isField:false,key:'id',label:{en:'Id',chn:'系统编号'}},
-		{isField:false,key:'type',label:{en:'Type',chn:'导师类型'}},
-		{isField:false,key:'profile',label:{en:'Profile',chn:'个人简介'}},
-		{isField:false,key:'experience',label:{en:'Experience',chn:'个人经历'}},
+		{isShown:true,key:'name',label:{en:'Name',chn:'姓名'},formType:'input'},
+		{isShown:false,key:'field',label:{en:'Field',chn:'专业领域'},formType:'select'},
+		{isShown:true,key:'research',label:{en:'Research',chn:'研究方向'},formType:'input'},
+		{isShown:false,key:'title',label:{en:'Title',chn:'职衔'},formType:'textarea'},
+		{isShown:true,key:'position',label:{en:'Position',chn:'职务'},formType:'textarea'},
+		{isShown:false,key:'id',label:{en:'Id',chn:'系统编号'},formType:''},
+		{isShown:false,key:'type',label:{en:'Type',chn:'导师类型'},formType:'select'},
+		{isShown:false,key:'profile',label:{en:'Profile',chn:'个人简介'},formType:'textarea'},
+		{isShown:false,key:'experience',label:{en:'Experience',chn:'个人经历'},formType:'textarea'},
 		FIELDSDEF.ACTIONS,
-		//{key:'',isField:false,label:{}},
+		//{key:'',isShown:false,label:{}},
 	],
 	'mentor-computer':FIELDSDEF.DEFAULT,
 	'mentor-strategy':FIELDSDEF.DEFAULT,
