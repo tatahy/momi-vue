@@ -37,8 +37,8 @@
 				<b-button 
 					v-if="actNav.routeStr!='system'"
 					size="sm" 
-					@click="getInfo('', '新增', $event.target)" 
-					class="py-0 px-1 mr-1 float-right"
+					v-on:click="toggleModal('', 'create', $event.target)" 
+					class="m-1 float-right"
 					variant="primary"
 					
 				>
@@ -58,11 +58,23 @@
 			</template>
 			
 			<template v-slot:cell(topic)="data">
-				<!-- <b-link href="#">{{ data.value }}</b-link> -->
+				<strong>
+					{{ data.value }}
+				</strong>
+			</template>
+			
+			<template v-slot:cell(name)="data">
+				<strong>
+					{{ data.value }}
+				</strong>
+			</template>
+			<!-- 
+			<template v-slot:cell(topic)="data">
+				
 				
 				<b-button 
 					variant="link" 
-					v-on:click="getInfo(data.item, data.index, $event.target)" 
+					v-on:click="toggleModal(data.item, `${data.value}`, $event.target)" 
 					class="mr-1 text-left"
 				>
 					{{ data.value }}
@@ -72,11 +84,13 @@
 			<template v-slot:cell(name)="data">
 				<b-button 
 					variant="link" 
-					v-on:click="getInfo(data.item, data.index, $event.target)" 
-					class="mr-1">
+					v-on:click="toggleModal(data.item, `${data.value}`, $event.target)" 
+					class="mr-1 text-left">
 					{{ data.value }}
 				</b-button>
-			</template>
+			</template> 
+			-->
+			
 			<!-- actions字段的内容 -->
 			<template v-slot:cell(actions)="row">
 				<!-- 弹出modal组件 class="mr-1"-->
@@ -84,9 +98,9 @@
 					size='sm'
 					variant="primary"
 					class="py-0 px-1 ml-1 mt-1"					
-					@click="getInfo(row.item, row.index, $event.target)" 
+					v-on:click="toggleModal(row.item, 'update', $event.target)" 
 				>
-					编辑
+					更新
 				</b-button>
 				
 				<!-- 显示/隐藏detail组件-->
@@ -95,7 +109,7 @@
 					variant="primary"
 					class="py-0 px-1 ml-1 mt-1"
 					:class="row.detailsShowing ? 'btn-'+themeClr: null"
-					@click="row.toggleDetails"
+					v-on:click="row.toggleDetails"
 				>
 					{{ row.detailsShowing ? '隐藏': '详情'  }} 
 				</b-button>
@@ -120,9 +134,9 @@
 							>
 							</b-img>
 						</template>
-					
+						<!-- <b-container fluid> -->
 						<b-row v-for="(obj, index) in fields.hide" :key="index">
-							<template v-if="obj.formType">
+							<template v-if="obj.formElement">
 							<b-col 
 								cols="3" 
 								class="text-right"> 
@@ -135,6 +149,7 @@
 							</b-col>
 							</template>
 						</b-row>
+						<!-- </b-container> -->
 					</b-media>
 				</b-card>
 			</template>
@@ -176,15 +191,54 @@
 		
 	</div>
 	
-	<!-- Info modal -->
+	<!-- Info modal :title="modalProps.title" -->
 	<b-modal 
 		size="lg"
-		:id="infoModal.id" 
-		:title="infoModal.title" 
-		@hide="resetInfoModal"
-		ok-only 
+		:id="modalProps.id" 
+		v-on:hide="resetModalInfo"
 	>
-		<pre>{{ infoModal.content }}</pre>
+		<template v-slot:modal-title>
+			<h4 class="text-left align-text-bottom" >
+				<span :class="`text-${themeClr}`">{{title}}&nbsp;--&nbsp;</span>
+				<span 
+					v-show="subTitle"
+					:class="`badge badge-${themeClr}`" 
+					style="font-size:16px;"
+						
+				>
+					{{subTitle}}
+				</span>
+				
+			</h4>
+			<!-- <span :class="`badge badge-${themeClr}`">{{modalProps.title}}</span>		 -->
+		</template>
+	
+		<pre>{{ modalProps.content }}</pre>
+		
+		<!-- <template>
+			<TheForm 
+				:elements=""
+			>
+			
+			</TheForm>
+		</template> -->
+				
+		<template v-slot:modal-footer="{ ok, cancel, hide }">
+			<b>Custom Footer</b>
+			<!-- //Emulate built in modal footer ok and cancel button actions -->
+			<!-- <b-button size="sm" variant="success" @click="ok()"> -->
+			<b-button size="sm" variant="primary" @click="fetchFormData(fetchTrigger)">
+				{{fetchTriggerLabel}}
+			</b-button>
+			<b-button size="sm" variant="secondary" @click="cancel()">
+				取消
+			</b-button>
+			<!-- //Button with custom close trigger value -->
+			<b-button size="sm" variant="outline-secondary" @click="resetFormData()">
+				重置
+			</b-button>
+		</template>
+		
 	</b-modal>
 	
 </div>
@@ -204,6 +258,7 @@ import {
 	BCard,
 	BButton,
 	BBadge,
+	//BContainer,
 	BRow,
 	BCol,
 	BFormGroup,
@@ -237,11 +292,13 @@ export default {
 				{ value: 20, text: '20' },
 				{ value: 50, text: '50', }
 			],
-			infoModal: {
+			modalProps: {
 				id: 'info-modal',
 				title: '',
 				content: ''
-			}
+			},
+			fetchTrigger:'create',
+			
 		}
 	},
 	computed: {
@@ -262,6 +319,15 @@ export default {
 		fields:function(){
 			return this.setFields()
 		},
+		fetchTriggerLabel:function(){
+			let self=this
+			let label={
+					create:{en:'Create',chn:'新建'},
+					update:{en:'Update',chn:'更新'},
+			}
+			
+			return label[self.fetchTrigger][self.lang]
+		},
 		...mapGetters({
 			actNav:'actNavbar',
 			actItem:'actEntry'
@@ -273,13 +339,15 @@ export default {
 	},
 	watch:{
 		resLists:function(){
-			this.isBusy=true
-			//设置lists
-			this.setLists()
-			//设置fields
-			this.setFields()
+			let self=this
 			
-			this.isBusy=false
+			self.isBusy=true
+			//设置lists
+			self.setLists()
+			//设置fields
+			self.setFields()
+			
+			self.isBusy=false
 			return 
 		}
 	},
@@ -321,19 +389,49 @@ export default {
 			}
 			return {'show':showArr,'hide':hideArr}
 		},
-		getInfo(item, index, button) {
-			this.infoModal.title = `Row index: ${index}`
-			//this.infoModal.content = JSON.stringify(item, null, 2)
-			this.infoModal.content =item
-			this.$root.$emit('bv::show::modal', this.infoModal.id, button)
+		toggleModal(item, trigger, button) {
+			let self=this
+			
+			self.fetchTrigger=trigger
+			//self.modalProps.content = JSON.stringify(item, null, 2)
+			if(item.hasOwnProperty('topic')){
+				self.modalProps.title = item.topic
+			}
+			
+			if(item.hasOwnProperty('name')){
+				self.modalProps.title = item.name
+			}
+			
+			self.modalProps.content =item
+			//alert(item)
+			console.log(trigger,item)
+			console.log(self.fields)
+			
+			//self.$root.$emit('bv::show::modal', self.modalProps.id, button)
+			self.$root.$emit('bv::toggle::modal', self.modalProps.id, button)
 		},
-		resetInfoModal() {
-			this.infoModal.title = ''
-			this.infoModal.content = ''
+		resetModalInfo() {
+			this.modalProps.title = ''
+			this.modalProps.content = ''
+		},
+		//向后端提交数据，并显示后端处理结果
+		fetchFormData:function(trigger){
+			let self=this
+			let route=self.actItem.routeStr
+					
+			//console.log('fetchFormData()',trigger)
+			self.$root.$emit('bv::hide::modal', self.modalProps.id)
+			
+			alert('fetchFormData() | '+trigger+' | '+route)
+			
+		},
+		resetFormData(){
+			this.resetModalInfo()
 		},
 		...mapActions({
 			//getTableItemsBy: 'asyChangeTable'
 		}),
+		
 	},
 	components:{
 		
@@ -344,13 +442,17 @@ export default {
 		'b-card':BCard,
 		'b-button':BButton,
 		'b-form-group':BFormGroup,
+		//BContainer,
 		'b-row':BRow,
 		'b-col':BCol,
 		//'b-form-checkbox':BFormCheckbox,
 		'b-form-select':BFormSelect,
 		'b-badge':BBadge,
 		BMedia,
-		BImg
+		BImg,
+		
+		//动态引入
+		//TheForm:()=>import('@/components/TheForm'),
 		
 		/*
 		//动态引入
