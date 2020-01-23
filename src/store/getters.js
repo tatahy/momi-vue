@@ -8,6 +8,8 @@ export default {
 		let actNav=nav.items[nav.index]
 		
 		return actNav.props.themeClr
+		
+		//return this.actNav.themeClr
 						
 	},
 	actNavLabel:state=>{

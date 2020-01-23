@@ -195,7 +195,8 @@
 	<b-modal 
 		size="lg"
 		:id="modalProps.id" 
-		v-on:hide="resetModalInfo"
+		:hide="resetModalInfo"
+		:hide-footer="true"
 	>
 		<template v-slot:modal-title>
 			<h4 class="text-left align-text-bottom" >
@@ -213,32 +214,18 @@
 			<!-- <span :class="`badge badge-${themeClr}`">{{modalProps.title}}</span>		 -->
 		</template>
 	
-		<pre>{{ modalProps.content }}</pre>
+		<!-- <pre>{{ modalProps.content }}</pre> -->
 		
-		<!-- <template>
+		<template v-if="formTrigger">
 			<TheForm 
-				:elements=""
+				v-bind:elements="formElements"
+				v-bind:trigger="formTrigger"
+				v-bind:modalId="modalProps.id"
 			>
 			
 			</TheForm>
-		</template> -->
-				
-		<template v-slot:modal-footer="{ ok, cancel, hide }">
-			<b>Custom Footer</b>
-			<!-- //Emulate built in modal footer ok and cancel button actions -->
-			<!-- <b-button size="sm" variant="success" @click="ok()"> -->
-			<b-button size="sm" variant="primary" @click="fetchFormData(fetchTrigger)">
-				{{fetchTriggerLabel}}
-			</b-button>
-			<b-button size="sm" variant="secondary" @click="cancel()">
-				取消
-			</b-button>
-			<!-- //Button with custom close trigger value -->
-			<b-button size="sm" variant="outline-secondary" @click="resetFormData()">
-				重置
-			</b-button>
 		</template>
-		
+						
 	</b-modal>
 	
 </div>
@@ -285,6 +272,10 @@ export default {
 			isBusy:false,
 			perPage: 10,
 			currentPage: 1,
+			fields:{
+				hide:[],
+				show:[]
+			},
 			lists:[],
 			options: [
 				{ value: 5, text: '5' },
@@ -297,8 +288,8 @@ export default {
 				title: '',
 				content: ''
 			},
-			fetchTrigger:'create',
-			
+			formTrigger:'create',
+			formElements:[]
 		}
 	},
 	computed: {
@@ -316,18 +307,9 @@ export default {
 		total:function(){
 			return this.resLists.length
 		},
-		fields:function(){
-			return this.setFields()
-		},
-		fetchTriggerLabel:function(){
-			let self=this
-			let label={
-					create:{en:'Create',chn:'新建'},
-					update:{en:'Update',chn:'更新'},
-			}
-			
-			return label[self.fetchTrigger][self.lang]
-		},
+		//fields:function(){
+			//return this.setFields()
+		//},
 		...mapGetters({
 			actNav:'actNavbar',
 			actItem:'actEntry'
@@ -370,15 +352,15 @@ export default {
 		setFields(){
 			let self=this
 			let route=self.actItem.routeStr
-			let fields=FIELDS.hasOwnProperty(route)
+			let arr=FIELDS.hasOwnProperty(route)
 						?FIELDS[route]:[]
 			
 			let lang=self.lang
-			let showArr=[]
-			let hideArr=[]
+			let showArr=self.fields.show=[]
+			let hideArr=self.fields.hide=[]
 			
-			if(fields.length){
-				fields.forEach(field=>{
+			if(arr.length){
+				arr.forEach(field=>{
 					let label=field.label.hasOwnProperty(lang)
 								?field.label[lang]
 								:field.label.en
@@ -387,12 +369,48 @@ export default {
 					field.isShown?showArr.push(obj):hideArr.push(obj)
 				})
 			}
-			return {'show':showArr,'hide':hideArr}
+			return 
+		},
+		//根据this.fields，item得到各个form元素对应的绑定对象，用于后续的校验、提交等操作。
+		setFormElements(item){
+			let self=this
+			let elements=self.formElements=[]
+			let obj={key:'',value:''}
+			
+			let combineArr=arr=>{
+			
+				if(arr.length){
+					if(!Object.keys(item).length){
+						//每个数组元素el是对象,对象的复制要用Object.assign()
+						arr.forEach(el=>{
+							el.hasOwnProperty('formElement')?elements.push(Object.assign({},el)):''
+						})
+					}else{
+						//每个数组元素el是对象,对象的复制要用Object.assign()
+						arr.forEach(el=>{
+							if(item.hasOwnProperty(el.key) && el.hasOwnProperty('formElement')){
+								obj.key=el.key
+								obj.value=item[el.key]
+							
+								elements.push(Object.assign({},el,obj))
+							}
+						})
+					}				
+				}
+				
+				return elements
+			}
+			
+			combineArr(self.fields.show)
+			combineArr(self.fields.hide)
+			
+			
+			return elements
 		},
 		toggleModal(item, trigger, button) {
 			let self=this
 			
-			self.fetchTrigger=trigger
+			self.formTrigger=trigger
 			//self.modalProps.content = JSON.stringify(item, null, 2)
 			if(item.hasOwnProperty('topic')){
 				self.modalProps.title = item.topic
@@ -403,9 +421,13 @@ export default {
 			}
 			
 			self.modalProps.content =item
-			//alert(item)
-			console.log(trigger,item)
-			console.log(self.fields)
+		
+			//console.log(trigger,item)
+			//console.log(self.fields)
+			self.formElements=[]
+			self.setFormElements(item)
+			
+			
 			
 			//self.$root.$emit('bv::show::modal', self.modalProps.id, button)
 			self.$root.$emit('bv::toggle::modal', self.modalProps.id, button)
@@ -413,17 +435,6 @@ export default {
 		resetModalInfo() {
 			this.modalProps.title = ''
 			this.modalProps.content = ''
-		},
-		//向后端提交数据，并显示后端处理结果
-		fetchFormData:function(trigger){
-			let self=this
-			let route=self.actItem.routeStr
-					
-			//console.log('fetchFormData()',trigger)
-			self.$root.$emit('bv::hide::modal', self.modalProps.id)
-			
-			alert('fetchFormData() | '+trigger+' | '+route)
-			
 		},
 		resetFormData(){
 			this.resetModalInfo()
@@ -452,7 +463,7 @@ export default {
 		BImg,
 		
 		//动态引入
-		//TheForm:()=>import('@/components/TheForm'),
+		TheForm:()=>import('@/components/TheForm'),
 		
 		/*
 		//动态引入

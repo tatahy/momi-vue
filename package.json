@@ -21,7 +21,7 @@
     "@fortawesome/vue-fontawesome": "^0.1.8",
     "@vue/cli-plugin-babel": "^4.0.0",
     "@vue/cli-plugin-eslint": "^4.0.0",
-    "@vue/cli-service": "^4.0.0",
+    "@vue/cli-service": "^4.1.2",
     "babel-eslint": "^10.0.3",
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "^2.1.0",
@@ -41,8 +41,8 @@
       "eslint:recommended"
     ],
     "rules": {
-		"no-console": 1
-	},
+      "no-console": 1
+    },
     "parserOptions": {
       "parser": "babel-eslint"
     }
