@@ -24,18 +24,18 @@ export let fieldProps={
 }
 
 const FIELDSDEF={
-	SN:{isShown:true,tdClass:'text-center',key:'serial-number',label:{en:'S/N',chn:'序号'}},
-	ACTIONS:{isShown:true,tdClass:'text-right',key:'actions',label:{en:'Actions',chn:'操作'},sortable:false,},
+	SN:{isInDetail:false,tdClass:'text-center',key:'serial-number',label:{en:'S/N',chn:'序号'}},
+	ACTIONS:{isInDetail:false,tdClass:'text-right',key:'actions',label:{en:'Actions',chn:'操作'},sortable:false,},
 	DEFAULT:[
-		{isShown:true,tdClass:'text-center',key:'serial-number',label:{en:'S/N',chn:'序号'}},
-		{isShown:true,key:'key',label:{en:'Key',chn:'键名'}},
-		{isShown:true,key:'value',label:{en:'Value',chn:'键值'}},
+		{isInDetail:false,tdClass:'text-center',key:'serial-number',label:{en:'S/N',chn:'序号'}},
+		{isInDetail:false,key:'key',label:{en:'Key',chn:'键名'}},
+		{isInDetail:false,key:'value',label:{en:'Value',chn:'键值'}},
 	]
 }
 
 const SELECTOPTION={
-	FIRST:{value: null, text: '...请选择一项...',disabled: true },
-	LAST:{value: null, text: '---',disabled: true }
+	FIRST:{value: null, text: '...请选择一项...',disabled: true},
+	LAST:{value: null, text: '——',disabled: true }
 }
 
 //定义字段名称及在表单中的展现类型，各项中字段的定义顺序也是显示的顺序
@@ -43,8 +43,13 @@ const SELECTOPTION={
 export const FIELDS={
 	'supply-pat':[
 		FIELDSDEF.SN,
-		{isShown:true,key:'topic',label:{en:'Topic',chn:'题目'},formElement:{name:'input',type:'text'}},
-		{isShown:true,key:'type',label:{en:'Type',chn:'类型'},
+		//input
+		{isInDetail:false,key:'topic',label:{en:'Topic',chn:'题目'},formElement:{name:'input',type:'text'}},
+		{isInDetail:false,key:'patowner',label:{en:'Owner',chn:'所有人'},formElement:{name:'input',type:'text'}},
+		{isInDetail:true,key:'inventor',label:{en:'Inventor',chn:'发明人'},formElement:{name:'input',type:'text'}},
+		{isInDetail:true,key:'author',label:{en:'Author',chn:'撰写人'},formElement:{name:'input',type:'text'}},
+		//select
+		{isInDetail:false,key:'type',label:{en:'Type',chn:'类型'},
 			formElement:{
 				name:'select',
 				type:'',
@@ -60,13 +65,11 @@ export const FIELDS={
 				]
 			}
 		},
-		{isShown:true,key:'patowner',label:{en:'Owner',chn:'所有人'},formElement:{name:'input',type:'text'}},
-		{isShown:false,key:'inventor',label:{en:'Inventor',chn:'发明人'},formElement:{name:'input',type:'text'}},
-		{isShown:false,key:'author',label:{en:'Author',chn:'撰写人'},formElement:{name:'input',type:'text'}},
-		{isShown:false,key:'id',label:{en:'Id',chn:'系统编号'},formElement:''},
-		{isShown:false,key:'patnum',label:{en:'Patent No.',chn:'专利编号'},formElement:''},
+		//none
+		{isInDetail:false,key:'id',label:{en:'Id',chn:'系统编号'},formElement:''},
+		{isInDetail:true,key:'patnum',label:{en:'Patent No.',chn:'专利编号'},formElement:''},
 		FIELDSDEF.ACTIONS,
-			//{key:'',isShown:true,label:{}},
+			//{key:'',isInDetail:false,label:{}},
 		],
 	'supply-pro':FIELDSDEF.DEFAULT,
 	'supply-ach':FIELDSDEF.DEFAULT,
@@ -76,8 +79,23 @@ export const FIELDS={
 	'system-serv':FIELDSDEF.DEFAULT,
 	'mentor-material':[
 		FIELDSDEF.SN,
-		{isShown:true,key:'name',label:{en:'Name',chn:'姓名'},formElement:{name:'input',type:'text'}},
-		{isShown:false,key:'field',label:{en:'Field',chn:'专业领域'},
+		//input
+		{isInDetail:false,key:'name',label:{en:'Name',chn:'姓名'},formElement:{name:'input',type:'text'}},
+		{isInDetail:false,key:'research',label:{en:'Research',chn:'研究方向'},formElement:{name:'input',type:'text'}},
+		//select
+		{isInDetail:true,key:'type',label:{en:'Type',chn:'导师类型'},
+			formElement:{
+				name:'select',
+				type:'',
+				options:[
+					SELECTOPTION.FIRST,
+					{ value: '_TYPE1', text: '科研导师' },
+					{ value: '_TYPE2', text: '管理导师' },
+					SELECTOPTION.LAST
+				]
+			}
+		},
+		{isInDetail:true,key:'field',label:{en:'Field',chn:'专业领域'},
 			formElement:{
 				name:'select',
 				type:'',
@@ -92,26 +110,16 @@ export const FIELDS={
 				]
 			}
 		},
-		{isShown:true,key:'research',label:{en:'Research',chn:'研究方向'},formElement:{name:'input',type:'text'}},
-		{isShown:false,key:'title',label:{en:'Title',chn:'职衔'},formElement:{name:'textarea',type:''}},
-		{isShown:true,key:'position',label:{en:'Position',chn:'职务'},formElement:{name:'textarea',type:''}},
-		{isShown:false,key:'id',label:{en:'Id',chn:'系统编号'},formElement:''},
-		{isShown:false,key:'type',label:{en:'Type',chn:'导师类型'},
-			formElement:{
-				name:'select',
-				type:'',
-				options:[
-					SELECTOPTION.FIRST,
-					{ value: '_TYPE1', text: '科研导师' },
-					{ value: '_TYPE2', text: '管理导师' },
-					SELECTOPTION.LAST
-				]
-			}
-		},
-		{isShown:false,key:'profile',label:{en:'Profile',chn:'个人简介'},formElement:{name:'textarea',type:''}},
-		{isShown:false,key:'experience',label:{en:'Experience',chn:'个人经历'},formElement:{name:'textarea',type:''}},
+		//textarea
+		{isInDetail:true,key:'title',label:{en:'Title',chn:'头衔'},formElement:{name:'textarea',type:''}},
+		{isInDetail:false,key:'position',label:{en:'Position',chn:'职位'},formElement:{name:'textarea',type:''}},
+		{isInDetail:true,key:'profile',label:{en:'Profile',chn:'个人简介'},formElement:{name:'textarea',type:''}},
+		{isInDetail:true,key:'experience',label:{en:'Experience',chn:'个人经历'},formElement:{name:'textarea',type:''}},
+		
+		//none
+		{isInDetail:true,key:'id',label:{en:'Id',chn:'系统编号'},formElement:''},
 		FIELDSDEF.ACTIONS,
-		//{key:'',isShown:false,label:{}},
+		//{key:'',isInDetail:true,label:{}},
 	],
 	'mentor-computer':FIELDSDEF.DEFAULT,
 	'mentor-strategy':FIELDSDEF.DEFAULT,

@@ -3,6 +3,9 @@
 
 import {navbar,sidebar} from '@/conf/adminEntity.conf.js'
 
+const debug = process.env.NODE_ENV !== 'production'
+const BackEndUrl=debug?'http://localhost:8090':'';
+
 export default {
 	fetchCont:{
 		request:{
@@ -33,5 +36,6 @@ export default {
 		//最近一次高亮的sidebar中的item
 		prev:{}
 	},
+	url:BackEndUrl,
 	
 }

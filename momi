@@ -26,6 +26,7 @@
                 <File name="src\components\util-chart.js" />
                 <File name="src\components\util-fontawesome.js" />
                 <File name="src\components\util-the-table.js" />
+                <File name="src\components\TheForm.vue" />
             </Folder>
             <Folder name="scss">
                 <File name="src\scss\custom.scss" />

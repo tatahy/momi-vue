@@ -12,7 +12,7 @@
 			sticky-header="800px"
 			no-border-collapse
 			:head-row-variant="themeClr"
-			:fields="fields.show"			
+			:fields="getFieldsInDetail(false)"			
 			:items="lists"
 			:busy="isBusy"
 			:per-page="perPage"
@@ -135,8 +135,8 @@
 							</b-img>
 						</template>
 						<!-- <b-container fluid> -->
-						<b-row v-for="(obj, index) in fields.hide" :key="index">
-							<template v-if="obj.formElement">
+						<b-row v-for="(obj, index) in getFieldsInDetail()" :key="index">
+							<template v-if="obj.formElement && obj.isInDetail">
 							<b-col 
 								cols="3" 
 								class="text-right"> 
@@ -272,10 +272,7 @@ export default {
 			isBusy:false,
 			perPage: 10,
 			currentPage: 1,
-			fields:{
-				hide:[],
-				show:[]
-			},
+			fields:[],
 			lists:[],
 			options: [
 				{ value: 5, text: '5' },
@@ -352,24 +349,37 @@ export default {
 		setFields(){
 			let self=this
 			let route=self.actItem.routeStr
-			let arr=FIELDS.hasOwnProperty(route)
+			let defArr=FIELDS.hasOwnProperty(route)
 						?FIELDS[route]:[]
 			
 			let lang=self.lang
-			let showArr=self.fields.show=[]
-			let hideArr=self.fields.hide=[]
+			let fields=self.fields=[]
 			
-			if(arr.length){
-				arr.forEach(field=>{
-					let label=field.label.hasOwnProperty(lang)
-								?field.label[lang]
-								:field.label.en
-					let obj=Object.assign({},fieldProps,field,{'label':label})
+			if(defArr.length){
+				defArr.forEach(obj=>{
+					let label=obj.label.hasOwnProperty(lang)
+								?obj.label[lang]
+								:obj.label.en
+					let field=Object.assign({},fieldProps,obj,{'label':label})
 					//是要显示的才添加到fields.show中
-					field.isShown?showArr.push(obj):hideArr.push(obj)
+					fields.push(field)
+					
 				})
 			}
-			return 
+			return fields
+		},
+		getFieldsInDetail(isIn=true){
+			let self=this
+			let fields=self.fields.length?self.fields:self.setFields()
+			
+			let arr=[]
+			
+			fields.forEach(el=>{
+				if(isIn===el.isInDetail){
+					arr.push(el)
+				}		
+			})
+			return arr
 		},
 		//根据this.fields，item得到各个form元素对应的绑定对象，用于后续的校验、提交等操作。
 		setFormElements(item){
@@ -401,10 +411,8 @@ export default {
 				return elements
 			}
 			
-			combineArr(self.fields.show)
-			combineArr(self.fields.hide)
-			
-			
+			combineArr(self.fields)
+		
 			return elements
 		},
 		toggleModal(item, trigger, button) {

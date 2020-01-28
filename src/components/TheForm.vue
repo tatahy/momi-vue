@@ -2,9 +2,10 @@
 <div>
     <!-- @reset="onReset"  -->
 	<b-form 
-		@submit.stop.prevent="fetchFormData()" 
-		@reset.stop.prevent="resetForm()" 
-			
+		@submit.stop.prevent="fetchFormData()"
+		@reset.stop.prevent="resetForm()" 		
+		:id="formId"
+		
 	>
 		<!-- 
 		<b-form-group
@@ -26,7 +27,6 @@
 		
 		
 		<b-form-group
-			class="mb-4"
 			v-for="(el,index) in elements"
 			v-bind:key="index"
 			:id="`form-group-${index}`"
@@ -37,28 +37,13 @@
 		>
 			<template v-if="el.formElement.name=='input'">
 				<b-form-input
-					class
 					v-model="formData[index].value"
 					required
+					size="sm"	
 					:type="`${el.formElement.type}`"
 					:id="`form-element-${index}`"
 					:placeholder="formData[index].value?``:`...输入${elements[index].label}...`"
 				></b-form-input>
-			
-			</template>
-			<!-- max-rows="5" -->
-			<template v-if="el.formElement.name=='textarea'">
-				<b-form-textarea
-					v-model="formData[index].value"
-					required
-					
-					rows="3" 
-					:id="`form-element-${index}`"
-					:placeholder="formData[index].value?``:`...输入${elements[index].label}...`"
-				>
-					<pre>{{formData[index].value}}
-					</pre>
-				</b-form-textarea>
 			
 			</template>
 			
@@ -66,11 +51,34 @@
 				<b-form-select
 					v-model="formData[index].value"
 					required
+					size="sm"	
 					:id="`form-element-${index}`"
 					:options="el.formElement.options" 
 				>
-				
+					<!-- <template v-slot:first> -->
+						<!-- <b-form-select-option  -->
+							<!-- value=""  -->
+							<!-- disabled -->
+							<!-- selected -->
+						<!-- > -->
+							<!-- -- Please select an option --</b-form-select-option> -->
+					<!-- </template> -->
 				</b-form-select>
+			
+			</template>
+			<!-- max-rows="5" -->
+			<template v-if="el.formElement.name=='textarea'">
+				<b-form-textarea
+					v-model="formData[index].value"
+					required
+					size="sm"	
+					rows="3" 
+					:id="`form-element-${index}`"
+					:placeholder="formData[index].value?``:`...输入${elements[index].label}...`"
+				>
+					<pre>{{formData[index].value}}
+					</pre>
+				</b-form-textarea>
 			
 			</template>
 			
@@ -112,6 +120,7 @@ import {
 	BFormGroup,
 	BFormInput,
 	BFormSelect,
+	//BFormSelectOption,
 	BFormTextarea,
 	BButton,
 	
@@ -153,8 +162,9 @@ export default {
 	},
 	data:function(){
 		return {
-			formData:[]
-		
+			formId:`${this.modalId}-form`,
+			formData:[], 
+			
 		}
 	},
 	computed:{
@@ -167,21 +177,92 @@ export default {
 			
 			return label[self.trigger][self.lang]
 		},
-		
+		//resetForm中如何还原原有的值
+		/*
+		formData:{
+			get:function(){
+				return this.setFormData1()
+			},
+			set:function(){
+				return this.setFormData1()
+			}
+		},
+		*/
 		...mapGetters({
-			themeClr:'actNavThemeClr'
+			themeClr:'actNavThemeClr',
+			actEntry:'actEntry',
+			url:'getUrl'
 		}),
 		...mapState({}),
 	},
 	methods:{
 		//向后端提交数据，并显示后端处理结果
-		fetchFormData(){
+		fetchFormData:function(){
 			let self=this
+			let opt={
+				method:'POST',
+				headers: '',
+				body:''
+			}
+			let routeStr=self.actEntry.routeStr+'-'+self.trigger
+			let url=`${self.url}/${routeStr.split('-').join('/')}`
 			
-			//let route=self.actItem.routeStr
-			alert(self.trigger)
-					
-			//console.log('fetchFormData()',self.trigger)
+			/*
+			//use FormData()
+			//let data=new FormData(document.getElementById(self.formId))
+			let data=new FormData()
+			
+			data.set('oprt',self.trigger)
+			
+			self.formData.forEach(obj=>{
+				data.set(obj.key,obj.value)
+			})
+			opt.headers={
+					//'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'
+					//有文件上传必须用multipart/form-data
+					//'Content-Type':'multipart/form-data;boundary='+'---xx'
+					'Content-Type':'multipart/form-data'
+				}
+			opt.body=data
+			*/
+			
+			//use JSON
+			let data={}
+			
+			self.formData.forEach(obj=>{
+				data[obj.key]=obj.value
+			})
+			opt.headers={
+					//json字符串的编码形式
+					'Content-Type': 'application/json'
+				}
+			opt.body=JSON.stringify(data)
+			//opt.body=Object.assign({},data)
+			
+			
+			//alert('fetchFormData()')
+			
+			console.log(self.trigger)
+			console.log(opt)
+			
+			console.log(data)
+			console.log(self.formData)
+			
+			fetch(url,opt)
+			.then(res=>{
+				//console.log(res)
+				//if(res.ok)
+				return res.json()
+				//return res.formData()
+				//return res.blob()
+				
+			})
+			.then(cont=>{
+				console.log('cont: ')
+				console.log(cont)
+				self.closeModal()
+			
+			})
 			
 			//self.$root.$emit('bv::hide::modal', self.modalProps.id)
 			
@@ -228,13 +309,30 @@ export default {
 			return self.formData
 		
 		},
-		resetForm() {
-			//this.setFormData()
+		setFormData1(){
+			let arr=[]
 			
-			this.$nextTick(() => {
-				this.setFormData()
+			this.elements.forEach(el=>{
+				arr.push({'key':el.key,'value':el.value})
 			})
+			
+			return arr
+		
 		},
+		
+		resetForm() {
+			//this.formData=this.setFormData1()
+			
+			
+			this.$nextTick(function() {
+				this.setFormData()
+				//this.formData=this.setFormData1()
+				//console.log(this.formData)
+				
+			})
+			
+		},
+		
 		...mapActions({})
 	},
 	components:{
@@ -242,6 +340,7 @@ export default {
 		BFormGroup,
 		BFormInput,
 		BFormSelect,
+		//BFormSelectOption,
 		BFormTextarea,
 		BButton,
 		
@@ -249,12 +348,11 @@ export default {
 	
 	created(){
 		this.setFormData()
-		console.log(this.formData)
+		//console.log(this.formData)
 	},
 	destroyed(){
 		this.formData=[]
-	}
-	
+	}	
 	
 
 }
