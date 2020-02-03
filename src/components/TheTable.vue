@@ -1,7 +1,7 @@
 <template>
 <div class="overflow-auto">
 		
-	<!-- <div class="text-left"> -->
+	<!-- <div class="text-left"> v-on:event-table-refesh="refeshTable(trigger,listIndex)"-->
 		
 		<b-table class="border-bottom"
 			id="my-talbe"
@@ -18,6 +18,7 @@
 			:per-page="perPage"
 			:current-page="currentPage"
 			small
+			
 		>
 			<template v-slot:table-caption >
 				<h4 class="text-center align-text-bottom" >
@@ -98,7 +99,7 @@
 					size='sm'
 					variant="primary"
 					class="py-0 px-1 ml-1 mt-1"					
-					v-on:click="toggleModal(row.item, 'update', $event.target)" 
+					v-on:click="toggleModal(row, 'update', $event.target)" 
 				>
 					更新
 				</b-button>
@@ -214,13 +215,15 @@
 			<!-- <span :class="`badge badge-${themeClr}`">{{modalProps.title}}</span>		 -->
 		</template>
 	
-		<!-- <pre>{{ modalProps.content }}</pre> -->
+		<!-- <pre>{{ modalProps.item }}</pre> -->
 		
 		<template v-if="formTrigger">
 			<TheForm 
 				v-bind:elements="formElements"
-				v-bind:trigger="formTrigger"
 				v-bind:modalId="modalProps.id"
+				v-bind:trigger="formTrigger"
+				v-bind:listIndex="modalProps.itemIndex"
+				v-on:event-table-refesh="refeshTable()"
 			>
 			
 			</TheForm>
@@ -283,7 +286,8 @@ export default {
 			modalProps: {
 				id: 'info-modal',
 				title: '',
-				content: ''
+				item: '',
+				itemIndex:'',
 			},
 			formTrigger:'create',
 			formElements:[]
@@ -317,6 +321,7 @@ export default {
 		}),
 	},
 	watch:{
+		/*
 		resLists:function(){
 			let self=this
 			
@@ -329,14 +334,48 @@ export default {
 			self.isBusy=false
 			return 
 		}
+		*/
+		resLists:{
+			handler: function(){
+				let self=this
+				
+				self.isBusy=true
+				//设置lists
+				self.setLists()
+				//设置fields
+				self.setFields()
+				
+				self.isBusy=false
+				
+				//console.log('TheTable-watch() ')
+				return console.log('TheTable-watch() ')
+			},
+			deep: true,
+			immediate: true
+		}
+		
 	},
 	methods: {
 		setLists(){
+		//setLists(idArr=[]){
 			let self=this
 			let resLists=self.resLists
 			let lists=self.lists=[]
+			//let lists=[]
+			
+			/*
+			if(idArr.length){
+				console.log(idArr.length)
+				idArr.forEach(id=>{
+					self.lists[id]=Object.assign({},resLists[id])
+				})
+				return
+			}
+			*/
 			//添加sn项，并逐项复制转化为TheTable自己的数据属性，方便修改，
+			//lists=[]
 			if(resLists.length){
+		
 				resLists.forEach((list,idx)=>{
 				//list为对象，必须用Object.assign()进行复制，否则就是对象的浅拷贝（按引用复制）
 					if(typeof list =='object'){
@@ -344,6 +383,8 @@ export default {
 					}
 				})
 			}
+			
+			//console.log(lists)
 			return 
 		},
 		setFields(){
@@ -415,11 +456,13 @@ export default {
 		
 			return elements
 		},
-		toggleModal(item, trigger, button) {
+		toggleModal(row, trigger, button) {
 			let self=this
+			let item=row.item
 			
-			self.formTrigger=trigger
-			//self.modalProps.content = JSON.stringify(item, null, 2)
+			self.modalProps.item =item
+			self.modalProps.itemIndex =row.index
+			//self.modalProps.item = JSON.stringify(item, null, 2)
 			if(item.hasOwnProperty('topic')){
 				self.modalProps.title = item.topic
 			}
@@ -428,10 +471,9 @@ export default {
 				self.modalProps.title = item.name
 			}
 			
-			self.modalProps.content =item
-		
 			//console.log(trigger,item)
 			//console.log(self.fields)
+			self.formTrigger=trigger
 			self.formElements=[]
 			self.setFormElements(item)
 			
@@ -440,9 +482,25 @@ export default {
 			//self.$root.$emit('bv::show::modal', self.modalProps.id, button)
 			self.$root.$emit('bv::toggle::modal', self.modalProps.id, button)
 		},
+		refeshTable(){
+			let self=this
+			//let listIndex=self.modalProps.itemIndex
+			/*
+			
+			let trigger=self.formTrigger
+			
+			
+			console.log('event-table-refesh')
+			console.log(trigger+listIndex)
+			*/
+			//self.setLists([listIndex])
+			self.setLists()
+		
+		},
 		resetModalInfo() {
 			this.modalProps.title = ''
-			this.modalProps.content = ''
+			this.modalProps.item = ''
+			this.modalProps.itemIndex = ''
 		},
 		resetFormData(){
 			this.resetModalInfo()
@@ -486,7 +544,22 @@ export default {
 		*/
 	},
 	mounted(){
+		/*
+		this.$on('event-table-refesh', function(trigger,listIndex){
+				console.log('event-table-refesh')
+				console.log(trigger+listIndex)
+			}
 		
+		)
+		
+		
+		this.$listeners{'event-table-refesh', function(trigger,listIndex){
+				console.log('event-table-refesh')
+				console.log(trigger+listIndex)
+			}
+		
+		}	
+		*/
 		//return this.lists=this.resLists.slice()
 	}
 

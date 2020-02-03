@@ -128,6 +128,17 @@ export default {
 		state.fetchCont=Object.assign({},state.fetchCont,payload)
 		//console.log(payload)
 	},
+	updateFetchContResponseList(state,payload){
+		let index=payload.index
+		let list=state.fetchCont.response.lists[index]
+		
+		state.fetchCont.response.lists[index]=Object.assign({},list,payload.list)
+		console.log('updateFetchContResponseList():')
+		console.log(payload)
+		
+		
+	},
+	
 	updateActiveEntry(state,payload={route:'',index:0}){
 		let index=payload.hasOwnProperty('index')?payload.index:-1
 		let route=payload.hasOwnProperty('route')?payload.route:''

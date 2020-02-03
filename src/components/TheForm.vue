@@ -1,8 +1,8 @@
 <template>
 <div>
-    <!-- @reset="onReset"  -->
+    <!-- @reset="onReset" @submit.stop.prevent="fetchFormData()" -->
 	<b-form 
-		@submit.stop.prevent="fetchFormData()"
+		@submit="fetchFormData($event)"
 		@reset.stop.prevent="resetForm()" 		
 		:id="formId"
 		
@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import { mapState,mapGetters, mapActions } from 'vuex'
+import { mapState,mapGetters, mapActions,mapMutations } from 'vuex'
 
 //引入BsV的component
 import { 
@@ -159,6 +159,10 @@ export default {
 			type:String,
 			required: true,
 		},
+		listIndex:{
+			type:Number,
+			required: true,
+		},
 	},
 	data:function(){
 		return {
@@ -197,7 +201,7 @@ export default {
 	},
 	methods:{
 		//向后端提交数据，并显示后端处理结果
-		fetchFormData:function(){
+		fetchFormData:function($evt){
 			let self=this
 			let opt={
 				method:'POST',
@@ -206,6 +210,8 @@ export default {
 			}
 			let routeStr=self.actEntry.routeStr+'-'+self.trigger
 			let url=`${self.url}/${routeStr.split('-').join('/')}`
+			
+			$evt.preventDefault()
 			
 			/*
 			//use FormData()
@@ -240,13 +246,13 @@ export default {
 			//opt.body=Object.assign({},data)
 			
 			
-			//alert('fetchFormData()')
-			
+			/*
 			console.log(self.trigger)
 			console.log(opt)
 			
 			console.log(data)
 			console.log(self.formData)
+			*/
 			
 			fetch(url,opt)
 			.then(res=>{
@@ -260,7 +266,28 @@ export default {
 			.then(cont=>{
 				console.log('cont: ')
 				console.log(cont)
-				self.closeModal()
+				
+				
+				if(cont.success){
+					//修改state.fetchCont.response.lists[self.listIndex]的内容
+					self.updateList({index:self.listIndex,list:data})
+					
+					//刷新表格，不起作用？？
+					//self.$root.$emit('bv::refresh::table', 'my-table')
+					
+					//注册一个事件，在TheForm的父组件中进行刷新	
+					self.$emit('event-table-refesh')
+					console.log('emit event-table-refesh')
+					/*
+					console.log(self.$parent)
+					console.log(self.$parent.$emit)
+					console.log(self.$parent.$attrs)
+					*/
+					self.closeModal()
+					
+				}
+				
+			
 			
 			})
 			
@@ -333,7 +360,11 @@ export default {
 			
 		},
 		
-		...mapActions({})
+		...mapActions({}),
+		...mapMutations({
+			updateList:'updateFetchContResponseList',
+		}),
+		
 	},
 	components:{
 		BForm,
