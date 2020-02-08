@@ -1,8 +1,10 @@
 <template>
 <div>
     <!-- @reset="onReset" @submit.stop.prevent="fetchFormData()" -->
+	<!-- @submit="fetchFormData($event)" -->
 	<b-form 
-		@submit="fetchFormData($event)"
+		
+		@submit="fetchFormData"
 		@reset.stop.prevent="resetForm()" 		
 		:id="formId"
 		
@@ -84,8 +86,9 @@
 			
 		</b-form-group>
 		
+		<hr class="mw-100" >
 
-		<div class="text-right">
+		<div class="text-right ">
 			<b-button 
 				class="mr-1"
 				size="sm" 
@@ -161,6 +164,7 @@ export default {
 		},
 		listIndex:{
 			type:Number,
+			default:-1,
 			required: true,
 		},
 	},
@@ -177,10 +181,24 @@ export default {
 			let label={
 					create:{en:'Create',chn:'新增'},
 					update:{en:'Update',chn:'更新'},
+					retrieve:{en:'Retrieve',chn:'查询'},
+					'delete':{en:'Delete',chn:'删除'},
 			}
 			
 			return label[self.trigger][self.lang]
 		},
+		themeClr:function(){
+			return this.actNavbar.themeClr
+		},
+		sysEnt:function(){
+			return this.actEntry.sysEnt
+		},
+		routeStr:function(){
+			
+			
+			return this.actEntry.routeStr
+		},
+			
 		//resetForm中如何还原原有的值
 		/*
 		formData:{
@@ -192,26 +210,31 @@ export default {
 			}
 		},
 		*/
-		...mapGetters({
-			themeClr:'actNavThemeClr',
-			actEntry:'actEntry',
-			url:'getUrl'
+		...mapGetters([
+			'actNavbar',
+			'actEntry',
+		]),
+		...mapState({
+			sidebarIndex:state=>state.sidebar.index,
+			host:state=>state.host,
 		}),
-		...mapState({}),
 	},
 	methods:{
 		//向后端提交数据，并显示后端处理结果
-		fetchFormData:function($evt){
+		//fetchFormData:function($evt){
+		fetchFormData:function(event){
+			event.preventDefault()
+			
 			let self=this
 			let opt={
 				method:'POST',
+				//mode: 'no-cors',
 				headers: '',
 				body:''
 			}
-			let routeStr=self.actEntry.routeStr+'-'+self.trigger
-			let url=`${self.url}/${routeStr.split('-').join('/')}`
+			let url=`${self.host}/${self.routeStr.split('-').join('/')}/${self.trigger}`
 			
-			$evt.preventDefault()
+			//let actEntryChange
 			
 			/*
 			//use FormData()
@@ -264,34 +287,39 @@ export default {
 				
 			})
 			.then(cont=>{
-				console.log('cont: ')
-				console.log(cont)
-				
+				//console.log('cont: ')
+				//console.log(cont)
 				
 				if(cont.success){
-					//修改state.fetchCont.response.lists[self.listIndex]的内容
-					self.updateList({index:self.listIndex,list:data})
+					//let routeStr=self.routeStr===cont.routeStr?self.routeStr:cont.routeStr
+					
+					/*
+					if(self.routeStr===cont.routeStr){
+						self.updateList({index:self.listIndex,list:data})
+					}else{
+						self.asyChangeSideItem(cont.routeStr)
+					}
+					*/
+					
+					self.asyChangeSideItem(cont.routeStr)
+					console.log(self.routeStr)
+					console.log(cont.routeStr)
+					
+					
+					
+					self.$root.$emit('bv::hide::modal', self.modalId)
 					
 					//刷新表格，不起作用？？
 					//self.$root.$emit('bv::refresh::table', 'my-table')
 					
-					//注册一个事件，在TheForm的父组件中进行刷新	
-					self.$emit('event-table-refesh')
-					console.log('emit event-table-refesh')
-					/*
-					console.log(self.$parent)
-					console.log(self.$parent.$emit)
-					console.log(self.$parent.$attrs)
-					*/
-					self.closeModal()
+					//注册一个事件，通知使用TheForm的组件
+					self.$emit('event-form-submit',cont)
 					
-				}
-				
-			
+				}	
 			
 			})
 			
-			//self.$root.$emit('bv::hide::modal', self.modalProps.id)
+			//self.$root.$emit('bv::hide::modal', self.modalId)
 			
 		},
 		closeModal(){
@@ -360,9 +388,11 @@ export default {
 			
 		},
 		
-		...mapActions({}),
+		...mapActions([
+			'asyChangeSideItem'
+		]),
 		...mapMutations({
-			updateList:'updateFetchContResponseList',
+			updateList:'updateFetchContResponseList'
 		}),
 		
 	},

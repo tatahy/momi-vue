@@ -26,7 +26,9 @@
 					:variant="`outline-${themeClr}`"
 				>
 					<template v-if="cat.isPressed">
-						<span class="font-weight-bold">[{{cat.label}}] </span>
+						<!-- <span class="font-weight-bold">[{{cat.label}}] </span> -->
+						<span 
+						:class="`font18px badge badge-${themeClr}`">{{cat.label}}</span>
 						<span class="when-opened"><font-awesome-icon :icon="['fas','minus-square']" /></span> 
 						<span class="when-closed"><font-awesome-icon :icon="['fas','plus-square']" /></span>
 						<!-- <span class="when-opened"><font-awesome-icon :icon="iconFas.minus" /></span>  -->

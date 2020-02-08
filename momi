@@ -22,11 +22,11 @@
                 <File name="src\components\TheSidebar.vue" />
                 <File name="src\components\TheSideItems.vue" />
                 <File name="src\components\TheTable.vue" />
+                <File name="src\components\TheForm.vue" />
                 <File name="src\components\util-bootstrap-vue.js" />
                 <File name="src\components\util-chart.js" />
                 <File name="src\components\util-fontawesome.js" />
                 <File name="src\components\util-the-table.js" />
-                <File name="src\components\TheForm.vue" />
             </Folder>
             <Folder name="scss">
                 <File name="src\scss\custom.scss" />
@@ -185,19 +185,6 @@
         </Folder>
         <Folder name="route">
             <File name="D:\wamp64\www\momi-tp5\route\route.php" />
-        </Folder>
-        <Folder name="runtime">
-            <Folder name="cache" />
-            <Folder name="log">
-                <Folder name="202001">
-                    <File name="D:\wamp64\www\momi-tp5\runtime\log\202001\14.log" />
-                    <File name="D:\wamp64\www\momi-tp5\runtime\log\202001\15.log" />
-                </Folder>
-            </Folder>
-            <Folder name="temp">
-                <File name="D:\wamp64\www\momi-tp5\runtime\temp\9a5752638a1cfaadba4f312571580a23.php" />
-            </Folder>
-            <File name="D:\wamp64\www\momi-tp5\runtime\.gitignore" />
         </Folder>
         <Folder name="thinkphp">
             <Folder name="lang">

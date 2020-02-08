@@ -108,45 +108,20 @@ export default {
 		},
 		//根据routeNow找到对应的path，
 		//再由path访问sidebar修改对应的isActive,isPressed等属性
-		itemClick(routeNow){
+		//itemClick(routeNow){
+		itemClick:async function(routeNow){
 			let self=this
 			let routeOld=self.routeStr
 
-			//let opt={index:self.index,route:routeNow,name:'',val:''}
-			
-			let opt={
-					index:self.index,
-					route:routeNow,
-					props:[]
-				}
-					
 			if(routeNow!==routeOld){
-				//将fetchCont.request.routeStr修改为routeNow
-				self.changeRouteStr({routeStr:routeNow})
-				
-				//任意时刻Sidebar中的Item只有一项的isActive=true
-				//任意时刻Sidebar中的button只有一项的isPressed=true
-				opt.props=[
-					{name:'isActive',val:true},
-					{name:'isPressed',val:true}
-				]
-				self.setProps(opt)
-				
-				self.changeEntry({route:routeNow,index:self.index})
-				
-				self.setIsBriefContent(false)
+				await self.asyChangeSideItem(routeNow)
 			}
 		},
-		... mapMutations({
-			setProps:'setSidebarProps',
-			setIsBriefContent:'updateIsBriefContent',
-			changeEntry:'updateActiveEntry',
-			
-		}),		
-		... mapActions({
-			changeRouteStr:'asyUpdateFetchCont'
-			
-		})
+		... mapMutations([
+		]),		
+		... mapActions([
+			'asyChangeSideItem',
+		])
 	},
 	components:{
 		'b-list-group':BListGroup,

@@ -2,12 +2,13 @@
   <div id="app">
     <TheNavbar />
 
-	<TheContainer>
+	<TheContainer />
+	<!-- <TheContainer>
 		<template v-slot:leftSide>
 			<TheSidebar />
 		</template>
 	
-	</TheContainer>
+	</TheContainer> -->
 
   </div>
 </template>
@@ -17,7 +18,7 @@
 //引入各个组件,'@'已在webpack配置文件中的resolve中定义为‘/src/’
 import TheNavbar from '@/components/TheNavbar'
 //import TheContainer from '@/components/TheContainer'
-import TheSidebar from '@/components/TheSidebar'
+//import TheSidebar from '@/components/TheSidebar'
 
 
 
@@ -27,7 +28,7 @@ export default {
 	components: {
 		
 		TheNavbar,
-		TheSidebar,
+		//TheSidebar,
 		/*TheContainer,
 		
 		*/

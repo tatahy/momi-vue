@@ -9,7 +9,7 @@
 			v-bind:class="`border-${themeClr}`"
 		>
 			<slot name="leftSide">
-				<!-- <TheSidebar /> -->
+				<TheSidebar />
 			</slot>
 		</div>
 			<!-- v-bind:style="`marginLeft:${showSidebar}?200px;:0px;`" -->
@@ -36,11 +36,19 @@
 			<main class="text-center">
 				
 				<template v-if="isBriefContent">
-					<TheChart chart-id='myChart' chart-type='horizontalBar' />
+					<TheChart 
+						chart-id='myChart' 			
+						chart-type='horizontalBar' 
+					>
+					</TheChart>
 				</template>
 				
 				<template v-else>
-					<TheTable lang='chn'/>
+					<TheTable 
+						lang='chn'
+						v-on:event-table-refresh="refreshState"
+					>
+					</TheTable>
 				</template>
 		
 			</main>
@@ -127,6 +135,12 @@ export default {
 		},
 		showAdvice: function (advice) {
 			alert(advice)
+		},
+		refreshState:function(cont){
+		
+			console.log('TheContainer response on event-table-refresh.')
+
+			console.log(cont)
 		}
 	},
 	
@@ -139,6 +153,7 @@ export default {
 		/*'b-container':()=>aGetBsv('b-container'),
 		'b-button':()=>aGetBsv('b-button'),
 		'font-awesome-icon':()=>aGetFa(faObj),*/
+		TheSidebar:()=>import('@/components/TheSidebar'),
 		TheChart:()=>import('@/components/TheChart'),
 		TheTable:()=>import('@/components/TheTable'),
 		

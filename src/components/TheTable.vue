@@ -13,7 +13,7 @@
 			no-border-collapse
 			:head-row-variant="themeClr"
 			:fields="getFieldsInDetail(false)"			
-			:items="lists"
+			:items="resLists"
 			:busy="isBusy"
 			:per-page="perPage"
 			:current-page="currentPage"
@@ -195,6 +195,7 @@
 	<!-- Info modal :title="modalProps.title" -->
 	<b-modal 
 		size="lg"
+		scrollable
 		:id="modalProps.id" 
 		:hide="resetModalInfo"
 		:hide-footer="true"
@@ -217,13 +218,16 @@
 	
 		<!-- <pre>{{ modalProps.item }}</pre> -->
 		
-		<template v-if="formTrigger">
+		<template 
+			v-slot:default
+			v-if="formTrigger"
+		>
 			<TheForm 
 				v-bind:elements="formElements"
 				v-bind:modalId="modalProps.id"
 				v-bind:trigger="formTrigger"
 				v-bind:listIndex="modalProps.itemIndex"
-				v-on:event-table-refesh="refeshTable()"
+				v-on:event-form-submit="refeshTable"
 			>
 			
 			</TheForm>
@@ -243,7 +247,7 @@ import { mapState,mapGetters, mapActions } from 'vuex'
 //引入BsV的component
 import { 
 	BTable,
-	BModal,
+	//BModal,
 	BPagination,
 	BCard,
 	BButton,
@@ -255,8 +259,15 @@ import {
 	//BFormCheckbox,
 	BFormSelect, 
 	BMedia,
-	BImg
+	BImg,
+	//modal插件
+	ModalPlugin
+	
 } from 'bootstrap-vue'
+
+import Vue from 'vue'
+//使用modal插件
+Vue.use(ModalPlugin)
 
 import {fieldProps,FIELDS} from '@/components/util-the-table'
 
@@ -276,7 +287,7 @@ export default {
 			perPage: 10,
 			currentPage: 1,
 			fields:[],
-			lists:[],
+			
 			options: [
 				{ value: 5, text: '5' },
 				{ value: 10, text: '10' },
@@ -308,6 +319,9 @@ export default {
 		total:function(){
 			return this.resLists.length
 		},
+		routeStr:function(){
+			return this.actItem.routeStr
+		},
 		//fields:function(){
 			//return this.setFields()
 		//},
@@ -317,24 +331,43 @@ export default {
 		}),
 		...mapState({
 			//表格内容
-			resLists:state => state.fetchCont.response.lists,
+			resLists:state => {
+				let lists=state.fetchCont.response.lists
+				let arr=[]
+				
+				if(lists.length){
+					//添加sn项，并逐项复制转化为TheTable自己的数据属性，
+					//方便修改。
+					lists.forEach((list,idx)=>{
+						if(typeof list =='object'){
+							//list为对象，必须用Object.assign()进行复制，
+							//否则就是对象的浅拷贝（按引用复制）
+							arr[idx]=Object.assign({},{'serial-number':idx*1+1},list)
+							
+						}
+					})
+				}
+				return arr
+			},
 		}),
 	},
 	watch:{
-		/*
+		
 		resLists:function(){
 			let self=this
 			
 			self.isBusy=true
-			//设置lists
-			self.setLists()
+			
 			//设置fields
 			self.setFields()
+			
+			console.log('ThetTable watch: resLists')
+			console.log(self.fields)
 			
 			self.isBusy=false
 			return 
 		}
-		*/
+		/*
 		resLists:{
 			handler: function(){
 				let self=this
@@ -348,12 +381,12 @@ export default {
 				self.isBusy=false
 				
 				//console.log('TheTable-watch() ')
-				return console.log('TheTable-watch() ')
+				return 
 			},
 			deep: true,
-			immediate: true
+			//immediate: true
 		}
-		
+		*/
 	},
 	methods: {
 		setLists(){
@@ -389,12 +422,12 @@ export default {
 		},
 		setFields(){
 			let self=this
-			let route=self.actItem.routeStr
-			let defArr=FIELDS.hasOwnProperty(route)
-						?FIELDS[route]:[]
+			let routeStr=self.routeStr
+			let defArr=FIELDS.hasOwnProperty(routeStr)
+						?FIELDS[routeStr]:FIELDS['default']
 			
 			let lang=self.lang
-			let fields=self.fields=[]
+			let fields=[]
 			
 			if(defArr.length){
 				defArr.forEach(obj=>{
@@ -407,11 +440,13 @@ export default {
 					
 				})
 			}
+			self.fields=fields
 			return fields
 		},
 		getFieldsInDetail(isIn=true){
 			let self=this
-			let fields=self.fields.length?self.fields:self.setFields()
+			//let fields=self.fields.length?self.fields:self.setFields()
+			let fields=self.setFields()
 			
 			let arr=[]
 			
@@ -458,7 +493,11 @@ export default {
 		},
 		toggleModal(row, trigger, button) {
 			let self=this
-			let item=row.item
+			let item={}
+			let rowDefault={item:'',index:-1}
+			
+			row=Object.assign({},rowDefault,row)
+			item=row.item
 			
 			self.modalProps.item =item
 			self.modalProps.itemIndex =row.index
@@ -482,7 +521,7 @@ export default {
 			//self.$root.$emit('bv::show::modal', self.modalProps.id, button)
 			self.$root.$emit('bv::toggle::modal', self.modalProps.id, button)
 		},
-		refeshTable(){
+		refeshTable:function(cont){
 			let self=this
 			//let listIndex=self.modalProps.itemIndex
 			/*
@@ -494,8 +533,37 @@ export default {
 			console.log(trigger+listIndex)
 			*/
 			//self.setLists([listIndex])
-			self.setLists()
+			
+			
+			console.log('TheTable, refreshTable()')
+			
+			console.log(cont)
+			if(cont.success){
+				//self.setLists()
+			//注册一个事件，通知使用TheTable的组件
+				self.$emit('event-table-refresh',cont)
+				self.showMsgBox('成功')
+			}
 		
+		},
+		showMsgBox(msg) {
+			//使用BSV中的简单msgBox
+			this.$bvModal.msgBoxOk(msg,{
+				title: 'Confirmation',
+				size: 'sm',
+				buttonSize: 'sm',
+				okVariant: 'success',
+				headerClass: 'p-2 border-bottom-0',
+				footerClass: 'p-2 border-top-0',
+				centered: true
+			})
+			.then(value => {
+				console.log(value)
+				console.log(msg)
+			})
+			.catch(err => {
+				console.log(err)// An error occurred
+			})
 		},
 		resetModalInfo() {
 			this.modalProps.title = ''
@@ -514,7 +582,7 @@ export default {
 		
 		//引入BSV的component
 		'b-table':BTable,
-		'b-modal':BModal,
+		//'b-modal':BModal,
 		'b-pagination':BPagination,
 		'b-card':BCard,
 		'b-button':BButton,

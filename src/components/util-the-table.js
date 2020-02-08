@@ -23,6 +23,11 @@ export let fieldProps={
 	stickyColumn:'',		//Boolean
 }
 
+const SELECTOPTION={
+	FIRST:{value: null, text: '...请选择一项...',disabled: true},
+	LAST:{value: null, text: '——',disabled: true }
+}
+
 const FIELDSDEF={
 	SN:{isInDetail:false,tdClass:'text-center',key:'serial-number',label:{en:'S/N',chn:'序号'}},
 	ACTIONS:{isInDetail:false,tdClass:'text-right',key:'actions',label:{en:'Actions',chn:'操作'},sortable:false,},
@@ -33,55 +38,11 @@ const FIELDSDEF={
 	]
 }
 
-const SELECTOPTION={
-	FIRST:{value: null, text: '...请选择一项...',disabled: true},
-	LAST:{value: null, text: '——',disabled: true }
-}
-
-//定义字段名称及在表单中的展现类型，各项中字段的定义顺序也是显示的顺序
-//根据routeStr的值进行定义
-export const FIELDS={
-	'supply-pat':[
-		FIELDSDEF.SN,
-		//input
-		{isInDetail:false,key:'topic',label:{en:'Topic',chn:'题目'},formElement:{name:'input',type:'text'}},
-		{isInDetail:false,key:'patowner',label:{en:'Owner',chn:'所有人'},formElement:{name:'input',type:'text'}},
-		{isInDetail:true,key:'inventor',label:{en:'Inventor',chn:'发明人'},formElement:{name:'input',type:'text'}},
-		{isInDetail:true,key:'author',label:{en:'Author',chn:'撰写人'},formElement:{name:'input',type:'text'}},
-		//select
-		{isInDetail:false,key:'type',label:{en:'Type',chn:'类型'},
-			formElement:{
-				name:'select',
-				type:'',
-				options:[
-					SELECTOPTION.FIRST,
-					{ value: '_PATT1', text: '发明专利' },
-					{ value: '_PATT2', text: '实用新型专利' },
-					{ value: '_PATT3', text: '外观设计专利' },
-					{ value: '_PATT4', text: '软件版权' },
-					{ value: '_PATT5', text: '著作权' },
-					{ value: '_PATT6', text: '集成电路图' },
-					SELECTOPTION.LAST
-				]
-			}
-		},
-		//none
-		{isInDetail:false,key:'id',label:{en:'Id',chn:'系统编号'},formElement:''},
-		{isInDetail:true,key:'patnum',label:{en:'Patent No.',chn:'专利编号'},formElement:''},
-		FIELDSDEF.ACTIONS,
-			//{key:'',isInDetail:false,label:{}},
-		],
-	'supply-pro':FIELDSDEF.DEFAULT,
-	'supply-ach':FIELDSDEF.DEFAULT,
-	'supply-sol':FIELDSDEF.DEFAULT,
-	'system-env':FIELDSDEF.DEFAULT,
-	'system-conf':FIELDSDEF.DEFAULT,
-	'system-serv':FIELDSDEF.DEFAULT,
-	'mentor-material':[
+const FIELDSMENTOR=[
 		FIELDSDEF.SN,
 		//input
 		{isInDetail:false,key:'name',label:{en:'Name',chn:'姓名'},formElement:{name:'input',type:'text'}},
-		{isInDetail:false,key:'research',label:{en:'Research',chn:'研究方向'},formElement:{name:'input',type:'text'}},
+		{isInDetail:false,key:'research',label:{en:'Research',chn:'研究方向'},formElement:{name:'textarea',type:''}},
 		//select
 		{isInDetail:true,key:'type',label:{en:'Type',chn:'导师类型'},
 			formElement:{
@@ -120,11 +81,54 @@ export const FIELDS={
 		{isInDetail:true,key:'id',label:{en:'Id',chn:'系统编号'},formElement:''},
 		FIELDSDEF.ACTIONS,
 		//{key:'',isInDetail:true,label:{}},
+]
+	
+	
+//定义字段名称及在表单中的展现类型，各项中字段的定义顺序也是显示的顺序
+//根据routeStr的值进行定义
+export const FIELDS={
+	'supply-pat':[
+		FIELDSDEF.SN,
+		//input
+		{isInDetail:false,key:'topic',label:{en:'Topic',chn:'题目'},formElement:{name:'input',type:'text'}},
+		{isInDetail:false,key:'patowner',label:{en:'Owner',chn:'所有人'},formElement:{name:'input',type:'text'}},
+		{isInDetail:true,key:'inventor',label:{en:'Inventor',chn:'发明人'},formElement:{name:'input',type:'text'}},
+		{isInDetail:true,key:'author',label:{en:'Author',chn:'撰写人'},formElement:{name:'input',type:'text'}},
+		//select
+		{isInDetail:false,key:'type',label:{en:'Type',chn:'类型'},
+			formElement:{
+				name:'select',
+				type:'',
+				options:[
+					SELECTOPTION.FIRST,
+					{ value: '_PATT1', text: '发明专利' },
+					{ value: '_PATT2', text: '实用新型专利' },
+					{ value: '_PATT3', text: '外观设计专利' },
+					{ value: '_PATT4', text: '软件版权' },
+					{ value: '_PATT5', text: '著作权' },
+					{ value: '_PATT6', text: '集成电路图' },
+					SELECTOPTION.LAST
+				]
+			}
+		},
+		//none
+		{isInDetail:false,key:'id',label:{en:'Id',chn:'系统编号'},formElement:''},
+		{isInDetail:true,key:'patnum',label:{en:'Patent No.',chn:'专利编号'},formElement:''},
+		FIELDSDEF.ACTIONS,
+			//{key:'',isInDetail:false,label:{}},
 	],
-	'mentor-computer':FIELDSDEF.DEFAULT,
-	'mentor-strategy':FIELDSDEF.DEFAULT,
-	'mentor-finance':FIELDSDEF.DEFAULT,
-	'mentor-operation':FIELDSDEF.DEFAULT,
+	'supply-pro':FIELDSDEF.DEFAULT,
+	'supply-ach':FIELDSDEF.DEFAULT,
+	'supply-sol':FIELDSDEF.DEFAULT,
+	'system-env':FIELDSDEF.DEFAULT,
+	'system-conf':FIELDSDEF.DEFAULT,
+	'system-serv':FIELDSDEF.DEFAULT,
+	'mentor-material':FIELDSMENTOR,
+	'mentor-computer':FIELDSMENTOR,
+	'mentor-strategy':FIELDSMENTOR,
+	'mentor-finance':FIELDSMENTOR,
+	'mentor-operation':FIELDSMENTOR,
+	'default':FIELDSDEF.DEFAULT,
 		//{routeStr:'',spec:[]},
 	
 }

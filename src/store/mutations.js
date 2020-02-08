@@ -3,12 +3,12 @@
 //import state from './state.js'
 
 //得到route对应的item在sideObj中的完整路径
-var _getSidebarEntryPathArr=(route,sideObj)=>{
+function _getSidebarEntryPathArr(routeStr,sideObj){
 	let arr=[]
 	sideObj.catalog.forEach((cat,idM)=>{
 		if(cat.hasOwnProperty('items')){
 			cat.items.forEach((item,idN)=>{
-				if(item.routeStr==route){
+				if(item.routeStr==routeStr){
 					arr=['catalog',idM,'items',idN]
 				}
 			})
@@ -19,7 +19,7 @@ var _getSidebarEntryPathArr=(route,sideObj)=>{
 } 
 
 //定义递归函数修改指定属性值
-var _setSidebarEntryPropVal=(name,val,arr,obj)=>{
+function _setSidebarEntryPropVal(name,val,arr,obj){
 	if(arr.includes('catalog')){
 		arr=arr.slice(arr.indexOf('catalog'))
 	}
@@ -42,27 +42,12 @@ var _setSidebarEntryPropVal=(name,val,arr,obj)=>{
 	}
 }
 
-/* _getStateObjByPath(state,path){
-		let obj=state
-		
-		if(!Array.isArray(path)){
-			return false
-		}
-		
-		path.forEach(el=>{
-			obj=obj[el]
-		})
-		
-		console.log(obj)
-		
-		return obj
-	}, */
 
 //只能通过commit mutations中的函数才能修改state中的数据
 export default {
 	
 	//update
-	updateNavbar(state,index){
+	updateNavbar:function(state,index){
 		let navArr=state.navbar.items
 		
 		//console.log(state)
@@ -80,7 +65,7 @@ export default {
 
 		return 
 	},
-	updateSidebar(state,index){
+	updateSidebar:function(state,index){
 		
 		let actSidebar=state.sidebar.items[index]
 		//后端返回的数据
@@ -117,31 +102,22 @@ export default {
 			
 		}
 		//重置activeItem
-		this.commit('updateActiveEntry',{index:index})
+		//this.commit('updateActiveEntry',{index:index})
 		
 		
 		//console.log(state.fetchCont.response.items)
 		return
 	},
 	//更新fetchCont
-	updateFetchCont(state,payload){
+	updateFetchCont:function(state,payload){
 		state.fetchCont=Object.assign({},state.fetchCont,payload)
 		//console.log(payload)
 	},
-	updateFetchContResponseList(state,payload){
-		let index=payload.index
-		let list=state.fetchCont.response.lists[index]
-		
-		state.fetchCont.response.lists[index]=Object.assign({},list,payload.list)
-		console.log('updateFetchContResponseList():')
-		console.log(payload)
-		
-		
-	},
 	
-	updateActiveEntry(state,payload={route:'',index:0}){
+	
+	updateActiveEntry:function(state,payload={routeStr:'',index:0}){
 		let index=payload.hasOwnProperty('index')?payload.index:-1
-		let route=payload.hasOwnProperty('route')?payload.route:''
+		let routeStr=payload.hasOwnProperty('routeStr')?payload.routeStr:''
 		let itemDefault={
 				isActive:false,
 				label:'',
@@ -151,7 +127,7 @@ export default {
 			}
 
 		let sideObj=index!=-1?state.sidebar.items[index]:itemDefault
-		let path=route.length?_getSidebarEntryPathArr(route,sideObj):''	
+		let path=routeStr.length?_getSidebarEntryPathArr(routeStr,sideObj):''	
 		
 		let getEntry=(arr,obj)=>{
 			arr.forEach(el=>{
@@ -162,6 +138,7 @@ export default {
 		
 		let actEntry=state.sidebarEntry.active
 		//let preEntry=state.sidebarEntry.prev
+		
 		
 		if(actEntry.hasOwnProperty('isActive') && actEntry.isActive ){
 			actEntry.isActive=false
@@ -187,13 +164,22 @@ export default {
 			state.sidebarEntry.active=itemDefault
 		}
 		
+		this.commit('setSidebarProps',{
+			'index':index,
+			'routeStr':routeStr,
+			props:[
+				//任意时刻Sidebar中的Item只有一项的isActive=true
+				//任意时刻Sidebar中的button只有一项的isPressed=true
+				{name:'isActive',val:true},
+				{name:'isPressed',val:true}
+			]}
+		)
 		
-		
-		return
+		return 
 		
 	},
 	//更新isBriefContent
-	updateIsBriefContent(state,val){
+	updateIsBriefContent:function(state,val){
 		state.isBriefContent=val
 		
 		/* if(val){
@@ -208,8 +194,8 @@ export default {
 	
 	//遍历指定sidebar，修改给定属性的值，
 	//前提是sidebar内的所有对象属性名都不同
-	setSidebarProps(state,payload){
-		let opt=Object.assign({},{index:0,route:'',props:{}},payload)
+	setSidebarProps:function(state,payload){
+		let opt=Object.assign({},{index:0,routeStr:'',props:{}},payload)
 		//需要遍历的sidebar对象
 		let sideObj=state.sidebar.items[opt.index]
 		let resItems=this.getters.resItems
@@ -236,7 +222,7 @@ export default {
 				})	
 			}
 			//递归函数所需参数
-			pathArr=_getSidebarEntryPathArr(opt.route,sideObj)
+			pathArr=_getSidebarEntryPathArr(opt.routeStr,sideObj)
 			//调用递归函数
 			_setSidebarEntryPropVal(prop.name,prop.val,pathArr,sideObj)
 		

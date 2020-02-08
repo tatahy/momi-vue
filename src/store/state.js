@@ -36,6 +36,6 @@ export default {
 		//最近一次高亮的sidebar中的item
 		prev:{}
 	},
-	url:BackEndUrl,
+	host:BackEndUrl,
 	
 }
