@@ -58,17 +58,7 @@
 				</div>
 			</template>
 			
-			<template v-slot:cell(topic)="data">
-				<strong>
-					{{ data.value }}
-				</strong>
-			</template>
 			
-			<template v-slot:cell(name)="data">
-				<strong>
-					{{ data.value }}
-				</strong>
-			</template>
 			<!-- 
 			<template v-slot:cell(topic)="data">
 				
@@ -121,6 +111,7 @@
 			<template v-slot:row-details="row">
 				<b-card>
 					<b-media>
+						<!-- actNav.routeStr=='mentor'-->
 						<template 
 							v-slot:aside
 							v-if="actNav.routeStr=='mentor'"
@@ -135,7 +126,10 @@
 							>
 							</b-img>
 						</template>
-						<!-- <b-container fluid> -->
+						<!-- <b-container fluid> 
+						
+						{{ obj.key=='field'?'aa':row.item[obj.key] }}
+						-->
 						<b-row v-for="(obj, index) in getFieldsInDetail()" :key="index">
 							<template v-if="obj.formElement && obj.isInDetail">
 							<b-col 
@@ -144,9 +138,10 @@
 								<strong>{{ obj.label+'：'}}</strong>
 							</b-col>
 							<b-col 
+								cols="9"
 								class="text-left border-bottom"
 							>
-								{{ row.item[obj.key] }}
+								{{ setTextInDetail(obj.key,row.item[obj.key]) }}
 							</b-col>
 							</template>
 						</b-row>
@@ -269,7 +264,7 @@ import Vue from 'vue'
 //使用modal插件
 Vue.use(ModalPlugin)
 
-import {fieldProps,FIELDS} from '@/components/util-the-table'
+import {fieldProps,FIELDS,FIELDSINDETAIL} from '@/components/util-the-table'
 
 //native JS Module export
 export default {
@@ -457,6 +452,22 @@ export default {
 			})
 			return arr
 		},
+		//select元素的显示内容由其value值转为对应的text值
+		setTextInDetail(key,value){
+			let sysEnt=this.actItem.sysEnt
+			let optionArr=FIELDSINDETAIL.hasOwnProperty(sysEnt)?
+						(FIELDSINDETAIL[sysEnt].hasOwnProperty(key)?FIELDSINDETAIL[sysEnt][key]:[]):[]
+			
+			if(optionArr.length){
+				optionArr.forEach(opt=>{
+					if(value==opt.value){
+						value=opt.text
+					}
+				})
+			}
+	
+			return value
+		},
 		//根据this.fields，item得到各个form元素对应的绑定对象，用于后续的校验、提交等操作。
 		setFormElements(item){
 			let self=this
@@ -545,6 +556,10 @@ export default {
 				self.showMsgBox('成功')
 			}
 		
+		},
+		showText(key){
+		
+			return key+'：'
 		},
 		showMsgBox(msg) {
 			//使用BSV中的简单msgBox

@@ -27,6 +27,10 @@
 		</b-form-group>
 		-->
 		
+		<b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
+			内容没有变化
+		</b-alert>
+		
 		
 		<b-form-group
 			v-for="(el,index) in elements"
@@ -126,6 +130,7 @@ import {
 	//BFormSelectOption,
 	BFormTextarea,
 	BButton,
+	BAlert
 	
 } from 'bootstrap-vue'
 
@@ -171,7 +176,9 @@ export default {
 	data:function(){
 		return {
 			formId:`${this.modalId}-form`,
+			//key-value数组，v-model与value绑定
 			formData:[], 
+			showDismissibleAlert:false
 			
 		}
 	},
@@ -203,10 +210,10 @@ export default {
 		/*
 		formData:{
 			get:function(){
-				return this.setFormData1()
+				return this.getFormDataArr()
 			},
 			set:function(){
-				return this.setFormData1()
+				return this.getFormDataArr()
 			}
 		},
 		*/
@@ -221,7 +228,6 @@ export default {
 	},
 	methods:{
 		//向后端提交数据，并显示后端处理结果
-		//fetchFormData:function($evt){
 		fetchFormData:function(event){
 			event.preventDefault()
 			
@@ -255,27 +261,42 @@ export default {
 			opt.body=data
 			*/
 			
-			//use JSON
-			let data={}
+			//将数组中的键值对对象，转为Json对象
+			let changeKeyVal2Obj=arr=>{
+				let retObj={}
+				arr.forEach(obj=>{
+					retObj[obj.key]=obj.value
+				})
+				
+				return retObj
+			}
+			//
+			let isTrue=value=>value==true
+						
+			let oriData=changeKeyVal2Obj(self.getFormDataArr())
 			
-			self.formData.forEach(obj=>{
-				data[obj.key]=obj.value
-			})
+			let data=changeKeyVal2Obj(self.formData)
+			let changeArr=[]
+			
+			
+			//判断oriData与data的元素是否有不同			
+			for(let key in oriData){
+				changeArr.push(oriData[key]===data[key]?true:false)
+			}
+			
+			
+			if(changeArr.every(isTrue)){
+				return self.showDismissibleAlert=true
+			}
+			
+			//有修改!changeArr.every(isTrue)才有后续动作	
 			opt.headers={
 					//json字符串的编码形式
 					'Content-Type': 'application/json'
 				}
+			//use JSON
 			opt.body=JSON.stringify(data)
 			//opt.body=Object.assign({},data)
-			
-			
-			/*
-			console.log(self.trigger)
-			console.log(opt)
-			
-			console.log(data)
-			console.log(self.formData)
-			*/
 			
 			fetch(url,opt)
 			.then(res=>{
@@ -291,21 +312,11 @@ export default {
 				//console.log(cont)
 				
 				if(cont.success){
-					//let routeStr=self.routeStr===cont.routeStr?self.routeStr:cont.routeStr
-					
-					/*
-					if(self.routeStr===cont.routeStr){
-						self.updateList({index:self.listIndex,list:data})
-					}else{
-						self.asyChangeSideItem(cont.routeStr)
-					}
-					*/
-					
+				
 					self.asyChangeSideItem(cont.routeStr)
-					console.log(self.routeStr)
-					console.log(cont.routeStr)
 					
-					
+					//console.log(self.routeStr)
+					//console.log(cont.routeStr)
 					
 					self.$root.$emit('bv::hide::modal', self.modalId)
 					
@@ -364,7 +375,7 @@ export default {
 			return self.formData
 		
 		},
-		setFormData1(){
+		getFormDataArr(){
 			let arr=[]
 			
 			this.elements.forEach(el=>{
@@ -376,12 +387,13 @@ export default {
 		},
 		
 		resetForm() {
-			//this.formData=this.setFormData1()
+			//this.formData=this.getFormDataArr()
+			let self=this
 			
-			
-			this.$nextTick(function() {
-				this.setFormData()
-				//this.formData=this.setFormData1()
+			self.$nextTick(function() {
+				//this.setFormData()
+				self.showDismissibleAlert=false
+				self.formData=self.getFormDataArr()
 				//console.log(this.formData)
 				
 			})
@@ -404,11 +416,15 @@ export default {
 		//BFormSelectOption,
 		BFormTextarea,
 		BButton,
+		BAlert
 		
 	},
 	
 	created(){
-		this.setFormData()
+		//this.setFormData()
+		
+		this.formData=this.getFormDataArr()
+		
 		//console.log(this.formData)
 	},
 	destroyed(){

@@ -38,13 +38,25 @@ const FIELDSDEF={
 	]
 }
 
-const FIELDSMENTOR=[
+const MENTOROPTIONS={
+	'field':[
+		SELECTOPTION.FIRST,
+		{ value: 'material', text: '新材料' },
+		{ value: 'computer', text: '计算机' },
+		{ value: 'strategy', text: '战略' },
+		{ value: 'finance', text: '财务' },
+		{ value: 'operation', text: '运营' },
+		SELECTOPTION.LAST
+	]
+}
+
+const MENTORFIELDS=[
 		FIELDSDEF.SN,
 		//input
 		{isInDetail:false,key:'name',label:{en:'Name',chn:'姓名'},formElement:{name:'input',type:'text'}},
 		{isInDetail:false,key:'research',label:{en:'Research',chn:'研究方向'},formElement:{name:'textarea',type:''}},
 		//select
-		{isInDetail:true,key:'type',label:{en:'Type',chn:'导师类型'},
+		/* {isInDetail:true,key:'type',label:{en:'Type',chn:'导师类型'},
 			formElement:{
 				name:'select',
 				type:'',
@@ -55,20 +67,12 @@ const FIELDSMENTOR=[
 					SELECTOPTION.LAST
 				]
 			}
-		},
+		}, */
 		{isInDetail:true,key:'field',label:{en:'Field',chn:'专业领域'},
 			formElement:{
 				name:'select',
 				type:'',
-				options:[
-					SELECTOPTION.FIRST,
-					{ value: 'material', text: '新材料' },
-					{ value: 'computer', text: '计算机' },
-					{ value: 'strategy', text: '战略' },
-					{ value: 'finance', text: '财务' },
-					{ value: 'operation', text: '运营' },
-					SELECTOPTION.LAST
-				]
+				options:MENTOROPTIONS.field
 			}
 		},
 		//textarea
@@ -82,12 +86,21 @@ const FIELDSMENTOR=[
 		FIELDSDEF.ACTIONS,
 		//{key:'',isInDetail:true,label:{}},
 ]
-	
-	
-//定义字段名称及在表单中的展现类型，各项中字段的定义顺序也是显示的顺序
-//根据routeStr的值进行定义
-export const FIELDS={
-	'supply-pat':[
+
+const SUPPLYPATOPTIONS={
+	'type':[
+		SELECTOPTION.FIRST,
+		{ value: '_PATT1', text: '发明专利' },
+		{ value: '_PATT2', text: '实用新型专利' },
+		{ value: '_PATT3', text: '外观设计专利' },
+		{ value: '_PATT4', text: '软件版权' },
+		{ value: '_PATT5', text: '著作权' },
+		{ value: '_PATT6', text: '集成电路图' },
+		SELECTOPTION.LAST
+	]
+}
+
+const SUPPLYPATFIELDS=[
 		FIELDSDEF.SN,
 		//input
 		{isInDetail:false,key:'topic',label:{en:'Topic',chn:'题目'},formElement:{name:'input',type:'text'}},
@@ -96,19 +109,24 @@ export const FIELDS={
 		{isInDetail:true,key:'author',label:{en:'Author',chn:'撰写人'},formElement:{name:'input',type:'text'}},
 		//select
 		{isInDetail:false,key:'type',label:{en:'Type',chn:'类型'},
+			//BSV中的callback，转换为中文,isInDetail:false才起作用
+			//formatter:(value, key, item) =>{
+			formatter:value =>{
+				let defArr=SUPPLYPATOPTIONS['type']
+				
+				defArr.forEach(obj=>{
+					value=obj.value==value?obj.text:value
+					
+				})
+				
+				//console.log(value, key, item) 
+				
+				return value
+			},
 			formElement:{
 				name:'select',
 				type:'',
-				options:[
-					SELECTOPTION.FIRST,
-					{ value: '_PATT1', text: '发明专利' },
-					{ value: '_PATT2', text: '实用新型专利' },
-					{ value: '_PATT3', text: '外观设计专利' },
-					{ value: '_PATT4', text: '软件版权' },
-					{ value: '_PATT5', text: '著作权' },
-					{ value: '_PATT6', text: '集成电路图' },
-					SELECTOPTION.LAST
-				]
+				options:SUPPLYPATOPTIONS['type']
 			}
 		},
 		//none
@@ -116,21 +134,31 @@ export const FIELDS={
 		{isInDetail:true,key:'patnum',label:{en:'Patent No.',chn:'专利编号'},formElement:''},
 		FIELDSDEF.ACTIONS,
 			//{key:'',isInDetail:false,label:{}},
-	],
+]
+	
+	
+//定义字段名称及在表单中的展现类型，各项中字段的定义顺序也是显示的顺序
+//根据routeStr的值进行定义
+export const FIELDS={
+	'supply-pat':SUPPLYPATFIELDS,
 	'supply-pro':FIELDSDEF.DEFAULT,
 	'supply-ach':FIELDSDEF.DEFAULT,
 	'supply-sol':FIELDSDEF.DEFAULT,
 	'system-env':FIELDSDEF.DEFAULT,
 	'system-conf':FIELDSDEF.DEFAULT,
 	'system-serv':FIELDSDEF.DEFAULT,
-	'mentor-material':FIELDSMENTOR,
-	'mentor-computer':FIELDSMENTOR,
-	'mentor-strategy':FIELDSMENTOR,
-	'mentor-finance':FIELDSMENTOR,
-	'mentor-operation':FIELDSMENTOR,
+	'mentor-material':MENTORFIELDS,
+	'mentor-computer':MENTORFIELDS,
+	'mentor-strategy':MENTORFIELDS,
+	'mentor-finance':MENTORFIELDS,
+	'mentor-operation':MENTORFIELDS,
 	'default':FIELDSDEF.DEFAULT,
 		//{routeStr:'',spec:[]},
 	
+}
+
+export const FIELDSINDETAIL={
+	'mentor':MENTOROPTIONS
 }
 
 //const horizontalBarData = {
