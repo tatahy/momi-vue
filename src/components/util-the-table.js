@@ -8,8 +8,8 @@ export let fieldProps={
 	class:'',				//String or Array
 	sortable:true,			//Boolean
 	sortDirection:'',		//String
-	thClass:'text-center',				//String or Array
-	tdClass:'text-left',				//String or Array or Function
+	thClass:'text-center align-middle',				//String or Array
+	tdClass:'text-left align-middle',				//String or Array or Function
 	variant:'',				//String
 	headerTitle:'',			//String
 	headerAbbr:'',			//String
@@ -29,12 +29,26 @@ const SELECTOPTION={
 }
 
 const FIELDSDEF={
-	SN:{isInDetail:false,tdClass:'text-center',key:'serial-number',label:{en:'S/N',chn:'序号'}},
-	ACTIONS:{isInDetail:false,tdClass:'text-right',key:'actions',label:{en:'Actions',chn:'操作'},sortable:false,},
+	SN:{
+		isInDetail:false,key:'serial-number',label:{en:'S/N',chn:'序号'},	
+		tdClass:'align-middle',
+	},
+	ACTIONS:{
+		isInDetail:false,key:'actions',label:{en:'Actions',chn:'操作'},
+		tdClass:'align-middle',
+		sortable:false
+	},
 	DEFAULT:[
-		{isInDetail:false,tdClass:'text-center',key:'serial-number',label:{en:'S/N',chn:'序号'}},
-		{isInDetail:false,key:'key',label:{en:'Key',chn:'键名'}},
-		{isInDetail:false,key:'value',label:{en:'Value',chn:'键值'}},
+		{
+			isInDetail:false,key:'serial-number',label:{en:'S/N',chn:'序号'},
+			tdClass:'align-middle'
+		},
+		{
+			isInDetail:false,key:'key',label:{en:'Key',chn:'键名'}
+		},
+		{
+			isInDetail:false,key:'value',label:{en:'Value',chn:'键值'}
+		},
 	]
 }
 
@@ -53,7 +67,10 @@ const MENTOROPTIONS={
 const MENTORFIELDS=[
 		FIELDSDEF.SN,
 		//input
-		{isInDetail:false,key:'name',label:{en:'Name',chn:'姓名'},formElement:{name:'input',type:'text'}},
+		{isInDetail:false,key:'name',label:{en:'Name',chn:'姓名'},
+			tdClass:'font-weight-bold align-middle',
+			formElement:{name:'input',type:'text'}
+		},
 		{isInDetail:false,key:'research',label:{en:'Research',chn:'研究方向'},formElement:{name:'textarea',type:''}},
 		//select
 		/* {isInDetail:true,key:'type',label:{en:'Type',chn:'导师类型'},
@@ -103,7 +120,18 @@ const SUPPLYPATOPTIONS={
 const SUPPLYPATFIELDS=[
 		FIELDSDEF.SN,
 		//input
-		{isInDetail:false,key:'topic',label:{en:'Topic',chn:'题目'},formElement:{name:'input',type:'text'}},
+		{isInDetail:false,key:'topic',label:{en:'Topic',chn:'题目'},
+			tdClass:'text-left font-weight-bold align-middle',
+			/* tdAttr:(value, key, item)=>{
+				
+				console.log(value)
+				console.log(key)
+				console.log(item)
+				
+				return {zz:'font-weight-bold'}
+			}, */
+			formElement:{name:'input',type:'text'}
+		},
 		{isInDetail:false,key:'patowner',label:{en:'Owner',chn:'所有人'},formElement:{name:'input',type:'text'}},
 		{isInDetail:true,key:'inventor',label:{en:'Inventor',chn:'发明人'},formElement:{name:'input',type:'text'}},
 		{isInDetail:true,key:'author',label:{en:'Author',chn:'撰写人'},formElement:{name:'input',type:'text'}},

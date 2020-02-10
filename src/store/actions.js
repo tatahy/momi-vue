@@ -52,8 +52,8 @@ export default {
 		commit('updateActiveEntry',{'routeStr':routeStr,'index':index})
 		commit('updateIsBriefContent',false)
 		
-		console.log('asyChangeSideItem')
-		console.log(routeStr)
+		//console.log('asyChangeSideItem')
+		//console.log(routeStr)
 		
 		return 
 	}

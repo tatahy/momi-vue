@@ -99,7 +99,7 @@
 					size='sm'
 					variant="primary"
 					class="py-0 px-1 ml-1 mt-1"
-					:class="row.detailsShowing ? 'btn-'+themeClr: null"
+					:class="row.detailsShowing ? `btn-${themeClr}`: null"
 					v-on:click="row.toggleDetails"
 				>
 					{{ row.detailsShowing ? '隐藏': '详情'  }} 
@@ -112,41 +112,71 @@
 				<b-card>
 					<b-media>
 						<!-- actNav.routeStr=='mentor'-->
+						
 						<template 
 							v-slot:aside
 							v-if="actNav.routeStr=='mentor'"
 						>
+						<!-- <b-row > -->
 							<b-img 
 								blank 
 								blank-color="#ccc" 
 								width="168" 
 								height="200"
 								alt="placeholder"
-								class="mr-3 rounded shadow"
+								class="rounded shadow"
 							>
 							</b-img>
+						<!-- </b-row>	 -->
 						</template>
-						<!-- <b-container fluid> 
 						
-						{{ obj.key=='field'?'aa':row.item[obj.key] }}
-						-->
-						<b-row v-for="(obj, index) in getFieldsInDetail()" :key="index">
+						<h5 class="d-none d-sm-flex"><strong>详情</strong></h5>
+						
+						<b-row 
+							class="d-none d-sm-flex"
+							v-for="(obj, index) in getFieldsInDetail()" :key="index"
+						>
+						
 							<template v-if="obj.formElement && obj.isInDetail">
 							<b-col 
-								cols="3" 
-								class="text-right"> 
+								cols="2" 
+								:class="labelClr"
+							> 
 								<strong>{{ obj.label+'：'}}</strong>
 							</b-col>
 							<b-col 
-								cols="9"
-								class="text-left border-bottom"
+								cols="10"
+								:class="textClr"
 							>
 								{{ setTextInDetail(obj.key,row.item[obj.key]) }}
 							</b-col>
 							</template>
 						</b-row>
-						<!-- </b-container> -->
 					</b-media>
+					
+					<div class="d-sm-none">
+					<h5 class="pt-3 py-2"><strong>详情</strong></h5>
+					<b-row 
+						v-for="(obj, index) in getFieldsInDetail()" 
+						:key="index"
+					>
+						
+						<template v-if="obj.formElement && obj.isInDetail">
+						<b-col 
+							cols="3" 
+							:class="labelClr"
+						> 
+							<strong>{{ obj.label+'：'}}</strong>
+						</b-col>
+						<b-col 
+							cols="9"
+							:class="textClr"
+						>
+							{{ setTextInDetail(obj.key,row.item[obj.key]) }}
+						</b-col>
+						</template>
+					</b-row>
+					</div>
 				</b-card>
 			</template>
 			
@@ -155,7 +185,7 @@
 	<div class="text-right" v-show="total > perPage">
 		<b-row>
 			<b-col cols="8" style="padding-top:5px;">
-				<span >总数：<b-badge :variant="themeClr" style="font-size:14px;">{{ total }}</b-badge></span>
+				<span >总数：<b-badge :variant="`${themeClr}`" style="font-size:14px;">{{ total }}</b-badge></span>
 			</b-col>
 			<b-col>
 				<b-form-group
@@ -296,7 +326,9 @@ export default {
 				itemIndex:'',
 			},
 			formTrigger:'create',
-			formElements:[]
+			formElements:[],
+			labelClr:'p-0 py-2 text-right',
+			textClr:'p-0 pl-1 py-2 text-left border-top'
 		}
 	},
 	computed: {
@@ -356,8 +388,8 @@ export default {
 			//设置fields
 			self.setFields()
 			
-			console.log('ThetTable watch: resLists')
-			console.log(self.fields)
+			//console.log('ThetTable watch: resLists')
+			//console.log(self.fields)
 			
 			self.isBusy=false
 			return 
@@ -650,7 +682,8 @@ export default {
 
 </script>
 
-<style>
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
 
 
 </style>
