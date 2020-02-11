@@ -138,9 +138,10 @@ export default {
 		},
 		refreshState:function(cont){
 		
-			console.log('TheContainer response on event-table-refresh.')
+			//console.log('TheContainer response on event-table-refresh.')
 
-			console.log(cont)
+			//console.log(cont)
+			return cont
 		}
 	},
 	

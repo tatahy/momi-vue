@@ -566,6 +566,13 @@ export default {
 		},
 		refeshTable:function(cont){
 			let self=this
+			let triggerLabel={
+				'create':'新增',
+				'update':'更新',
+				'retrieve':'查询',
+				'delete':'删除',
+			}
+			let label=triggerLabel.hasOwnProperty(self.formTrigger)?triggerLabel[self.formTrigger]:''
 			//let listIndex=self.modalProps.itemIndex
 			/*
 			
@@ -578,25 +585,27 @@ export default {
 			//self.setLists([listIndex])
 			
 			
-			console.log('TheTable, refreshTable()')
-			
-			console.log(cont)
+			//console.log('TheTable, refreshTable()')
+			//console.log(cont)
 			if(cont.success){
 				//self.setLists()
 			//注册一个事件，通知使用TheTable的组件
 				self.$emit('event-table-refresh',cont)
-				self.showMsgBox('成功')
+				self.showMsgBox('“'+label+'”完成')
 			}
 		
 		},
-		showText(key){
-		
-			return key+'：'
-		},
 		showMsgBox(msg) {
+			//Starting with version 3.4.0 of the Babel plugin for Vue, we automatically inject const h = this.$createElement in any method and getter
+			const h = this.$createElement
+			// More complex structure with the render function
+			const messageVNode = h('p', { class: ['text-center'] }, [
+				h('strong', {}, msg)
+			])
+			
 			//使用BSV中的简单msgBox
-			this.$bvModal.msgBoxOk(msg,{
-				title: 'Confirmation',
+			this.$bvModal.msgBoxOk([messageVNode],{
+				title: '操作成功',
 				size: 'sm',
 				buttonSize: 'sm',
 				okVariant: 'success',
@@ -604,12 +613,13 @@ export default {
 				footerClass: 'p-2 border-top-0',
 				centered: true
 			})
-			.then(value => {
+			/*.then(value => {
 				console.log(value)
 				console.log(msg)
-			})
+			})*/
 			.catch(err => {
-				console.log(err)// An error occurred
+				//console.log(err)// An error occurred
+				return err
 			})
 		},
 		resetModalInfo() {
