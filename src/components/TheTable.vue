@@ -591,7 +591,7 @@ export default {
 				//self.setLists()
 			//注册一个事件，通知使用TheTable的组件
 				self.$emit('event-table-refresh',cont)
-				self.showMsgBox('“'+label+'”完成')
+				self.showMsgBox('“'+label+'”')
 			}
 		
 		},
@@ -600,7 +600,9 @@ export default {
 			const h = this.$createElement
 			// More complex structure with the render function
 			const messageVNode = h('p', { class: ['text-center'] }, [
-				h('strong', {}, msg)
+				this.title,
+				h('strong', {}, msg),
+				'完成'
 			])
 			
 			//使用BSV中的简单msgBox
