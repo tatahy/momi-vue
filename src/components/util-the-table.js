@@ -89,7 +89,7 @@ const MENTORFIELDS=[
 			formElement:{
 				name:'select',
 				type:'',
-				options:MENTOROPTIONS.field
+				options:MENTOROPTIONS['field']
 			}
 		},
 		//textarea
@@ -97,6 +97,11 @@ const MENTORFIELDS=[
 		{isInDetail:false,key:'position',label:{en:'Position',chn:'职位'},formElement:{name:'textarea',type:''}},
 		{isInDetail:true,key:'profile',label:{en:'Profile',chn:'个人简介'},formElement:{name:'textarea',type:''}},
 		{isInDetail:true,key:'experience',label:{en:'Experience',chn:'个人经历'},formElement:{name:'textarea',type:''}},
+		{isInDetail:true,key:'award',label:{en:'Award',chn:'个人获奖'},formElement:{name:'textarea',type:''}},
+		{isInDetail:true,key:'patent',label:{en:'Patent',chn:'个人专利'},formElement:{name:'textarea',type:''}},
+		{isInDetail:true,key:'thesis',label:{en:'Thesis',chn:'个人论文'},formElement:{name:'textarea',type:''}},
+		{isInDetail:true,key:'writing',label:{en:'Writing',chn:'个人著作'},formElement:{name:'textarea',type:''}},
+		{isInDetail:true,key:'project',label:{en:'Project',chn:'参与项目'},formElement:{name:'textarea',type:''}},
 		
 		//none
 		{isInDetail:true,key:'id',label:{en:'Id',chn:'系统编号'},formElement:''},
@@ -185,16 +190,16 @@ export const FIELDS={
 	
 }
 
-export const FIELDSINDETAIL={
+export const SELECTFIELDS={
 	'mentor':MENTOROPTIONS
 }
 
 //const horizontalBarData = {
-export default {
+/* export default {
 	
 	zz:{},
 	
-}
+} */
 
 
 //export {asyGetBsvComponent}

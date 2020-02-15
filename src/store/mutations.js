@@ -112,6 +112,7 @@ export default {
 	updateFetchCont:function(state,payload){
 		state.fetchCont=Object.assign({},state.fetchCont,payload)
 		//console.log(payload)
+		return state.fetchCont
 	},
 	
 	

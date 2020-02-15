@@ -36,6 +36,7 @@
                 <File name="src\store\index.js" />
                 <File name="src\store\mutations.js" />
                 <File name="src\store\state.js" />
+                <File name="src\store\getters.js" />
             </Folder>
             <Folder name="oldCodeForRef">
                 <File name="src\oldCodeForRef\actions-temp.js" />

@@ -40,5 +40,7 @@ export default {
 	}, */
 	
 	//首页加载时有可能为空数组，因为fethchCont通过fetch异步从后端拿数据
-	resItems:state=>state.fetchCont.response.items
+	resItems:state=>state.fetchCont.response.items,
+	
+	
 }

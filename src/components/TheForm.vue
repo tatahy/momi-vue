@@ -404,7 +404,7 @@ export default {
 			'asyChangeSideItem'
 		]),
 		...mapMutations({
-			updateList:'updateFetchContResponseList'
+			//updateList:'updateFetchContResponseList'
 		}),
 		
 	},

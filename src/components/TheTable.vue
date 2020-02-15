@@ -110,31 +110,35 @@
 			<!-- detail组件 -->
 			<template v-slot:row-details="row">
 				<b-card>
-					<b-media>
+					<b-media >
 						<!-- actNav.routeStr=='mentor'-->
 						
 						<template 
 							v-slot:aside
 							v-if="actNav.routeStr=='mentor'"
 						>
-						<!-- <b-row > -->
 							<b-img 
+								:id="`img-${row.index}`"
 								blank 
 								blank-color="#ccc" 
 								width="168" 
 								height="200"
 								alt="placeholder"
 								class="rounded shadow"
+								v-on:click="uploadFile(row.item,$event)"
 							>
 							</b-img>
-						<!-- </b-row>	 -->
+							
+							<!-- Tooltip title specified via prop title -->
+							<b-tooltip :target="`img-${row.index}`">
+							点击上传图片！
+							</b-tooltip>
 						</template>
-						
-						<h5 class="d-none d-sm-flex"><strong>详情</strong></h5>
-						
+							
+						<h5 class="text-center pb-2" :class="smShow"><strong>详情</strong></h5>
 						<b-row 
-							class="d-none d-sm-flex"
 							v-for="(obj, index) in getFieldsInDetail()" :key="index"
+							:class="smShow"
 						>
 						
 							<template v-if="obj.formElement && obj.isInDetail">
@@ -148,13 +152,22 @@
 								cols="10"
 								:class="textClr"
 							>
+								{{ obj.formElement.name=="select"?setSelectText(obj.key,row.item[obj.key]):row.item[obj.key] }}
+								
+								<!-- <template v-if="obj.formElement.name=='textarea'">
+							
+									<pre>{{ setTextInDetail(obj.key,row.item[obj.key]) }}</pre>
+								</template>
+							
+								<template v-else>
 								{{ setTextInDetail(obj.key,row.item[obj.key]) }}
+								</template> -->
 							</b-col>
 							</template>
 						</b-row>
 					</b-media>
 					
-					<div class="d-sm-none">
+					<div :class="smHide">
 					<h5 class="pt-3 py-2"><strong>详情</strong></h5>
 					<b-row 
 						v-for="(obj, index) in getFieldsInDetail()" 
@@ -163,16 +176,16 @@
 						
 						<template v-if="obj.formElement && obj.isInDetail">
 						<b-col 
-							cols="3" 
+							cols="4" 
 							:class="labelClr"
 						> 
 							<strong>{{ obj.label+'：'}}</strong>
 						</b-col>
 						<b-col 
-							cols="9"
+							cols="8"
 							:class="textClr"
 						>
-							{{ setTextInDetail(obj.key,row.item[obj.key]) }}
+							{{ obj.formElement.name=="select"?setSelectText(obj.key,row.item[obj.key]):row.item[obj.key] }}
 						</b-col>
 						</template>
 					</b-row>
@@ -187,7 +200,7 @@
 			<b-col cols="8" style="padding-top:5px;">
 				<span >总数：<b-badge :variant="`${themeClr}`" style="font-size:14px;">{{ total }}</b-badge></span>
 			</b-col>
-			<b-col>
+			<b-col cols="4" >
 				<b-form-group
 					label-cols="6"
 					label-align="right"
@@ -264,7 +277,7 @@
 </template>
 
 <script>
-import { mapState,mapGetters, mapActions } from 'vuex'
+import { mapState,mapGetters, mapActions, mapMutations } from 'vuex'
 
 //import { asyGetBsvComponent as aGetBsv} from '@/components/util-bootstrap-vue'
 
@@ -284,7 +297,9 @@ import {
 	//BFormCheckbox,
 	BFormSelect, 
 	BMedia,
+	//BMediaBody,
 	BImg,
+	BTooltip,
 	//modal插件
 	ModalPlugin
 	
@@ -294,7 +309,7 @@ import Vue from 'vue'
 //使用modal插件
 Vue.use(ModalPlugin)
 
-import {fieldProps,FIELDS,FIELDSINDETAIL} from '@/components/util-the-table'
+import {fieldProps,FIELDS,SELECTFIELDS} from '@/components/util-the-table'
 
 //native JS Module export
 export default {
@@ -308,6 +323,8 @@ export default {
     data:function() {
 		return {
 			
+			smShow:'d-none d-sm-flex',
+			smHide:'d-sm-none',
 			isBusy:false,
 			perPage: 10,
 			currentPage: 1,
@@ -354,7 +371,7 @@ export default {
 		//},
 		...mapGetters({
 			actNav:'actNavbar',
-			actItem:'actEntry'
+			actItem:'actEntry',
 		}),
 		...mapState({
 			//表格内容
@@ -376,6 +393,9 @@ export default {
 				}
 				return arr
 			},
+			host:state=>state.host,
+			request:state=>state.fetchCont.request,
+			//request:state=>Object.assign({},state.fetchCont.request),
 		}),
 	},
 	watch:{
@@ -416,37 +436,8 @@ export default {
 		*/
 	},
 	methods: {
-		setLists(){
-		//setLists(idArr=[]){
-			let self=this
-			let resLists=self.resLists
-			let lists=self.lists=[]
-			//let lists=[]
-			
-			/*
-			if(idArr.length){
-				console.log(idArr.length)
-				idArr.forEach(id=>{
-					self.lists[id]=Object.assign({},resLists[id])
-				})
-				return
-			}
-			*/
-			//添加sn项，并逐项复制转化为TheTable自己的数据属性，方便修改，
-			//lists=[]
-			if(resLists.length){
-		
-				resLists.forEach((list,idx)=>{
-				//list为对象，必须用Object.assign()进行复制，否则就是对象的浅拷贝（按引用复制）
-					if(typeof list =='object'){
-						lists[idx]=Object.assign({},{'serial-number':idx*1+1},list)
-					}
-				})
-			}
-			
-			//console.log(lists)
-			return 
-		},
+		//使用渲染函数，Starting with version 3.4.0 of the Babel plugin for Vue, we automatically inject const h = this.$createElement in any method and getter
+		renderFunc(){return this.$createElement},
 		setFields(){
 			let self=this
 			let routeStr=self.routeStr
@@ -485,10 +476,10 @@ export default {
 			return arr
 		},
 		//select元素的显示内容由其value值转为对应的text值
-		setTextInDetail(key,value){
+		setSelectText(key,value){
 			let sysEnt=this.actItem.sysEnt
-			let optionArr=FIELDSINDETAIL.hasOwnProperty(sysEnt)?
-						(FIELDSINDETAIL[sysEnt].hasOwnProperty(key)?FIELDSINDETAIL[sysEnt][key]:[]):[]
+			let optionArr=SELECTFIELDS.hasOwnProperty(sysEnt)?
+						(SELECTFIELDS[sysEnt].hasOwnProperty(key)?SELECTFIELDS[sysEnt][key]:[]):[]
 			
 			if(optionArr.length){
 				optionArr.forEach(opt=>{
@@ -591,13 +582,146 @@ export default {
 				//self.setLists()
 			//注册一个事件，通知使用TheTable的组件
 				self.$emit('event-table-refresh',cont)
-				self.showMsgBox('“'+label+'”')
+				self.showMsgBoxOk('“'+label+'”')
 			}
 		
 		},
-		showMsgBox(msg) {
-			//Starting with version 3.4.0 of the Babel plugin for Vue, we automatically inject const h = this.$createElement in any method and getter
-			const h = this.$createElement
+		//异步处理文件上传
+		uploadFile:async function(obj,event){
+			event.preventDefault
+			
+			let self=this
+			let url=[self.host,self.actItem.sysEnt,'uploadFile',obj.id].join('/')
+			let req=Object.assign({},self.request)
+			let file=req.load
+			
+			//异步引入TheFormFile组件
+			const {default:formFileCom}=await Promise.resolve(import('@/components/TheFormFile'))
+			
+			//引入定义好的渲染函数
+			const h = self.renderFunc()	
+			/*const bodyVNode = h('p', { class: ['text-center'] }, [
+				h('strong', {}, obj.id)
+			])*/
+			
+			/*
+			const bodyVNode=h('b-form-file', { class: ['text-center'] }, [
+				h('strong', {}, obj.id)
+			])
+			*/
+			//使用渲染函数进行BSV的msgBoxConfirm组件关键部分的渲染
+			const bodyVNode = h(formFileCom)
+			const titleVNode = h('div', { domProps: { innerHTML: '上传<strong> '+obj.name+' </strong>照片？' } })
+			
+			//得到BSV的msgBoxConfirm组件的按钮值
+			let modalVal=await self.$bvModal.msgBoxConfirm([bodyVNode], {
+				title:[titleVNode],
+				size: 'sm',
+				buttonSize: 'sm',
+				okVariant: 'primary',
+				okTitle: '是',
+				cancelTitle: '否',
+				footerClass: 'p-2',
+				hideHeaderClose: false,
+				centered: true
+			})
+			let res={'status':0}
+			let data={success:false}
+			
+			//console.log(file)
+			
+			if(modalVal){
+				const formData = new FormData()
+				formData.append('fileObj', file)
+				
+				//向后端上传文件
+				//使用formData上传文件，method必须为‘PSOT’
+				res=await fetch(url,{
+						method:'POST',
+						body:formData
+					})	
+			}
+			//后端成功处理
+			if(res.status=='200'){
+				//得到后端发回的数据
+				data=await res.json()	
+			}
+			
+			console.log(data)
+			/*if(res.hasOwnProperty('status') && res.status=='200'){
+				data=await res.json()
+				console.log(data)
+			}*/
+				
+			
+			
+			/*
+			self.$bvModal.msgBoxConfirm([bodyVNode], {
+				title:[titleVNode],
+				size: 'sm',
+				buttonSize: 'sm',
+				okVariant: 'primary',
+				okTitle: '是',
+				cancelTitle: '否',
+				footerClass: 'p-2',
+				hideHeaderClose: false,
+				centered: true
+			})
+			.then(value => {
+				let url=[self.host,self.actItem.sysEnt,'uploadPic',obj.id].join('/')
+				let req=Object.assign({},self.request)
+				let file=req.load
+				//let file1=new File()
+				
+				console.log(value)
+				console.log(file)
+				//console.log(file1)
+				
+				//按下的是‘ok’
+				//if(value && file.name){
+				if(value){
+					
+					const formData = new FormData()
+					formData.append('image', file)
+					
+					console.log(url)
+					console.table(file)
+					console.log(formData)
+					
+					//使用formData上传文件，method必须为‘PSOT’
+					return fetch(url,{
+						method:'POST',
+						body:formData
+					})
+				}
+				
+				
+				if(!value){
+					req.load={}
+					console.log(file)
+					return self.updateFetchCont({request:req})
+				}
+				
+				
+			})
+			.then(res=>{
+				if(res.status=='200'){
+					return res.json()
+				}			
+			})
+			.then(obj=>{
+				console.log(obj)
+			
+			})
+			.catch(err => {
+				// An error occurred
+				return err
+			})
+			*/
+		},
+		showMsgBoxOk(msg) {
+			const h = this.renderFunc()
+			//const h = this.$createElement
 			// More complex structure with the render function
 			const messageVNode = h('p', { class: ['text-center'] }, [
 				this.title,
@@ -632,6 +756,9 @@ export default {
 		resetFormData(){
 			this.resetModalInfo()
 		},
+		...mapMutations([
+			'updateFetchCont'
+		]),
 		...mapActions({
 			//getTableItemsBy: 'asyChangeTable'
 		}),
@@ -653,10 +780,13 @@ export default {
 		'b-form-select':BFormSelect,
 		'b-badge':BBadge,
 		BMedia,
+		//BMediaBody,
 		BImg,
+		BTooltip,
 		
 		//动态引入
 		TheForm:()=>import('@/components/TheForm'),
+		//TheFormFile:()=>import('@/components/TheFormFile')
 		
 		/*
 		//动态引入
@@ -694,8 +824,8 @@ export default {
 
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+
+<style >
 
 
 </style>

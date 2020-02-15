@@ -10,7 +10,9 @@ export default {
 	fetchCont:{
 		request:{
 			routeStr:'',
-			method:'GET'
+			method:'GET',
+			//headers: {},
+			load:{}
 		},
 		response:{
 			//放置后端返回的各项统计数据
