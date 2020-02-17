@@ -1,6 +1,8 @@
 <template>
 <div>
-	<!-- :state="Boolean(file)" -->
+	<!-- :state="Boolean(file)" 
+		
+	-->
     <b-form-file
 		class="my-2"
 		placeholder="选择一个文件..."
@@ -128,20 +130,16 @@ export default {
 		'b-form-file':BFormFile
 		
 	},
+	/*
 	//清除state.fetchCont.request.load的内容
 	created(){
 		let self=this
 		let req=Object.assign({},{load:{}},self.request)
 		
-		/*console.log('TheFormFile, created()')
-		console.log(req.load)*/
-		
 		return self.updateFetchCont({request:req})
-		
-		
 		//this.setStateFile()
 	},
-	/*
+	
 	destroyed(){
 		let self=this
 		let req=Object.assign({},self.request)

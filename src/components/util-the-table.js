@@ -105,6 +105,7 @@ const MENTORFIELDS=[
 		
 		//none
 		{isInDetail:true,key:'id',label:{en:'Id',chn:'系统编号'},formElement:''},
+		{isInDetail:true,key:'picture',label:{en:'Picture',chn:'个人照片'},formElement:''},
 		FIELDSDEF.ACTIONS,
 		//{key:'',isInDetail:true,label:{}},
 ]

@@ -116,6 +116,12 @@
                 </Folder>
                 <File name="D:\wamp64\www\momi-tp5\application\system\common.php" />
             </Folder>
+            <Folder name="uploads">
+                <Folder name="controller">
+                    <File name="D:\wamp64\www\momi-tp5\application\uploads\controller\Index.php" />
+                </Folder>
+                <File name="D:\wamp64\www\momi-tp5\application\uploads\common.php" />
+            </Folder>
             <File name="D:\wamp64\www\momi-tp5\application\.htaccess" />
             <File name="D:\wamp64\www\momi-tp5\application\command.php" />
             <File name="D:\wamp64\www\momi-tp5\application\common.php" />

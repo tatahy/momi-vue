@@ -22,7 +22,7 @@
 		>
 			<template v-slot:table-caption >
 				<h4 class="text-center align-text-bottom" >
-					<span :class="`text-${themeClr}`">{{title}}&nbsp;--&nbsp;</span>
+					<strong :class="`text-${themeClr}`">{{title}}&nbsp;--&nbsp;</strong>
 					<span 
 						v-show="subTitle"
 						:class="`badge badge-${themeClr}`" 
@@ -117,17 +117,38 @@
 							v-slot:aside
 							v-if="actNav.routeStr=='mentor'"
 						>
+						<!-- blank 
+								blank-color="#ccc"
+								
+								src="http://localhost:8080/uploads/pictures/mentor/5e4946143a8e6.JPG"
+								
+								
+								src="/uploads/pictures/mentor/5e4946143a8e6.jpg"
+								:src="setImgSrc(row.item.picture)"
+								-->
+							<!-- //TODO: b-img	 -->
 							<b-img 
 								:id="`img-${row.index}`"
-								blank 
-								blank-color="#ccc" 
+								fluid
+								:src="setImgSrc(row.item.picture)"
 								width="168" 
 								height="200"
-								alt="placeholder"
+								alt="导师照片"
 								class="rounded shadow"
 								v-on:click="uploadFile(row.item,$event)"
 							>
 							</b-img>
+							
+							<!-- <img 
+								src="http://localhost:8080/uploads/pictures/mentor/5e49541a422d8.jpg"
+								
+								width="168" 
+								height="200"
+								alt="导师照片"
+								class="rounded shadow"
+								
+							/>
+							-->
 							
 							<!-- Tooltip title specified via prop title -->
 							<b-tooltip :target="`img-${row.index}`">
@@ -135,7 +156,7 @@
 							</b-tooltip>
 						</template>
 							
-						<h5 class="text-center pb-2" :class="smShow"><strong>详情</strong></h5>
+						<h5 class="text-center pb-2" :class="smShow"><span :class="`text-${themeClr}`">详情</span></h5>
 						<b-row 
 							v-for="(obj, index) in getFieldsInDetail()" :key="index"
 							:class="smShow"
@@ -168,7 +189,7 @@
 					</b-media>
 					
 					<div :class="smHide">
-					<h5 class="pt-3 py-2"><strong>详情</strong></h5>
+					<h5 class="pt-3 py-2"><span :class="`text-${themeClr}`">详情</span></h5>
 					<b-row 
 						v-for="(obj, index) in getFieldsInDetail()" 
 						:key="index"
@@ -525,6 +546,17 @@ export default {
 		
 			return elements
 		},
+		setImgSrc(obj){
+			let objDefault={'dir':'','name':''}
+			let srcStr=this.host
+			
+			obj=Object.assign({},objDefault,obj)
+			srcStr+=obj.dir+obj.name
+			
+			//console.log(obj)
+			
+			return srcStr
+		},
 		toggleModal(row, trigger, button) {
 			let self=this
 			let item={}
@@ -586,10 +618,12 @@ export default {
 			}
 		
 		},
+		
 		//异步处理文件上传
 		uploadFile:async function(obj,event){
-			event.preventDefault
-			
+			//event.preventDefault
+			//console.log(event.target)
+		
 			let self=this
 			let url=[self.host,self.actItem.sysEnt,'uploadFile',obj.id].join('/')
 			let req=Object.assign({},self.request)
@@ -609,8 +643,24 @@ export default {
 				h('strong', {}, obj.id)
 			])
 			*/
+			
+			
+			
 			//使用渲染函数进行BSV的msgBoxConfirm组件关键部分的渲染
+			/*
+			const bodyVNode = h(formFileCom,{
+				on:{
+					input:inputFile=>{
+						console.log(inputFile)
+						return file=inputFile
+						
+					}
+				},
+			})
+			*/
 			const bodyVNode = h(formFileCom)
+			
+			
 			const titleVNode = h('div', { domProps: { innerHTML: '上传<strong> '+obj.name+' </strong>照片？' } })
 			
 			//得到BSV的msgBoxConfirm组件的按钮值
@@ -628,10 +678,13 @@ export default {
 			let res={'status':0}
 			let data={success:false}
 			
-			//console.log(file)
+			//console.log(event.target.id)
 			
 			if(modalVal){
 				const formData = new FormData()
+				
+				console.log(file)
+				//定义后端提取文件的名称：fileObj
 				formData.append('fileObj', file)
 				
 				//向后端上传文件
@@ -648,6 +701,24 @@ export default {
 			}
 			
 			console.log(data)
+			
+			console.log(event)
+			
+			//TODO: change b-img src prop sync?
+			//更新event.target.src
+			if(data.success){
+				//event.target.src=data.dir+data.name
+				
+				
+				await self.$nextTick(function() {
+					event.target.src=self.setImgSrc(data)
+				
+				})
+				
+			}
+			console.log(event.target.currentSrc)
+			
+			//http://localhost:8080/uploads/pictures/mentor/5e4946143a8e6.JPG
 			/*if(res.hasOwnProperty('status') && res.status=='200'){
 				data=await res.json()
 				console.log(data)

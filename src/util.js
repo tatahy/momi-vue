@@ -28,7 +28,6 @@ function getUrlByRoute(routeStr){
 	return resObj;
 } */
 
-
 async function asyFetchByRoute(opt={routeStr:'',method:'GET'}){
 	let url=getUrlByRoute(opt.routeStr)
 	let typeArr=['blob','text','json','formData'];
