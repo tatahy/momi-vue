@@ -279,9 +279,10 @@
 		
 		<template 
 			v-slot:default
-			v-if="formTrigger"
+			
 		>
 			<TheForm 
+				v-if="formTrigger"
 				v-bind:elements="formElements"
 				v-bind:modalId="modalProps.id"
 				v-bind:trigger="formTrigger"
@@ -290,9 +291,22 @@
 			>
 			
 			</TheForm>
+			
+			<!-- TODO: Temple TheFormFile -->
+			<!-- v-on:event-input-file="updateFileEvent" -->
+			<TheFormFile
+				v-if="isUpdateFile"
+				v-model="updateFile"
+			>
+				
+			</TheFormFile>
+			
 		</template>
+		
 						
 	</b-modal>
+	
+	
 	
 </div>
 </template>
@@ -347,6 +361,10 @@ export default {
 			smShow:'d-none d-sm-flex',
 			smHide:'d-sm-none',
 			isBusy:false,
+			
+			updateFile:null,
+			isUpdateFile:false,
+			
 			perPage: 10,
 			currentPage: 1,
 			fields:[],
@@ -618,12 +636,19 @@ export default {
 			}
 		
 		},
-		
+		//TODO: TheFormFile event-input-file handlder?
+		updateFileEvent:function(){
+			let self=this
+			
+			console.log(self.updateFile)
+			
+		},
 		//异步处理文件上传
 		uploadFile:async function(obj,event){
 			//event.preventDefault
 			//console.log(event.target)
-		
+			
+			//var inputFile=null
 			let self=this
 			let url=[self.host,self.actItem.sysEnt,'uploadFile',obj.id].join('/')
 			let req=Object.assign({},self.request)
@@ -645,14 +670,18 @@ export default {
 			*/
 			
 			
-			
+			//TODO: h(formFileCom) ?
 			//使用渲染函数进行BSV的msgBoxConfirm组件关键部分的渲染
 			/*
 			const bodyVNode = h(formFileCom,{
+				props: {
+					file: null
+				},
+				
 				on:{
-					input:inputFile=>{
-						console.log(inputFile)
-						return file=inputFile
+					input-file:function(){
+						
+						return this.file
 						
 					}
 				},
@@ -708,14 +737,12 @@ export default {
 			//更新event.target.src
 			if(data.success){
 				//event.target.src=data.dir+data.name
-				
-				
-				await self.$nextTick(function() {
-					event.target.src=self.setImgSrc(data)
-				
-				})
-				
+				event.target.src=self.setImgSrc(data)
 			}
+			
+			await self.$nextTick()
+			
+			console.log(event.target.src)
 			console.log(event.target.currentSrc)
 			
 			//http://localhost:8080/uploads/pictures/mentor/5e4946143a8e6.JPG
@@ -857,7 +884,7 @@ export default {
 		
 		//动态引入
 		TheForm:()=>import('@/components/TheForm'),
-		//TheFormFile:()=>import('@/components/TheFormFile')
+		TheFormFile:()=>import('@/components/TheFormFile')
 		
 		/*
 		//动态引入
@@ -889,8 +916,8 @@ export default {
 		}	
 		*/
 		//return this.lists=this.resLists.slice()
-	}
-
+	},
+	
 }
 
 </script>

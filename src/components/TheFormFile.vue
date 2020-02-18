@@ -11,6 +11,7 @@
 		:state="fileCheck.ready" 
 		:accept="typeStr"
 		@input="setStateFile"
+		v-on:event-input-file="$emit('event-input-file', $event.target.file)"
     ></b-form-file>
     <div v-if="fileCheck.ready" class="my-2">上传文件: 
 		<P class="px-2"><strong>{{ file ? file.name : '' }}</strong></P>
@@ -62,9 +63,29 @@ import {
 
 export default {
 	name:'TheFormFile',
+	/*props:{
+		file: {
+			type: Object,
+			//required:true,
+			// Object or array defaults must be returned from
+			// a factory function
+			default: function () {
+				return null
+			}
+		},
+	},*/
+	//定义父组件使用的V-model
+	model: {
+		//定义v-model使用的变量
+		prop: 'inputFile',
+		//定义v-model使用的事件
+		event: 'event-input-file'
+	},
+	
 	data:function(){
 		return {
 			file: null,
+			inputFile:null,
 			//typeStr:'image/jpeg, image/png, image/gif',
 			typeStr:'.jpg, .jpeg, .png, .gif',
 			size:256,
@@ -110,15 +131,23 @@ export default {
 		//$event在change事件中则是<input>对象
 		setStateFile(){
 			let self=this
-			
 			//native js to get the file Object on 'Change' event
 			//let file=$eve.target.files[0]
 			
 			let req=Object.assign({},self.request)
-		
-			req.load=self.validateFile()?self.file:{}
 			
-			return self.updateFetchCont({request:req})
+			self.inputFile=self.validateFile()?self.file:{}
+		
+			req.load=self.inputFile
+			
+			if(self.inputFile){
+				//注册一个事件，通知使用TheFormFile的组件
+				//self.$emit('event-input-file',self.file)
+				self.updateFetchCont({request:req})
+			}
+			
+			
+			return 
 		},
 		...mapMutations([
 			'updateFetchCont'
