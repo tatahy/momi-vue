@@ -2,9 +2,11 @@
 <div>
     <!-- @reset="onReset" @submit.stop.prevent="fetchFormData()" -->
 	<!-- @submit="fetchFormData($event)" -->
+	
+	<!-- //TODO:asyFetchFormData tpl -->
 	<b-form 
 		
-		@submit="fetchFormData"
+		@submit="asyFetchFormData"
 		@reset.stop.prevent="resetForm()" 		
 		:id="formId"
 		
@@ -323,12 +325,92 @@ export default {
 					//刷新表格，不起作用？？
 					//self.$root.$emit('bv::refresh::table', 'my-table')
 					
-					//注册一个事件，通知使用TheForm的组件
+					//生成一个事件，通知使用TheForm的组件
 					self.$emit('event-form-submit',cont)
 					
 				}	
 			
 			})
+			
+			//self.$root.$emit('bv::hide::modal', self.modalId)
+			
+		},
+		//TODO:asyFetchFormData method
+		//向后端提交数据，并显示后端处理结果
+		asyFetchFormData:async function(event){
+			event.preventDefault()
+			
+			let self=this
+			let opt={
+				method:'POST',
+				//mode: 'no-cors',
+				headers: '',
+				body:''
+			}
+			let url=`${self.host}/${self.routeStr.split('-').join('/')}/${self.trigger}`
+			
+			//将数组中的键值对对象，转为Json对象
+			let changeKeyVal2Obj=arr=>{
+				let retObj={}
+				arr.forEach(obj=>{
+					retObj[obj.key]=obj.value
+				})
+				
+				return retObj
+			}
+			//
+			let isTrue=value=>value==true
+						
+			let oriData=changeKeyVal2Obj(self.getFormDataArr())
+			
+			let data=changeKeyVal2Obj(self.formData)
+			let changeArr=[]
+			
+			let res={}
+			let cont={success:false}
+			
+			//判断oriData与data的元素是否有不同			
+			for(let key in oriData){
+				changeArr.push(oriData[key]===data[key]?true:false)
+			}
+			
+			
+			if(changeArr.every(isTrue)){
+				return self.showDismissibleAlert=true
+			}
+			
+			//有修改!changeArr.every(isTrue)才有后续动作	
+			opt.headers={
+					//json字符串的编码形式
+					'Content-Type': 'application/json'
+				}
+			//use JSON
+			opt.body=JSON.stringify(data)
+			//opt.body=Object.assign({},data)
+			
+			res=await fetch(url,opt)
+			
+			//后端成功处理
+			if(res.status=='200'){
+				//得到后端发回的数据
+				cont=await res.json()	
+			}
+			
+			if(cont.success){
+				self.asyChangeSideItem(cont.routeStr)
+					
+				//console.log(self.routeStr)
+				//console.log(cont.routeStr)
+					
+				self.$root.$emit('bv::hide::modal', self.modalId)
+					
+				//刷新表格，不起作用？？
+				//self.$root.$emit('bv::refresh::table', 'my-table')
+					
+				//生成一个事件，通知使用TheForm的组件
+				self.$emit('event-form-submit',cont)
+			
+			}
 			
 			//self.$root.$emit('bv::hide::modal', self.modalId)
 			

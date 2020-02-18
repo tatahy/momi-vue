@@ -1,7 +1,7 @@
 <template>
 <div class="overflow-auto">
 		
-	<!-- <div class="text-left"> v-on:event-table-refesh="refeshTable(trigger,listIndex)"-->
+	<!-- <div class="text-left"> v-on:event-table-refesh="refreshTable(trigger,listIndex)"-->
 		
 		<b-table class="border-bottom"
 			id="my-talbe"
@@ -83,13 +83,14 @@
 			-->
 			
 			<!-- actions字段的内容 -->
+			
 			<template v-slot:cell(actions)="row">
 				<!-- 弹出modal组件 class="mr-1"-->
 				<b-button 
 					size='sm'
 					variant="primary"
 					class="py-0 px-1 ml-1 mt-1"					
-					v-on:click="toggleModal(row, 'update', $event.target)" 
+					v-on:click="toggleModal(row, {name:'triggerForm',trigger:'update'}, $event.target)" 
 				>
 					更新
 				</b-button>
@@ -117,16 +118,7 @@
 							v-slot:aside
 							v-if="actNav.routeStr=='mentor'"
 						>
-						<!-- blank 
-								blank-color="#ccc"
 								
-								src="http://localhost:8080/uploads/pictures/mentor/5e4946143a8e6.JPG"
-								
-								
-								src="/uploads/pictures/mentor/5e4946143a8e6.jpg"
-								:src="setImgSrc(row.item.picture)"
-								-->
-							<!-- //TODO: b-img	 -->
 							<b-img 
 								:id="`img-${row.index}`"
 								fluid
@@ -134,25 +126,15 @@
 								width="168" 
 								height="200"
 								alt="导师照片"
+								blank-color="#ccc"
 								class="rounded shadow"
-								v-on:click="uploadFile(row.item,$event)"
+								v-on:click="toggleModal(row, {name:'fileForm',trigger:'uploadFile'}, $event.target)"
 							>
 							</b-img>
-							
-							<!-- <img 
-								src="http://localhost:8080/uploads/pictures/mentor/5e49541a422d8.jpg"
 								
-								width="168" 
-								height="200"
-								alt="导师照片"
-								class="rounded shadow"
-								
-							/>
-							-->
-							
 							<!-- Tooltip title specified via prop title -->
 							<b-tooltip :target="`img-${row.index}`">
-							点击上传图片！
+							点击上传头像！
 							</b-tooltip>
 						</template>
 							
@@ -282,24 +264,31 @@
 			
 		>
 			<TheForm 
-				v-if="formTrigger"
+				v-show="showTriggerForm"
 				v-bind:elements="formElements"
 				v-bind:modalId="modalProps.id"
 				v-bind:trigger="formTrigger"
 				v-bind:listIndex="modalProps.itemIndex"
-				v-on:event-form-submit="refeshTable"
+				v-on:event-form-submit="refreshTable"
 			>
 			
 			</TheForm>
 			
-			<!-- TODO: Temple TheFormFile -->
-			<!-- v-on:event-input-file="updateFileEvent" -->
-			<TheFormFile
-				v-if="isUpdateFile"
-				v-model="updateFile"
+			<!-- 
+		
+			v-model="updateFile"
+			
+			-->
+			<TheFileUpload
+				v-show="showFileForm"
+				v-bind:title="titleStr"
+				v-bind:url="uploadFileUrl"
+				v-bind:name="fileName"
+				
+				v-on:event-uploaded-file="uploadedFile"
 			>
 				
-			</TheFormFile>
+			</TheFileUpload>
 			
 		</template>
 		
@@ -362,8 +351,10 @@ export default {
 			smHide:'d-sm-none',
 			isBusy:false,
 			
-			updateFile:null,
-			isUpdateFile:false,
+			fileName:'',
+			uploadFileUrl:'',
+			showFileForm:false,
+			titleStr:'',
 			
 			perPage: 10,
 			currentPage: 1,
@@ -382,6 +373,7 @@ export default {
 				itemIndex:'',
 			},
 			formTrigger:'create',
+			showTriggerForm:false,
 			formElements:[],
 			labelClr:'p-0 py-2 text-right',
 			textClr:'p-0 pl-1 py-2 text-left border-top'
@@ -433,8 +425,6 @@ export default {
 				return arr
 			},
 			host:state=>state.host,
-			request:state=>state.fetchCont.request,
-			//request:state=>Object.assign({},state.fetchCont.request),
 		}),
 	},
 	watch:{
@@ -575,37 +565,100 @@ export default {
 			
 			return srcStr
 		},
-		toggleModal(row, trigger, button) {
+		toggleModal(row, body={name:'',trigger:''}, toggler) {
 			let self=this
+			
 			let item={}
 			let rowDefault={item:'',index:-1}
 			
+			let nameArr=['triggerForm','fileForm']
+			let triggerArr=['create','update','uploadFile']
+			let bodyDefault={
+				name:nameArr[0],
+				trigger:triggerArr[0],
+			}
+						
+			body=Object.assign({},bodyDefault,body)
+			
 			row=Object.assign({},rowDefault,row)
+			
 			item=row.item
+			
+			self.showTriggerForm=false
+			self.showFileForm=false
 			
 			self.modalProps.item =item
 			self.modalProps.itemIndex =row.index
-			//self.modalProps.item = JSON.stringify(item, null, 2)
-			if(item.hasOwnProperty('topic')){
-				self.modalProps.title = item.topic
+			
+			if(!nameArr.includes(body.name) || !triggerArr.includes(body.trigger)){
+				return 
+			}
+				
+			if(body.name=='triggerForm'){
+			
+				if(item.hasOwnProperty('topic')){
+					self.modalProps.title = item.topic
+				}
+				
+				if(item.hasOwnProperty('name')){
+					self.modalProps.title = item.name
+				}
+				
+				self.formTrigger=body.trigger
+				self.formElements=[]
+				self.setFormElements(item)
+				
+				self.showTriggerForm=true
 			}
 			
-			if(item.hasOwnProperty('name')){
-				self.modalProps.title = item.name
+			if(body.name=='fileForm'){
+				self.titleStr='"'+item.name+'"头像上传'
+				self.showFileForm=true
+				self.uploadFileUrl=[self.host,self.actItem.sysEnt,'uploadFile',item.id].join('/')
+				self.fileName=item.field+item.id
 			}
 			
-			//console.log(trigger,item)
-			//console.log(self.fields)
-			self.formTrigger=trigger
-			self.formElements=[]
-			self.setFormElements(item)
-			
-			
-			
-			//self.$root.$emit('bv::show::modal', self.modalProps.id, button)
-			self.$root.$emit('bv::toggle::modal', self.modalProps.id, button)
+			self.$root.$emit('bv::toggle::modal', self.modalProps.id, toggler)
 		},
-		refeshTable:function(cont){
+		setFileName(){
+			let self=this
+			let item=self.modalProps.item
+			let name=item.field+item.id
+			
+			return name
+		},
+		//根据回传参数处理文件上传结果
+		uploadedFile:function(data){
+			let self=this
+			let index=self.modalProps.itemIndex
+			let dataDefault={success:false,name:'',dir:''}
+			
+			console.log('uploadedFile()')
+			data=Object.assign({},dataDefault,data)
+			
+			if(data.success){
+				self.$root.$emit('bv::toggle::modal', self.modalProps.id)
+				console.log(data)
+				
+				self.showMsgBoxOk('头像上传') 
+				
+				//TODO: uploadedFile()，2种更新方法的区别？
+				//更新所在条目的picture
+				self.resLists[index]['picture']=data
+				
+				//出现"Error: [vuex] do not mutate vuex store state outside mutation handlers."
+
+				/*for(let obj in self.resLists[index]['picture']){
+					self.resLists[index]['picture'][obj]=data[obj]
+				}*/
+				
+				console.log(self.resLists[index]['picture'])
+				
+				
+			}
+		},
+		
+		refreshTable:function(cont){
 			let self=this
 			let triggerLabel={
 				'create':'新增',
@@ -630,193 +683,13 @@ export default {
 			//console.log(cont)
 			if(cont.success){
 				//self.setLists()
-			//注册一个事件，通知使用TheTable的组件
+			//生成一个事件，通知使用TheTable的组件
 				self.$emit('event-table-refresh',cont)
 				self.showMsgBoxOk('“'+label+'”')
 			}
 		
 		},
-		//TODO: TheFormFile event-input-file handlder?
-		updateFileEvent:function(){
-			let self=this
-			
-			console.log(self.updateFile)
-			
-		},
-		//异步处理文件上传
-		uploadFile:async function(obj,event){
-			//event.preventDefault
-			//console.log(event.target)
-			
-			//var inputFile=null
-			let self=this
-			let url=[self.host,self.actItem.sysEnt,'uploadFile',obj.id].join('/')
-			let req=Object.assign({},self.request)
-			let file=req.load
-			
-			//异步引入TheFormFile组件
-			const {default:formFileCom}=await Promise.resolve(import('@/components/TheFormFile'))
-			
-			//引入定义好的渲染函数
-			const h = self.renderFunc()	
-			/*const bodyVNode = h('p', { class: ['text-center'] }, [
-				h('strong', {}, obj.id)
-			])*/
-			
-			/*
-			const bodyVNode=h('b-form-file', { class: ['text-center'] }, [
-				h('strong', {}, obj.id)
-			])
-			*/
-			
-			
-			//TODO: h(formFileCom) ?
-			//使用渲染函数进行BSV的msgBoxConfirm组件关键部分的渲染
-			/*
-			const bodyVNode = h(formFileCom,{
-				props: {
-					file: null
-				},
-				
-				on:{
-					input-file:function(){
-						
-						return this.file
-						
-					}
-				},
-			})
-			*/
-			const bodyVNode = h(formFileCom)
-			
-			
-			const titleVNode = h('div', { domProps: { innerHTML: '上传<strong> '+obj.name+' </strong>照片？' } })
-			
-			//得到BSV的msgBoxConfirm组件的按钮值
-			let modalVal=await self.$bvModal.msgBoxConfirm([bodyVNode], {
-				title:[titleVNode],
-				size: 'sm',
-				buttonSize: 'sm',
-				okVariant: 'primary',
-				okTitle: '是',
-				cancelTitle: '否',
-				footerClass: 'p-2',
-				hideHeaderClose: false,
-				centered: true
-			})
-			let res={'status':0}
-			let data={success:false}
-			
-			//console.log(event.target.id)
-			
-			if(modalVal){
-				const formData = new FormData()
-				
-				console.log(file)
-				//定义后端提取文件的名称：fileObj
-				formData.append('fileObj', file)
-				
-				//向后端上传文件
-				//使用formData上传文件，method必须为‘PSOT’
-				res=await fetch(url,{
-						method:'POST',
-						body:formData
-					})	
-			}
-			//后端成功处理
-			if(res.status=='200'){
-				//得到后端发回的数据
-				data=await res.json()	
-			}
-			
-			console.log(data)
-			
-			console.log(event)
-			
-			//TODO: change b-img src prop sync?
-			//更新event.target.src
-			if(data.success){
-				//event.target.src=data.dir+data.name
-				event.target.src=self.setImgSrc(data)
-			}
-			
-			await self.$nextTick()
-			
-			console.log(event.target.src)
-			console.log(event.target.currentSrc)
-			
-			//http://localhost:8080/uploads/pictures/mentor/5e4946143a8e6.JPG
-			/*if(res.hasOwnProperty('status') && res.status=='200'){
-				data=await res.json()
-				console.log(data)
-			}*/
-				
-			
-			
-			/*
-			self.$bvModal.msgBoxConfirm([bodyVNode], {
-				title:[titleVNode],
-				size: 'sm',
-				buttonSize: 'sm',
-				okVariant: 'primary',
-				okTitle: '是',
-				cancelTitle: '否',
-				footerClass: 'p-2',
-				hideHeaderClose: false,
-				centered: true
-			})
-			.then(value => {
-				let url=[self.host,self.actItem.sysEnt,'uploadPic',obj.id].join('/')
-				let req=Object.assign({},self.request)
-				let file=req.load
-				//let file1=new File()
-				
-				console.log(value)
-				console.log(file)
-				//console.log(file1)
-				
-				//按下的是‘ok’
-				//if(value && file.name){
-				if(value){
-					
-					const formData = new FormData()
-					formData.append('image', file)
-					
-					console.log(url)
-					console.table(file)
-					console.log(formData)
-					
-					//使用formData上传文件，method必须为‘PSOT’
-					return fetch(url,{
-						method:'POST',
-						body:formData
-					})
-				}
-				
-				
-				if(!value){
-					req.load={}
-					console.log(file)
-					return self.updateFetchCont({request:req})
-				}
-				
-				
-			})
-			.then(res=>{
-				if(res.status=='200'){
-					return res.json()
-				}			
-			})
-			.then(obj=>{
-				console.log(obj)
-			
-			})
-			.catch(err => {
-				// An error occurred
-				return err
-			})
-			*/
-		},
+		
 		showMsgBoxOk(msg) {
 			const h = this.renderFunc()
 			//const h = this.$createElement
@@ -884,7 +757,7 @@ export default {
 		
 		//动态引入
 		TheForm:()=>import('@/components/TheForm'),
-		TheFormFile:()=>import('@/components/TheFormFile')
+		TheFileUpload:()=>import('@/components/TheFileUpload')
 		
 		/*
 		//动态引入
