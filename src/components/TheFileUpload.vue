@@ -1,9 +1,5 @@
 <template>
-<div>
-	<!-- :state="Boolean(file)" 
-	
-	-->
-	
+<div>	
 	<h5>{{title}}</h5>
     <b-form-file
 		class="my-2"
@@ -14,10 +10,7 @@
 		:accept="extStr"
 		browse-text="选择文件"
     ></b-form-file>
-    <!-- <div v-if="fileCheck.ready" class="my-2">上传文件: 
-		<P class="px-2"><strong>{{ file ? file.name : '' }}</strong></P>
-	</div> -->
-	
+   
 	<P 
 		v-if="fileCheck.ready" 
 		:class="pCls"
@@ -82,8 +75,6 @@
 </template>
 
 <script>
-//mapActions,
-import { mapState,mapGetters,mapMutations } from 'vuex'
 
 //引入BsV的component
 import { 
@@ -98,9 +89,6 @@ export default {
 	props:{
 		title: {
 			type: String,
-			//required:true,
-			// Object or array defaults must be returned from
-			// a factory function
 			default: '文件上传'
 		},
 		url:{
@@ -112,6 +100,7 @@ export default {
 			required:true,
 		},
 	},
+	/*
 	//定义父组件使用的V-model
 	model: {
 		//定义v-model使用的变量
@@ -119,7 +108,7 @@ export default {
 		//定义v-model使用的事件
 		event: 'event-input-file'
 	},
-	
+	*/
 	data:function(){
 		return {
 			file: null,
@@ -138,12 +127,6 @@ export default {
 		fileCheck:function(){
 			return this.validateFile()
 		},
-		...mapGetters([
-			
-		]),
-		...mapState({
-			request:state=>state.fetchCont.request,
-		}),
 	},
 	methods:{
 		validateFile(){
@@ -165,8 +148,6 @@ export default {
 			
 			return result
 		},
-	
-	
 		//异步处理文件上传
 		uploadFile:async function(){
 			let self=this
@@ -203,18 +184,6 @@ export default {
 			}
 			
 		},
-		
-		uploadFileResult(file){
-			console.log('uploadFileResult()')
-			console.log(file)
-			
-			
-		},
-		...mapMutations([
-		
-		]),
-		
-		//
 	},
 	components:{
 		'b-form-file':BFormFile,
