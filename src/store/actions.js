@@ -2,7 +2,7 @@
 
 //import state from './state.js'
 
-import {asyFetchByRoute,} from '@/util.js'
+import {asyFetchByRoute} from '@/util.js'
 //getBSVTableByFetchResult
 export default {
 	//异步更新fetchCont
@@ -15,6 +15,8 @@ export default {
 		
 		//let index=state.sidebar.index
 		
+		//console.log('actions.js ',req)
+
 		commit('updateFetchCont',{
 						request:req,
 						response:{

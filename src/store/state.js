@@ -3,8 +3,17 @@
 
 import {navbar,sidebar} from '@/conf/adminEntity.conf.js'
 
-const debug = process.env.NODE_ENV !== 'production'
-const BackEndUrl=debug?'http://localhost:8090':'';
+// const debug = process.env.NODE_ENV !== 'production'
+// const BackEndUrl=debug?'http://localhost:8090':''
+function getBackEndUrl(){
+	const host = new URL(window.location.href)
+	const debug = process.env.NODE_ENV !== 'production'
+
+	host.port=8090
+	//console.log(host)
+	return debug?host.origin:''
+
+}
 
 export default {
 	fetchCont:{
@@ -38,6 +47,6 @@ export default {
 		//最近一次高亮的sidebar中的item
 		prev:{}
 	},
-	host:BackEndUrl,
+	host:getBackEndUrl(),
 	
 }

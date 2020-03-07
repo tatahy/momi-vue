@@ -4,12 +4,23 @@ import {bsvTableFieldProps} from '@/conf/common.conf.js'
 
 //import {adminEntity} from '@/conf/adminEntity.conf.js'
 
-const debug = process.env.NODE_ENV !== 'production'
-const BackEndUrl=debug?'http://localhost:8090':'';
+// const debug = process.env.NODE_ENV !== 'production'
+// const BackEndUrl=debug?'http://localhost:8090':''
+
 //const postmanUrl='https://a9baf5bf-a2cf-43a8-8db8-2fb9aa3f5acc.mock.pstmn.io';
+function getBackEndUrl(){
+	const host = new URL(window.location.href)
+	const debug = process.env.NODE_ENV !== 'production'
+
+	host.port=8090
+	//console.log(host)
+	return debug?host.origin:''
+
+}
 
 function getUrlByRoute(routeStr){
-	let url=routeStr?BackEndUrl+`/${routeStr.split('-').join('/')}`:''
+	let url=routeStr?getBackEndUrl()+`/${routeStr.split('-').join('/')}`:''
+	//console.log('util.js ',url)
 	return url
 }
 

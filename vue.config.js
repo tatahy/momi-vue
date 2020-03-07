@@ -29,6 +29,14 @@ module.exports = {
 		//申明无需打包的库
 		externals: getProdExternals()
 	},
+	// //局域网内访问设置??
+	// devServer: {
+    //     host: '192.168.1.102', // ip
+    //     port: 8090, // 设置端口号
+    //     https: false, // https:{type:Boolean}
+    //     open: false, //配置自动启动浏览器
+    //     proxy:null  //设置代理
+    // },
 	/* css: {
     	modules: true,
 		loaderOptions: {
