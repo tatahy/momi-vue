@@ -1,7 +1,14 @@
 //util-chart.js
+//chart中的类型
+export const typeArr=[
+	{name:'bar',label:'直方图'},
+	{name:'horizontalBar',label:'水平直方图'},
+	// {name:'radar',label:'雷达图'},
+	// {name:'doughnut',label:'环状图'},
+]
 
 //chart中使用的颜色值
-const rgbaColor={
+export const rgbaColor={
 	labels:['blue', 'yellow', 'purple','green', 'orange','red'],
 	background:{
 		blue:'rgba(54, 162, 235, 0.2)',
@@ -63,7 +70,7 @@ let getDataColor=(labArr,colorObj={})=>{
 //由num的数量，根据预定义的rgbaColor取得颜色值
 //因为clrNameArr.length有上限，
 //超过该上限就又按照rgbaColor.labels的排列顺序得到颜色值
-let getDataColor=(num)=>{
+export let getDataColor=(num)=>{
 	const max=rgbaColor.labels.length
 	const clrLabArr=rgbaColor.labels
 	//按照num的值生成对应长度的数组
@@ -101,7 +108,7 @@ let getDataColor=(num)=>{
 }
 
 
-//const horizontalBarData = {
+//horizontalBar
 export default {
 	type:'horizontalBar',
 	data:{
@@ -135,7 +142,7 @@ export default {
 				},
 				ticks: {
 					//stacked: true,
-					//beginAtZero: true,
+					beginAtZero: true,
 					fontSize:16,
 					//suggestedMin:0,
 				},
@@ -149,19 +156,20 @@ export default {
 					//stacked: true,
 					beginAtZero: true,
 					suggestedMin:0,
+					fontSize:16,
 				},
 			}]
 		},
 		title: {
-            display: true,
-            text: 'Custom Chart Title',
+      display: true,
+      text: 'Custom Chart Title',
 			fontSize:20,
 			fontColor:''
-        },
+    },
 		maintainAspectRatio: false,
 		
 	}
 }
 
 
-export {rgbaColor,getDataColor}
+// export {rgbaColor,getDataColor}

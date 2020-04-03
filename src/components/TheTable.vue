@@ -137,8 +137,13 @@
 							点击上传头像！
 							</b-tooltip>
 						</template>
-							
-						<h5 class="text-center pb-2" :class="smShow"><span :class="`text-${themeClr}`">详情</span></h5>
+
+						<b-row :class="smShow">	
+							<b-col class="text-center">
+								<h5 class="pb-2" ><span :class="`text-${themeClr}`">详情</span></h5>
+							</b-col>
+						</b-row >
+					
 						<b-row 
 							v-for="(obj, index) in getFieldsInDetail()" :key="index"
 							:class="smShow"
@@ -633,12 +638,12 @@ export default {
 			let index=self.modalProps.itemIndex
 			let dataDefault={success:false,name:'',dir:''}
 			
-			console.log('uploadedFile()')
+			// console.log('uploadedFile()')
 			data=Object.assign({},dataDefault,data)
 			
 			if(data.success){
 				self.$root.$emit('bv::toggle::modal', self.modalProps.id)
-				console.log(data)
+				// console.log(data)
 				
 				self.showMsgBoxOk('头像上传') 
 				
@@ -652,7 +657,7 @@ export default {
 					self.resLists[index]['picture'][obj]=data[obj]
 				}*/
 				
-				console.log(self.resLists[index]['picture'])
+				// console.log(self.resLists[index]['picture'])
 				
 				
 			}

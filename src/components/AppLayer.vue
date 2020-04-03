@@ -103,17 +103,17 @@ export default {
 
 /* css实现sidenav与content的动画效果  */
 .sidenav {
-    //padding: 5px;
-    //height: 100%;
+    /* //padding: 5px; */
+    /* //height: 100%; */
     width: 0px;
     position: fixed;
     z-index: 0;
     top: 56px;
     left: 0;
-    //border-right: 1px solid #e3e3e3;
-    //background-color: #f5f5f5;
-	//background-color: transparent;
-	//background-color: #ffffff;
+    /* //border-right: 1px solid #e3e3e3; */
+    /* //background-color: #f5f5f5; */
+	/* //background-color: transparent; */
+	/* //background-color: #ffffff; */
     
     overflow: hidden;
     transition: 0.5s;
@@ -127,7 +127,7 @@ export default {
 .content {
     top: 56px;
     position: relative;
-    //z-index: 0;
+    /* //z-index: 0; */
     transition: margin-left 0.5s;
 }
 
@@ -141,11 +141,11 @@ export default {
 	}
 	.sidenav-show-up {
 		z-index: 20;
-		//height: 100%;
-		//border-radius: 3px;
+		/* //height: 100%; */
+		/* //border-radius: 3px; */
 		box-shadow: 0px 0px 5px 2px #aaa;
-		//background-color: #f2f2f2;
-		//background-color: #ffffff;
+		/* //background-color: #f2f2f2; */
+		/* //background-color: #ffffff; */
 	}
 	.sidenav-backdrop {
 		position: fixed;

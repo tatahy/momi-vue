@@ -1,11 +1,13 @@
 <template>
-	
+<div>			
 	<div class="chart-container" >
-	
-		<canvas :id="chartId"></canvas>
-	
+		<canvas :id="id"></canvas>
 	</div>
-
+	<b-form-select 
+			v-model="type" 
+			:options="selOpts">
+	</b-form-select>
+</div>
 </template>
 
 <script>
@@ -15,40 +17,48 @@ import {bs4TextColor} from '@/conf/common.conf.js'
 
 import Chart from 'chart.js'
 
-import {default as chartData,getDataColor} from '@/components/util-chart'
+import {default as chartConf,getDataColor,typeArr} from '@/components/util-chart'
+
+import { BFormSelect } from 'bootstrap-vue'
 
 /* import * as chartConf from './chart-conf.js'
 console.log(chartConf) */
 
 export default {
 	name: 'TheChart',
-	data:function(){
-		return {
-			//chartData,
-		}
-	},
 	props: {
-		chartId:{
+		id:{
 			type:String,
 			default:'myChart',
 			required:true
 		},
-		chartType:{
-			type:String,
-			default:'bar',
-			required:true
+	},
+	data:function(){
+		return {
+			type:'bar',
+			//存储Chart实例
+			ctx:null
+		
 		}
 	},
 	computed:{
-		chartData:function(){
-			return chartData
-		},		
-		ctx:function(){
+		//用于实例化Chart的各项参数
+		config:function(){
+			return Object.assign({},chartConf,{type:this.type})
+		},
+		selOpts:function(){
+			let arr=[]
+			let opt={value:'',text:''}	
+
+			typeArr.forEach(obj=>{
+				opt.value=obj.hasOwnProperty('name')?obj.name:false
+				opt.text=obj.hasOwnProperty('label')?obj.label:''
+				if(opt.value!=false){
+					arr.push(Object.assign({},opt))
+				}
+			})
 			
-			
-			//return new Chart(this.chartId, this.chartData)
-			
-			return this.createChart()
+			return arr
 		},
 		//chart.js中的颜色使用数值，将字符转换为数值
 		themeClr:function(){
@@ -68,30 +78,22 @@ export default {
 	watch:{
 		title:function(){			
 			return this.updateChart()
+		},
+		type:function(){	
+			//重新实例化Chart
+			this.getChart()
+			return this.updateChart()
 		}
-		/*title:{
-			handler:function(){
-				return this.updateChart()
-			},
-			immediate: true			
-		}*/
-		
 	},
 	methods:{
-		createChart(){
-			//this.chartData.type='bar'
-		
-			return new Chart(this.chartId, this.chartData)
-		},
-		setChartData(){
-		//updateChart(){
+		setConfig(){
 			let self=this
-			
+
+			let config=self.config
 			let entries=self.entries
-			let chartData=self.chartData
-			
-			let title=chartData.options.title
-			let datasets=chartData.data.datasets[0]
+	
+			let title=config.options.title
+			let datasets=config.data.datasets[0]
 			
 			let getSidebarEntry=route=>{
 				let obj={}
@@ -106,26 +108,20 @@ export default {
 				})
 				return obj
 			}
-			
-			
 			//更改标题
 			title.text=self.title
 			title.fontColor=self.themeClr
 			
-			//datasets.label=`各类${self.title}（数量）`
-			
-			//console.log(entries)
-			
 			//datasets有关的数据从entries获得
 			if(entries.length){
 				//数据名称数组
-				chartData.data.labels=[]
+				config.data.labels=[]
 				//数据值数组
 				datasets.data=[]
 				entries.forEach(ent=>{
 					let obj=getSidebarEntry(ent.routeStr)
 					
-					chartData.data.labels.push(obj.label)
+					config.data.labels.push(obj.label)
 					datasets.data.push(obj.total)
 					
 				})
@@ -137,38 +133,37 @@ export default {
 				let clrObj=getDataColor(datasets.data.length)
 				datasets.backgroundColor=clrObj.background
 				datasets.borderColor=clrObj.border
-				
+			}			
+			return
+		},
+		//实例化Chart
+		getChart(){
+			let self=this
+
+			if(self.ctx){
+				self.ctx.destroy()
 			}
-			
-			//return 
-		
+			self.setConfig()
+			self.ctx=new Chart(self.id,self.config)
+			return
 		},
 		updateChart(){
 			let self=this
-			//定义promise，延迟一点时间再设置数据
-			let promise1 = new Promise(function(resolve) {
-					setTimeout(function() {
-						resolve(self.setChartData())
-					}, 300)
-				})
-			//延迟一点时间再执行更新
-			return promise1.then(()=>self.ctx.update())
-			
-			/*
-			//无延迟设置数据，有可能无数据
-			this.setChartData()
-			return this.ctx.update()*/
+			self.setConfig()
+			return	self.ctx.update()
 		}
 		
 	},
 	components:{
+		BFormSelect
 		//Chart:()=>import('chart.js')
 	},
-
 	mounted(){
-		return this.updateChart()
+		//实例化Chart
+		return this.getChart()
 	},
 	destroyed(){
+		//销毁Chart实例
 		return this.ctx.destroy()
 	}
 
@@ -181,6 +176,6 @@ export default {
   position: relative;
   margin: auto;
   height: 80vh;
-  //width: 80vw;
+  /* width: 80vw; */
 }
 </style>
