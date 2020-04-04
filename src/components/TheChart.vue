@@ -3,26 +3,33 @@
 	<div class="chart-container" >
 		<canvas :id="id"></canvas>
 	</div>
-	<b-form-select 
-			v-model="type" 
-			:options="selOpts">
-	</b-form-select>
+	<br>
+	<b-form-group
+		label-cols="8"
+		label-align="right"
+		v-bind:label-class="`text-${navThemeClr}`"
+		label="选择图形:"
+	>
+		<b-form-select 
+				v-model="type" 
+				:options="selOpts">
+		</b-form-select>
+	</b-form-group>
 </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import {bs4TextColor} from '@/conf/common.conf.js'
-//
 
 import Chart from 'chart.js'
 
 import {default as chartConf,getDataColor,typeArr} from '@/components/util-chart'
 
-import { BFormSelect } from 'bootstrap-vue'
-
-/* import * as chartConf from './chart-conf.js'
-console.log(chartConf) */
+import {
+	BFormSelect,
+	BFormGroup 
+} from 'bootstrap-vue'
 
 export default {
 	name: 'TheChart',
@@ -123,9 +130,7 @@ export default {
 					
 					config.data.labels.push(obj.label)
 					datasets.data.push(obj.total)
-					
 				})
-				
 			}
 			
 			//改变颜色
@@ -148,14 +153,14 @@ export default {
 			return
 		},
 		updateChart(){
-			let self=this
-			self.setConfig()
-			return	self.ctx.update()
+			this.setConfig()
+			return	this.ctx.update()
 		}
 		
 	},
 	components:{
-		BFormSelect
+		BFormSelect,
+		BFormGroup 
 		//Chart:()=>import('chart.js')
 	},
 	mounted(){
