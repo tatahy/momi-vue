@@ -134,7 +134,6 @@ export default {
 			if(!self.isBriefContent){
 				self.asyUpdateNavbar(self.index)
 			}
-			
 		},
 		...mapActions([
 			//changeNavbar:'asyUpdateNavbar',
@@ -142,7 +141,7 @@ export default {
 		]),
 	},
 	created(){
-		return this.asyUpdateNavbar(this.index)
+		this.asyUpdateNavbar(this.index)
 	},
 	components:{
 		'b-navbar':BNavbar,

@@ -116,7 +116,7 @@ export default {
 		//labels:['专利','项目','技术成果','解决方案'] ,
 		datasets: [{
 			label:'数量',
-			data: [0, 0, 0, 0],
+			data: [1, 0, 0, 0],
 			backgroundColor: [
 				'rgba(255, 99, 132, 0.2)',
 				'rgba(54, 162, 235, 0.2)',

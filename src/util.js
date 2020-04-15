@@ -41,7 +41,7 @@ function getUrlByRoute(routeStr){
 
 async function asyFetchByRoute(opt={routeStr:'',method:'GET'}){
 	let url=getUrlByRoute(opt.routeStr)
-	let typeArr=['blob','text','json','formData'];
+	let typeArr=['blob','text','json','formData']
 	//js原生fetch()方法的第二参数
 	let optDefault={
 			method: 'GET', // *GET, POST, PUT, DELETE, etc
@@ -56,7 +56,7 @@ async function asyFetchByRoute(opt={routeStr:'',method:'GET'}){
 			//referrer: 'no-referrer', // no-referrer, *client
 			//body:JSON.stringify({zz:11}), // body data type must match "Content-Type" header while method=='POST' or 'PUT'
 			type:'json',
-		};
+		}
 	let res={ok:false}
 	let result={
 			ok:false,
@@ -68,10 +68,10 @@ async function asyFetchByRoute(opt={routeStr:'',method:'GET'}){
 			]
 		}
 	
-	opt=Object.assign({},optDefault,opt);
+	opt=Object.assign({},optDefault,opt)
 	
 	if(url && typeArr.includes(opt.type)){
-		res=await fetch(url,opt);
+		res=await fetch(url,opt)
 		//console.log(res);
 	}
 	

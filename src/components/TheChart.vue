@@ -1,6 +1,6 @@
 <template>
 <div>			
-	<div class="chart-container" >
+	<div class="chart-container">
 		<canvas :id="id"></canvas>
 	</div>
 	<br>
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters} from 'vuex'
 import {bs4TextColor} from '@/conf/common.conf.js'
 
 import Chart from 'chart.js'
@@ -42,15 +42,16 @@ export default {
 	},
 	data:function(){
 		return {
-			type:'bar',
+			// type:'bar',
+			type:'horizontalBar',
 			//存储Chart实例
 			ctx:null
-		
 		}
 	},
 	computed:{
 		//用于实例化Chart的各项参数
 		config:function(){
+			//一定要用Obj.assign()，否则就是按引用返回，无法进行chart重绘
 			return Object.assign({},chartConf,{type:this.type})
 		},
 		selOpts:function(){
@@ -64,7 +65,6 @@ export default {
 					arr.push(Object.assign({},opt))
 				}
 			})
-			
 			return arr
 		},
 		//chart.js中的颜色使用数值，将字符转换为数值
@@ -78,7 +78,6 @@ export default {
 			//首页加载时有可能entries=[]
 			entries:'resItems',
 			actSidebar:'actSidebar'
-			
 		}),
 	},
 	//监视是否需要更新
@@ -90,7 +89,10 @@ export default {
 			//重新实例化Chart
 			this.getChart()
 			return this.updateChart()
-		}
+		},
+		entries:function(){			
+			return this.updateChart()
+		},
 	},
 	methods:{
 		setConfig(){
@@ -102,7 +104,7 @@ export default {
 			let title=config.options.title
 			let datasets=config.data.datasets[0]
 			
-			let getSidebarEntry=route=>{
+			let getEntryLabel=route=>{
 				let obj={}
 				self.actSidebar.catalog.forEach(cat=>{
 					if(cat.hasOwnProperty('items')){
@@ -113,32 +115,31 @@ export default {
 						})
 					}	
 				})
-				return obj
+				return obj.label
 			}
 			//更改标题
 			title.text=self.title
 			title.fontColor=self.themeClr
-			
-			//datasets有关的数据从entries获得
-			if(entries.length){
-				//数据名称数组
-				config.data.labels=[]
-				//数据值数组
-				datasets.data=[]
-				entries.forEach(ent=>{
-					let obj=getSidebarEntry(ent.routeStr)
-					
-					config.data.labels.push(obj.label)
-					datasets.data.push(obj.total)
-				})
-			}
 			
 			//改变颜色
 			if(datasets.data.length){
 				let clrObj=getDataColor(datasets.data.length)
 				datasets.backgroundColor=clrObj.background
 				datasets.borderColor=clrObj.border
-			}			
+			}	
+
+			//datasets有关的数据从entries获得
+			if(entries.length){
+				//数据名称数组
+				config.data.labels=[]
+				//数据值数组
+				datasets.data=[]
+				entries.forEach((ent,idx)=>{
+					config.data.labels[idx]=getEntryLabel(ent.routeStr)
+					datasets.data[idx]=ent.total
+				})
+			}
+
 			return
 		},
 		//实例化Chart
@@ -149,8 +150,9 @@ export default {
 				self.ctx.destroy()
 			}
 			self.setConfig()
+			// console.log('getChart()',self.entries)
 			self.ctx=new Chart(self.id,self.config)
-			return
+			return			
 		},
 		updateChart(){
 			this.setConfig()
@@ -161,17 +163,17 @@ export default {
 	components:{
 		BFormSelect,
 		BFormGroup 
-		//Chart:()=>import('chart.js')
 	},
 	mounted(){
 		//实例化Chart
-		return this.getChart()
+		this.$nextTick(function(){
+			this.getChart()
+		})
 	},
 	destroyed(){
 		//销毁Chart实例
-		return this.ctx.destroy()
+		this.ctx.destroy()
 	}
-
 }
 </script>
 

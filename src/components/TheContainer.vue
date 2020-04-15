@@ -34,20 +34,12 @@
 			</header>
 				
 			<main class="text-center">
-					<!-- chart-type='horizontalBar'
-					id='myChart' 		  -->
-				<template v-if="isBriefContent">
-					<TheChart id='myChart' />
-				</template>
-				
-				<template v-else>
-					<TheTable 
-						lang='chn'
-						v-on:event-table-refresh="refreshState"
-					>
-					</TheTable>
-				</template>
-		
+				<TheChart v-if="isBriefContent" id='myChart' />
+				<TheTable 
+					v-else
+					lang='chn'
+					v-on:event-table-refresh="refreshState"
+				/>
 			</main>
 				
 			<footer>
@@ -64,7 +56,10 @@
 
 <script>
 
-import { mapState, mapGetters } from 'vuex'
+import {
+	mapState, 
+	mapGetters,
+} from 'vuex'
 
 //import { asyGetBsvComponent as aGetBsv} from '@/components/util-bootstrap-vue'
 import {
@@ -83,6 +78,7 @@ let faObj=Object.assign({},FANAME,{
 		]
 	})
 */
+
 //静态引入fontawesome
 import { 
 	faAngleDoubleLeft,
@@ -139,9 +135,9 @@ export default {
 
 			//console.log(cont)
 			return cont
-		}
+		},
+		
 	},
-	
 	components: {
 		'b-container':BContainer,
 		'b-button':BButton,

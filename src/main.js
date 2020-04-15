@@ -34,9 +34,10 @@ async function appInit(){
 
 appInit()	
 .then(obj=>{
-	let store=obj.store
-	let Vue=obj.Vue
-	let App=obj.App
+	// const store=obj.store
+	// const Vue=obj.Vue
+	// const App=obj.App
+	const [store,Vue,App]=[obj.store,obj.Vue,obj.App]
 	Vue.config.productionTip = false	
 	let vmRoot=new Vue({
 		store,
@@ -44,7 +45,6 @@ appInit()
 	})
 		
 	vmRoot.$mount('#app')
-
 })
 .catch(err=>alert(err))
 
